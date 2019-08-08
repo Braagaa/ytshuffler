@@ -1,5 +1,8 @@
 import React from 'react';
+import Login from './views/Login';
 
 export default function App() {
-	return <h1>Hi</h1>
+	return (
+		<Login/>
+	);
 };
