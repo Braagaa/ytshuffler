@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'Merriweather Sans';
+	src: local('Merriweather Sans'),
+		 url(./fonts/MerriweatherSans-Regular.ttf) format('truetype');
+}
+
+body {
+	font-family: 'Merriweather Sans', 'sans-serif';
+}
