@@ -9,3 +9,46 @@ body {
 	color: white;
 	background-color: #f06d54;
 }
+
+a {
+	color: #f06d54;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #f06d54;
+}
+
+.link a {
+	padding: 10px 20px;
+	position: relative;
+}
+
+.link a::before,
+.link a::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 3px solid transparent;
+	transition: transform 0.3s, opacity 0.3s;
+}
+
+.link a::after {
+	border-color: #f06d54;
+	opacity: 0;
+	transform: translateY(-7px) translateX(6px);
+}
+
+.link a:hover::after,
+.link .active::after {
+	opacity: 1;
+	transform: translateY(0px) translateX(0px);
+}
+
+.link a:focus::before {
+	opacity: 0;
+	transform: translateY(5px) translateX(-5px);
+}
