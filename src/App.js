@@ -8,6 +8,7 @@ import Search from './views/Search';
 
 const MainWrapper = styled.div`
 	max-width: 992px;
+	padding: 0 20px;
 	margin: 0 auto;
 `;
 
