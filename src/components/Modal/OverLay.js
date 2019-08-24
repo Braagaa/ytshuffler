@@ -6,7 +6,7 @@ const visibility = css`
 	opacity: ${props => props.on ? '1' : '0'};
 `;
 
-const OverLay = styled.div`
+export const OverLay = styled.div`
 	position: fixed;
 	width: 100%;
 	height: 100%;

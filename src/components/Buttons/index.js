@@ -20,6 +20,16 @@ const StyledButton = styled.button`
 	}
 `;
 
+export const SmallButton = styled.button`
+	padding: 13px 20px;
+	color: ${props => props.color};
+	background: ${props => props.background};
+	letter-spacing: 1px;
+	font-size: 1.2em;
+	font-weight: bold;
+	border: none;
+`;
+
 export default function Button(props) {
 	return (
 		<StyledButton 

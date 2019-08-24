@@ -28,7 +28,7 @@ export default function(props) {
 	return (
 		<>
 			<Label htmlFor="search">{props.text}</Label>
-			<Input id="search" type="text"/>
+			<Input placeholder="Type here..." id="search" type="text"/>
 		</>
 	);
 };
