@@ -8,7 +8,6 @@ export const Wrapper = styled.div`
 	width: 100%;
 	border: 3px solid transparent;
 	padding: 10px;
-	cursor: pointer;
 	position: relative;
 	transition: all 0.3s ease-in-out;
 
@@ -59,6 +58,7 @@ export const VideoImg = styled.img`
 
 export const Button = styled(SmallButton)`
 	position: absolute;
+	cursor: pointer;
 	opacity: 0;
 	display: flex;
 	justify-content: center;
