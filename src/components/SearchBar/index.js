@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import main from '../../style/main';
+import {ReactComponent as SearchIcon} from '../../imgs/search.svg';
 
 const Label = styled.label`
 	display: inline-block;
@@ -11,7 +12,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-	display: block;
+	display: inline-block;
 	padding-bottom: 0.15em;
 	width: 80%;
 	border: none;
@@ -24,11 +25,24 @@ const Input = styled.input`
 	margin-bottom: 1em;
 `;
 
+const SearchIconWrapper = styled.div`
+	cursor: pointer;
+	margin-left: 20px;
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+`;
+
 export default function(props) {
 	return (
 		<>
 			<Label htmlFor="search">{props.text}</Label>
-			<Input placeholder="Type here..." id="search" type="text"/>
+			<div>
+				<Input placeholder="Type here..." id="search" type="text"/>
+				<SearchIconWrapper>
+					<SearchIcon fill={main.colors.color1}/>
+				</SearchIconWrapper>
+			</div>
 		</>
 	);
 };
