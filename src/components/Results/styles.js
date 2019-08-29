@@ -50,7 +50,6 @@ export const ChannelImg = styled.img`
 	border-radius: 50%;
 `;
 
-
 export const VideoImg = styled.img`
 	width: 100%
 	margin-bottom: 15px;

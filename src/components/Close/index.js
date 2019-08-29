@@ -23,7 +23,7 @@ export default function (props) {
 	const handleLeave = handleHover(colors.color2);
 
 	return (
-		<div className="positon-relative text-left">
+		<div className="position-relative text-left">
 			<Wrapper 
 				onMouseEnter={handleEnter} 
 				onMouseLeave={handleLeave}
