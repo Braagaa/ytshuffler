@@ -4,6 +4,7 @@ import RadioButton from '../RadioButton';
 
 const Wrapper = styled.fieldset`
 	padding: 20px;
+	margin-bottom: 1.5em;
 `;
 
 export default function(props) {
@@ -11,13 +12,13 @@ export default function(props) {
 		<Wrapper>
 			<h2 className="mb-4">{props.title}</h2>
 			{
-				props.values.map(value => 
+				props.values.map(([id,value]) => 
 					<RadioButton 
-						key={value}
+						key={id}
 						name={props.name} 
-						checked={value.toLowerCase() === props.checked}
-						id={value.toLowerCase()}
-						value={value.toLowerCase()}
+						checked={id.toLowerCase() === props.checked}
+						id={id.toLowerCase()}
+						value={id.toLowerCase()}
 						text={value}
 						handler={props.handler}
 					/>

@@ -1,7 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
 
-import main from '../../style/main';
 import {Wrappper, Inner, Header, Img, P} from './styles';
 
 export default function(props) {

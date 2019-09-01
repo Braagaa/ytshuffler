@@ -8,7 +8,7 @@ export default function(props) {
 	return (
 		<div>
 			<Header>My Channels</Header>
-			<ChannelList channels={[channel_example, channel_example, channel_example, channel_example, channel_example, channel_example]}/>
+			<ChannelList channels={[channel_example]}/>
 		</div>
 	);
 };

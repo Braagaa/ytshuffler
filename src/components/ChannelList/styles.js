@@ -25,8 +25,6 @@ export const Wrappper = styled.div`
 `;
 
 export const Inner = styled.div`
-	@media (min-width: 576px) {
-	}
 `;
 
 export const Img = styled.img`

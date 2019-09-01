@@ -30,6 +30,32 @@ export const SmallButton = styled.button`
 	border: none;
 `;
 
+export const TransformButton = styled(SmallButton)`
+	position: absolute;
+	cursor: pointer;
+	opacity: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform: ${({transform}) => transform === 'scale' ? 
+		'scale(0)' : 'translateY(-100px)'};
+	transition: all 0.2s ease-in;
+`;
+
+export const Pill = styled.button`
+	background-color: ${props => props.bg};
+	color: ${props => props.color};
+	border: none;
+	border-radius: 1em;
+	display: inline-block;
+	padding: .50em .8em;
+	font-size: 75%;
+	font-weight: 700;
+	text-align: center;
+	letter-spacing: 1px;
+	cursor: pointer;
+`;
+
 export default function Button(props) {
 	return (
 		<StyledButton 

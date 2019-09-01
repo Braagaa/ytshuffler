@@ -24,8 +24,7 @@ const Label = styled.label`
 	color: ${visible};
 	padding-left: 80px;
 	cursor: pointer;
-	font-size: 1.7em;
-	margin-bottom: 0px;
+	font-size: 1.4em;
 	font-weight: 800;
 
 	position: relative;

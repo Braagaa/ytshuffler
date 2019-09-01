@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import Login from './views/Login';
 import Search from './views/Search';
 import Library from './views/Library';
+import Songs from './views/Songs';
 
 const MainWrapper = styled.div`
 	max-width: 992px;
@@ -23,6 +24,7 @@ export default function App() {
 						<Route path="/" exact component={Login}/>
 						<Route path="/search" exact component={Search}/>
 						<Route path="/library" exact component={Library}/>
+						<Route path="/library/songs" exact component={Songs}/>
 					</Switch>
 				</MainWrapper>
 			</Router>

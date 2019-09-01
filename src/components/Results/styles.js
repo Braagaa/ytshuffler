@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {SmallButton} from '../Buttons';
+import {TransformButton} from '../Buttons';
 
 export const Wrapper = styled.div`
 	display: flex;
@@ -55,14 +55,4 @@ export const VideoImg = styled.img`
 	margin-bottom: 15px;
 `;
 
-export const Button = styled(SmallButton)`
-	position: absolute;
-	cursor: pointer;
-	opacity: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	transform: translateY(-100px);
-	transition: all 0.2s ease-in;
-`;
-
+export const Button = TransformButton;
