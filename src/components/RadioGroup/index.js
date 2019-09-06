@@ -1,16 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
 import RadioButton from '../RadioButton';
+import Tooltip from '../Tooltip/InfoTooltip';
 
 const Wrapper = styled.fieldset`
 	padding: 20px;
 	margin-bottom: 1.5em;
 `;
 
+const ToolWrapper = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 1.5em;
+
+	h2 {
+		margin-right: 10px;
+		margin-bottom: 0;
+	}
+`;
+
 export default function(props) {
 	return (
 		<Wrapper>
-			<h2 className="mb-4">{props.title}</h2>
+			<ToolWrapper>
+				<h2>{props.title}</h2>
+				{props.hint && <Tooltip>{props.hint}</Tooltip>}
+			</ToolWrapper>
 			{
 				props.values.map(([id,value]) => 
 					<RadioButton 

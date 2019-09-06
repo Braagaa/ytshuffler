@@ -23,7 +23,7 @@ export default function(props) {
 						bg={main.colors.color3} 
 						color={main.colors.color1}
 					>
-							Info
+							Play
 					</SongButton>
 					<SongButton 
 						bg={main.colors.color3} 

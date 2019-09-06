@@ -5,8 +5,9 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Login from './views/Login';
 import Search from './views/Search';
-import Library from './views/Library';
+import Channels from './views/Channels';
 import Songs from './views/Songs';
+import Settings from './views/Settings';
 import Player from './components/Player/';
 
 const MainWrapper = styled.div`
@@ -24,8 +25,9 @@ export default function App() {
 					<Switch>
 						<Route path="/" exact component={Login}/>
 						<Route path="/search" exact component={Search}/>
-						<Route path="/library" exact component={Library}/>
-						<Route path="/library/songs" exact component={Songs}/>
+						<Route path="/settings" exact component={Settings}/>
+						<Route path="/channels" exact component={Channels}/>
+						<Route path="/channels/songs" exact component={Songs}/>
 					</Switch>
 					<Player/>
 				</MainWrapper>

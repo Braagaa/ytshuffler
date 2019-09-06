@@ -27,9 +27,9 @@ const toData = ([link, text]) =>
 	<data key={text} link={link} text={text}/>;
 
 const navItems = [
-	['/player', 'Player'],
-	['/library', 'Library'], 
+	['/channels', 'Channels'], 
 	['/search', 'Search'],
+	['/settings', 'Settings'],
 	['/signout', 'Sign Out']
 ].map(toData);
 

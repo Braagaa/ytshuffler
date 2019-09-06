@@ -8,11 +8,12 @@ import {handleChecked} from '../../utils/commonEvent';
 import {video_example} from '../../data/';
 
 const radioButtons = [
-	['all', 'All Songs'],
 	['recent', 'Most Recent Songs'],
 	['popular', 'Most Popular Songs'],
 	['viewed', 'Most Viewed Songs'],
 ];
+
+const songsAddedHint = 'Selects how songs are added to the library from the channel. Either by the most recently uploaded, the most popular, or the most viewed. 100 songs are added to the list at default.';
 
 export default function(props) {
 	const [playmodeChecked, setPlaymodeChecked] = useState({});
@@ -24,6 +25,7 @@ export default function(props) {
 			<form>
 				<RadioGroup 
 					title="Play Mode"
+					hint={songsAddedHint}
 					name="playmode"
 					values={radioButtons}
 					checked={playmodeChecked.playmode || 'all'}

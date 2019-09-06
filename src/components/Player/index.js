@@ -41,8 +41,9 @@ export default function(props) {
 	const [playmode, setPlaymode] = useState(SHUFFLE);
 	const [isExpanded, setIsExpanded] = useState(false);
 
-	const changeMode = e => 
+	const pauseOrPlay = e => 
 		setPlaymode(playmode.status === 1 ? PAUSE : PLAY);
+	const changeMode = mode => e => setPlaymode(mode);
 	const expandOrMinimize = inverseBool(setIsExpanded, isExpanded);
 
 	return(
@@ -60,10 +61,10 @@ export default function(props) {
 					{
 						playmode.status === 0 || 
 						<MinimizeWrapper>
-							<StopButton fill={modeButtonColor}/>
+							<StopButton onClick={changeMode(SHUFFLE)} fill={modeButtonColor}/>
 						</MinimizeWrapper>
 					}
-					<ButtonWrapper onClick={changeMode}>
+					<ButtonWrapper onClick={pauseOrPlay}>
 						<playmode.component fill={modeButtonColor}/>
 					</ButtonWrapper>
 					<ButtonWrapper>
