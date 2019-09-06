@@ -7,6 +7,7 @@ import Login from './views/Login';
 import Search from './views/Search';
 import Library from './views/Library';
 import Songs from './views/Songs';
+import Player from './components/Player/';
 
 const MainWrapper = styled.div`
 	max-width: 992px;
@@ -26,6 +27,7 @@ export default function App() {
 						<Route path="/library" exact component={Library}/>
 						<Route path="/library/songs" exact component={Songs}/>
 					</Switch>
+					<Player/>
 				</MainWrapper>
 			</Router>
 		</div>

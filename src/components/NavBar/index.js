@@ -9,6 +9,7 @@ const Wrapper = styled.div`
 	background: ${colors.color1};
 `;
 
+
 const Inner = styled.div`
 	height: 100px;
 	margin: 0 auto;
@@ -26,7 +27,7 @@ const toData = ([link, text]) =>
 	<data key={text} link={link} text={text}/>;
 
 const navItems = [
-	['/playlists', 'Playlists'], 
+	['/player', 'Player'],
 	['/library', 'Library'], 
 	['/search', 'Search'],
 	['/signout', 'Sign Out']

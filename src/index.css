@@ -22,6 +22,7 @@ a:hover {
 .link a {
 	padding: 10px 20px;
 	position: relative;
+	margin-right: 10px;
 }
 
 .link a::before,
@@ -51,4 +52,10 @@ a:hover {
 .link a:focus::before {
 	opacity: 0;
 	transform: translateY(5px) translateX(-5px);
+}
+
+@media (min-width: 768px) {
+	.link a {
+		margin-right: 0;
+	}
 }
