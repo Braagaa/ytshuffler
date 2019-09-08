@@ -4,6 +4,8 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 
+const {shuffler} = require('./routes/');
+
 const app = express();
 
 app.set('env', process.env.NODE_ENV || 'DEV');
@@ -13,6 +15,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use('/shuffler', shuffler);
 
 app.use((req, res, next) => next(createError(404)));
 
