@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
+
+import {valueChange} from '../../utils/commonEvent';
 import main from '../../style/main';
 import {ReactComponent as SearchIcon} from '../../imgs/search.svg';
 
@@ -34,12 +36,22 @@ const SearchIconWrapper = styled.div`
 `;
 
 export default function(props) {
+	const [searchText, setSearchText] = useState(props.value || '');
+
+	const onTextChange = valueChange(setSearchText);
+
 	return (
 		<>
 			<Label htmlFor="search">{props.text}</Label>
 			<div>
-				<Input placeholder="Type here..." id="search" type="text"/>
-				<SearchIconWrapper>
+				<Input 
+					placeholder="Type here..." 
+					id="search" 
+					type="text" 
+					value={searchText}
+					onChange={onTextChange}
+				/>
+				<SearchIconWrapper onClick={props.clickHandler}>
 					<SearchIcon fill={main.colors.color1}/>
 				</SearchIconWrapper>
 			</div>
