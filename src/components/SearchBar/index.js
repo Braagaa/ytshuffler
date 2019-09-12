@@ -51,7 +51,7 @@ export default function(props) {
 					value={searchText}
 					onChange={onTextChange}
 				/>
-				<SearchIconWrapper onClick={props.clickHandler}>
+				<SearchIconWrapper onClick={props.clickHandler(searchText)}>
 					<SearchIcon fill={main.colors.color1}/>
 				</SearchIconWrapper>
 			</div>

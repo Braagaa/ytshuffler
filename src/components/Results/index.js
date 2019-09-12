@@ -1,25 +1,37 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import Result from './Result';
 
-import {search_result_channel, search_result_video, channel_example, video_example} from '../../data';
+import {flipObject} from '../../utils/func';
+import {getYotubeTopicIds} from '../../apis/shuffler';
 
 const Wrapper = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 `;
 
+const isNotSearchResult = item => item.kind !== 'youtube#searchResult';
+
 export default function(props) {
+	const [topicIds, setTopicIds] = useState({}); 
+
+	useEffect(() => {
+		getYotubeTopicIds()
+			.then(res => res.data)
+			.then(setTopicIds)
+	}, []);
+
 	return (
 		<Wrapper>
-			<Result 
-				{...search_result_channel} 
-				videoCount={channel_example.statistics.videoCount}
-			/>
-			<Result
-				{...search_result_video}
-				duration={video_example.contentDetails.duration}
-			/>
+			{
+				props.items
+					.filter(isNotSearchResult)
+					.map(item => <Result 
+						key={item.id} 
+						topicIds={flipObject(topicIds)} 
+						{...item}
+					/>)
+			}
 		</Wrapper>
 	);
 };

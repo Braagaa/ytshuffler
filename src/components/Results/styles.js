@@ -55,4 +55,17 @@ export const VideoImg = styled.img`
 	margin-bottom: 15px;
 `;
 
+export const ListTopicIds = styled.ul`
+	margin: 0 0 5px;
+	padding: 0;
+	list-style-type: none;
+	display: flex;
+	flex-direction: column;
+
+	li {
+		margin: 0;
+		text-align: center;
+	}
+`;
+
 export const Button = TransformButton;

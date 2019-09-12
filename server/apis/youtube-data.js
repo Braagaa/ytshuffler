@@ -1,12 +1,13 @@
 const axios = require('axios');
-const {tap} = require('../utils/func');
+const {reThrow} = require('../utils/errors');
 
 const {TOPIC_ID_MUSIC} = require('../data/youtube-data-api');
 const YOUTUBE_API_KEY = process.env.REACT_APP_YOUTUBE_DATA_API_KEY;
 const baseUrl = 'https://www.googleapis.com/youtube/v3';
 const searchUrl = baseUrl + '/search';
+const channelUrl = baseUrl + '/channels';
 
-const getAxios = (url, initlQuery) => query => 
+const getAxios = (url, initlQuery) => (query = {}) => 
 	axios.get(url, {
 		params: {
 			...initlQuery,
@@ -19,7 +20,7 @@ const getAxios = (url, initlQuery) => query =>
 			data
 		}))
 		//log this here
-		.catch(tap(console.error));
+		.catch(reThrow(console.error));
 
 const getSearch = getAxios(searchUrl, {
 	part: 'snippet',
@@ -28,8 +29,15 @@ const getSearch = getAxios(searchUrl, {
 	topicId: TOPIC_ID_MUSIC,
 	type: 'channel',
 	key: YOUTUBE_API_KEY
-})
+});
+
+const getChannels = getAxios(channelUrl, {
+	part: 'snippet,statistics,topicDetails',
+	maxResults: 10,
+	key: YOUTUBE_API_KEY
+});
 
 module.exports = {
-	getSearch
+	getSearch,
+	getChannels
 };

@@ -1,13 +1,19 @@
 import React from 'react';
-import {Wrapper, Inner, VideoImg, ChannelImg, Button} from './styles';
+import {Wrapper, Inner, VideoImg, ChannelImg, Button, ListTopicIds} from './styles';
 import main from '../../style/main';
+
+import {noDup} from '../../utils/func';
 
 const {colors} = main;
 
 export default function(props) {
 	const {snippet: data} = props;
 	const {url} = data.thumbnails.medium;
-	const isChannel = props.id.channelId;
+	const isChannel = props.kind === 'youtube#channel';
+	const topicIdList = noDup(props.topicDetails.topicIds)
+		.map(num => props.topicIds[num])
+		.filter(topicId => topicId && topicId !== 'Music');
+
 	return (
 		<Wrapper>
 			<div>
@@ -18,10 +24,20 @@ export default function(props) {
 				}
 				<Inner>
 					<h4>{data.title}</h4>
+					{
+						topicIdList && 
+							<ListTopicIds>
+								{
+									topicIdList.map(
+										topicId => <li key={topicId}>{topicId}</li>
+									)
+								}	
+							</ListTopicIds>
+					}
 					<p>
 						{
 							isChannel ? 
-								`${props.videoCount} videos`: 
+								`${props.statistics.videoCount} videos`: 
 								`Duration: ${props.duration}`
 						}
 					</p>
