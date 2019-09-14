@@ -3,10 +3,16 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
+const mongoose = require('mongoose');
 
 const {youtube} = require('./routes/');
 
 const app = express();
+const db = mongoose.connect(
+	process.env.REACT_APP_DB_URL, 
+	{useNewUrlParser: true, useUnifiedTopology: true}
+)
+	.then(() => console.log('DataBase connected!'));
 
 app.set('env', process.env.NODE_ENV || 'DEV');
 app.set('port', process.env.PORT || '3001');
