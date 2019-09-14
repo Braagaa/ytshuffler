@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {Provider} from 'react-redux';
+import dataStore from './store';
 
 import NavBar from './components/NavBar';
 import Login from './views/Login';
@@ -18,20 +20,22 @@ const MainWrapper = styled.div`
 
 export default function App() {
 	return (
-		<div>
-			<Router>
-				<NavBar/>
-				<MainWrapper>
-					<Switch>
-						<Route path="/" exact component={Login}/>
-						<Route path="/search" exact component={Search}/>
-						<Route path="/settings" exact component={Settings}/>
-						<Route path="/channels" exact component={Channels}/>
-						<Route path="/channels/songs" exact component={Songs}/>
-					</Switch>
-					<Player/>
-				</MainWrapper>
-			</Router>
-		</div>
+		<Provider store={dataStore}>
+			<div>
+				<Router>
+					<NavBar/>
+					<MainWrapper>
+						<Switch>
+							<Route path="/" exact component={Login}/>
+							<Route path="/search" exact component={Search}/>
+							<Route path="/settings" exact component={Settings}/>
+							<Route path="/channels" exact component={Channels}/>
+							<Route path="/channels/songs" exact component={Songs}/>
+						</Switch>
+						<Player/>
+					</MainWrapper>
+				</Router>
+			</div>
+		</Provider>
 	);
 };
