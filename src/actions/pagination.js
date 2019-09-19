@@ -3,9 +3,9 @@ export const NEXT_PAGE = 'NEXT_PAGE';
 export const CURRENT_PAGE = 'CURRENT_PAGE';
 export const INITIALIZE = 'INITIALIZE';
 
-export const initalizePage = (itemsPerPage, page, maximumItems) => ({
+export const initalizePage = (itemsPerPage, page, maximumItems, offset) => ({
 	type: INITIALIZE,
-	payload: {itemsPerPage, page, maximumItems}
+	payload: {itemsPerPage, page, maximumItems, offset}
 });
 
 export const prevPage = (itemsPerPage, page) => ({

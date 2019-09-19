@@ -8,66 +8,48 @@ import Conditional from '../../components/Conditional';
 import Pagination from '../../components/Pagination';
 
 import {initalizePage, currentPage} from '../../actions/pagination';
-import {tap} from '../../utils/func';
-import {getYoutubeSearch, getYoutubeChannels} from '../../apis/shuffler';
-import {setState} from '../../utils/commonEvent';
-import {spliceInto} from '../../utils/func';
+import {getSearchResults, checkToChannels} from '../../actions/searchResults';
 import {getOffset} from '../../utils/math';
 
 const Loader = PreLoader(Results);
 const PaginationOrNull = Conditional(Pagination);
-const itemsPerPage = 10;
 
-const mapStateToProps = storeData => ({page: storeData.page});
-const mapDispatchToProps = {initalizePage, currentPage};
+const mapStateToProps = storeData => ({
+	pagination: storeData.pagination,
+	searchResults: storeData.searchResults,
+});
+const mapDispatchToProps = {
+	initalizePage, 
+	currentPage,
+	getSearchResults,
+	checkToChannels
+};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {page, initalizePage} = props;
+	const {initalizePage, getSearchResults, checkToChannels} = props;
+	const {page, itemsPerPage, offset} = props.pagination;
+	const {isLoading, results: items} = props.searchResults;
+
 	const query = new URLSearchParams(props.history.location.search)
 		.get('q');
 	const [q, setq] = useState(query);
-	const [items, setItems] = useState([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const isCancelled = React.useRef(false);
-
-	const offset = getOffset(itemsPerPage, page);
 	const displayedItems = items.slice(offset, itemsPerPage * page);
 
 	const onSubmitHandle = value => e => {
-		e.preventDefault();
 		props.history.push('/search?q=' + value);
 		setq(value);
+		initalizePage(10, 1, 50, 0);
+		getSearchResults(value, 10);
 	};
 
 	useEffect(() => {
-		if (q) {
-			getYoutubeSearch(q)
-				.then(res => res.data.items)
-				.then(tap(items => setItems(items)))
-				.then(items => initalizePage(itemsPerPage, 1, items.length))
+		if (!isLoading) {
+			checkToChannels(items, offset, page, itemsPerPage);
 		}
-	}, [q, initalizePage]);
+	}, [offset])
 
-	useEffect(() => {
-		const channelIds = displayedItems
-			.filter(channel => channel.kind === 'youtube#searchResult')
-			.map(channel => channel.id.channelId)
-			.join(',');
-
-		if (!isCancelled.current && channelIds) {
-			isCancelled.current = true;
-			setIsLoading(true);
-			getYoutubeChannels(channelIds)
-				.then(res => res.data.items)
-				.then(spliceInto(items, offset, itemsPerPage))
-				.then(items => setItems(items))
-				.then(setState(setIsLoading, false))
-
-		}
-
-		return () => isCancelled.current = false;
-	}, [items, displayedItems, offset]);
+	console.log(items);
 
 	return (
 		<div>

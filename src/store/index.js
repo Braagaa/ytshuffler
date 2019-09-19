@@ -1,5 +1,9 @@
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
-import paginationReducer from '../reducers/pagination';
+import pagination from '../reducers/pagination';
+import searchResults from '../reducers/searchResults';
 
-export default createStore(paginationReducer, applyMiddleware(thunk));
+export default createStore(
+	combineReducers({pagination, searchResults}), 
+	applyMiddleware(thunk)
+);
