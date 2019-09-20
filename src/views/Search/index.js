@@ -9,7 +9,6 @@ import Pagination from '../../components/Pagination';
 
 import {initalizePage, currentPage} from '../../actions/pagination';
 import {getSearchResults, checkToChannels} from '../../actions/searchResults';
-import {getOffset} from '../../utils/math';
 
 const Loader = PreLoader(Results);
 const PaginationOrNull = Conditional(Pagination);
@@ -47,9 +46,7 @@ export default connectFunction(function(props) {
 		if (!isLoading) {
 			checkToChannels(items, offset, page, itemsPerPage);
 		}
-	}, [offset])
-
-	console.log(items);
+	}, [offset, items, page, itemsPerPage, checkToChannels, isLoading])
 
 	return (
 		<div>

@@ -14,9 +14,9 @@ const Wrappper = styled.div`
 `;
 
 const mapStateToProps = storeData => ({
-	page: storeData.page,
-	maximumItems: storeData.maximumItems,
-	itemsPerPage: storeData.itemsPerPage
+	page: storeData.pagination.page,
+	maximumItems: storeData.pagination.maximumItems,
+	itemsPerPage: storeData.pagination.itemsPerPage
 });
 const mapDispatchToProps = {prevPage, nextPage};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);

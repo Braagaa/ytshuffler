@@ -1,7 +1,5 @@
 import {getYoutubeSearch, getYoutubeChannels} from '../apis/shuffler';
-import {getOffset} from '../utils/math';
 import {spliceInto} from '../utils/func';
-import {tap} from '../utils/func';
 
 export const SEARCH_BEGIN = 'SEARCH_RESULTS_BEGIN';
 export const SEARCH_SUCCESS = 'SEARCH_RESULTS_SUCCESS';
@@ -33,21 +31,19 @@ export const getSearchResults = (query, itemsPerPage) => dispatch => {
 		.then(actionCreatorToDispatch(setResults, dispatch));
 };
 
-export const getChannels = (items, offset, page, itemsPerPage) => {
-	console.log(items, offset, page);
-	return getYoutubeChannels(getChannelIds(items, offset, itemsPerPage * page))
+export const getChannels = (items, offset, page, itemsPerPage) => 
+	getYoutubeChannels(getChannelIds(items, offset, itemsPerPage * page))
 		.then(pathItems)
 		.then(spliceInto(items, offset, itemsPerPage));
-}
 
 export const checkToChannels = (items, offset, page, itemsPerPage) => dispatch => {
-	const channelIds = getChannelIds(items, offset, offset * page);
-	
+	const channelIds = getChannelIds(items, offset, offset + itemsPerPage);
+
 	if (channelIds) {
 		dispatch(searchBegin());
 		return getYoutubeChannels(channelIds)
 			.then(pathItems)
-			.then(spliceInto(items, offset, itemsPerPage * page))
+			.then(spliceInto(items, offset, itemsPerPage))
 			.then(actionCreatorToDispatch(setResults, dispatch));
 	}
 };

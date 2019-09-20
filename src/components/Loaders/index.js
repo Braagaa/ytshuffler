@@ -13,6 +13,9 @@ const Wrapper = styled.div`
 	width: 120px;
 	height: 120px;
 	margin: 0 auto;
+	
+	visibility: ${props => !props.isLoading ? 'hidden' : 'visible'};
+	display: ${props => !props.isLoading ? 'none' : 'block'};
 
 	svg {
 		animation: ${spin3D} 3s linear infinite;
@@ -25,15 +28,22 @@ const Wrapper = styled.div`
 	}
 `;
 
+const LoaderWrap = styled.div`
+	visibility: ${props => props.isLoading ? 'hidden' : 'visible'};
+`;
+
 export default function(Component) {
 	return function({isLoading, ...props}) {
-		return isLoading ? (
-			<Wrapper>
-				<DiscSVG fill={main.colors.color1}/>	
-				<p>Loading</p>
-			</Wrapper>
-		) : (
-			<Component {...props}/>
-		)
+		return (
+			<div>
+				<Wrapper isLoading={isLoading}>
+					<DiscSVG fill={main.colors.color1}/>	
+					<p>Loading</p>
+				</Wrapper>
+				<LoaderWrap isLoading={isLoading}>
+					<Component {...props}/>
+				</LoaderWrap>
+			</div>
+		);
 	}
 };

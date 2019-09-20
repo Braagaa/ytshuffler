@@ -17,19 +17,19 @@ export default function(storeData = {}, action) {
 				page: action.payload.page
 			};
 		case PREV_PAGE:
-			return {
+			return getOffset(itemsPerPage, page) > 0 ? {
 				...storeData,
-				page: getOffset(itemsPerPage, page) > 0 ? page - 1 : page,
+				page: page - 1,
 				offset: getOffset(itemsPerPage, page) - itemsPerPage
-			};
+			} : storeData;
 		case NEXT_PAGE:
 			const pred = getOffset(itemsPerPage, page) < 
 				maximumItems - itemsPerPage;
-			return {
+			return pred ? {
 				...storeData,
-				page: pred ? page + 1 : page,
+				page: page + 1,
 				offset: getOffset(itemsPerPage, page) + itemsPerPage
-			};
+			} : storeData;
 		default:
 			return {
 				page: 1,
