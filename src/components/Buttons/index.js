@@ -28,6 +28,7 @@ export const SmallButton = styled.button`
 	font-size: 1.2em;
 	font-weight: bold;
 	border: none;
+	cursor: pointer;
 `;
 
 export const TransformButton = styled(SmallButton)`

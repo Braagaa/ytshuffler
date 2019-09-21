@@ -38,9 +38,14 @@ export default connectFunction(function(props) {
 	const onSubmitHandle = value => e => {
 		props.history.push('/search?q=' + value);
 		setq(value);
-		initalizePage(10, 1, 50, 0);
-		getSearchResults(value, 10);
 	};
+
+	useEffect(() => {
+		if (q) {
+			initalizePage(10, 1, 50, 0);
+			getSearchResults(q, 10);
+		}
+	}, [q, initalizePage, getSearchResults]);
 
 	useEffect(() => {
 		if (!isLoading) {
@@ -65,6 +70,9 @@ export default connectFunction(function(props) {
 			<Loader 
 				isLoading={isLoading} 
 				items={displayedItems}
+			/>
+			<PaginationOrNull 
+				bool={!isLoading && items.length > 0}
 			/>
 		</div>
 	);

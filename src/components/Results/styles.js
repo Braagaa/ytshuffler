@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {TransformButton} from '../Buttons';
+import {SmallButton} from '../Buttons';
 
 export const Wrapper = styled.div`
 	display: flex;
@@ -19,13 +19,14 @@ export const Wrapper = styled.div`
 		width: 33.33%;
 	}
 
-	:hover div {
+	:hover :first-child img,
+	:hover :first-child div {
 		opacity: 0.5;
 	}
 
-	:hover button {
+	:hover :last-child {
 		opacity: 1;
-		transform: translateX(0);
+		transform: translateY(0);
 	}
 `;
 
@@ -68,4 +69,38 @@ export const ListTopicIds = styled.ul`
 	}
 `;
 
-export const Button = TransformButton;
+export const Buttons = styled.div`
+	position: absolute;
+	opacity: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform: translateY(-100px);
+	transition: all 0.2s ease-in;
+	flex-direction: column;
+
+	a {
+		margin-top: 10px;
+	}
+`;
+
+const shardedProps = `
+	width: 180px;
+`;
+
+export const Button = styled(SmallButton)`
+	${shardedProps}
+`;
+
+export const Link = styled.a`
+	padding: 13px 20px;
+	color: ${props => props.color};
+	background: ${props => props.background};
+	letter-spacing: 1px;
+	font-size: 1.2em;
+	font-weight: bold;
+	border: none;
+	cursor: pointer;
+	text-align: center;
+	${shardedProps}
+`;

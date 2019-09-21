@@ -1,5 +1,6 @@
 import React from 'react';
-import {Wrapper, Inner, VideoImg, ChannelImg, Button, ListTopicIds} from './styles';
+import {Wrapper, Inner, VideoImg, ChannelImg, Buttons, Button, Link, ListTopicIds} from './styles';
+import {youtubeURL} from '../../data/url';
 import main from '../../style/main';
 
 import {noDup} from '../../utils/func';
@@ -43,7 +44,22 @@ export default function(props) {
 					</p>
 				</Inner>
 			</div>
-			<Button color={colors.color3}>Add to Library</Button>
+			<Buttons>
+				<Button 
+					color={colors.color3}
+					background={colors.color1}
+				>
+						Add to Library
+				</Button>
+				<Link
+					href={youtubeURL.channel + props.id}
+					color={colors.color3}
+					background={colors.color1}
+					target="_blank"
+				>
+					Info
+				</Link>
+			</Buttons>
 		</Wrapper>
 	);
 };
