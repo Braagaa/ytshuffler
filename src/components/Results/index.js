@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
+import {connect} from 'react-redux';
 import Result from './Result';
 
 import {flipObject} from '../../utils/func';
@@ -12,14 +13,13 @@ const Wrapper = styled.div`
 
 const isNotSearchResult = item => item.kind !== 'youtube#searchResult';
 
-export default function(props) {
-	const [topicIds, setTopicIds] = useState({}); 
+const mapStateToProps = storeData => ({
+	topicIds: storeData.initialLoad.topicIds
+});
+const connectFunction = connect(mapStateToProps);
 
-	useEffect(() => {
-		getYotubeTopicIds()
-			.then(res => res.data)
-			.then(setTopicIds)
-	}, []);
+export default connectFunction(function(props) {
+	const {topicIds} = props;
 
 	return (
 		<Wrapper>
@@ -34,4 +34,4 @@ export default function(props) {
 			}
 		</Wrapper>
 	);
-};
+});
