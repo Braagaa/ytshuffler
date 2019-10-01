@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import main from '../../style/main';
 
 const Modal = styled.div`
 	visibility: ${props => props.on ? 'visible' : 'hidden'};
@@ -19,7 +20,7 @@ const Modal = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-	color: ${props => props.color};
+	color: ${props => props.color || main.colors.color3};
 	position: relative;
 	border-radius: 3px;
 	margin: 0 auto;

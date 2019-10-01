@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import main from '../../style/main';
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
 	background-color: ${props => props.color || 'white'};
 	color: ${main.colors.color3};
 	border: none;
@@ -55,6 +55,11 @@ export const Pill = styled.button`
 	text-align: center;
 	letter-spacing: 1px;
 	cursor: pointer;
+`;
+
+export const ModalButton = styled(SmallButton)`
+	display: block;
+	margin: 0 auto;
 `;
 
 export default function Button(props) {

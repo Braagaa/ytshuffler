@@ -9,3 +9,18 @@ export default function(Component, pred) {
 		) : null
 	};
 };
+
+export const ConditionalLoader = function({bool, children, ...props}) {
+	const newChildren = React.Children.map(
+		children, 
+		child => React.cloneElement(child, {...props})
+	);
+
+	return (
+		<React.Fragment>
+			{
+				bool ? [newChildren[0]] : [newChildren[1]]
+			}
+		</React.Fragment>
+	);
+};

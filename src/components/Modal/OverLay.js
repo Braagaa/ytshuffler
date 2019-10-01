@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
+import main from '../../style/main';
 
 const visibility = css`
 	visibility: ${props => props.on ? 'visible' : 'hidden'};
@@ -13,7 +14,7 @@ export const OverLay = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 100;
-	background: ${props => props.background};
+	background: ${props => props.background || main.colors.color1};
 	transition: all 0.3s;
 	${props => visibility}
 `;

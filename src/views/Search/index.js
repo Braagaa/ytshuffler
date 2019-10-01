@@ -9,8 +9,9 @@ import Pagination from '../../components/Pagination';
 
 import {initalizePage, currentPage} from '../../actions/pagination';
 import {getSearchResults, checkToChannels} from '../../actions/searchResults';
+import main from '../../style/main';
 
-const Loader = PreLoader(Results);
+const Loader = PreLoader();
 const PaginationOrNull = Conditional(Pagination);
 
 const mapStateToProps = storeData => ({
@@ -67,10 +68,9 @@ export default connectFunction(function(props) {
 			<PaginationOrNull 
 				bool={!isLoading && items.length > 0}
 			/>
-			<Loader 
-				isLoading={isLoading} 
-				items={displayedItems}
-			/>
+			<Loader fill={main.colors.color1} isLoading={isLoading}>
+				<Results items={displayedItems}/>
+			</Loader>
 			<PaginationOrNull 
 				bool={!isLoading && items.length > 0}
 			/>

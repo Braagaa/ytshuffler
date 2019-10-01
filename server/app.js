@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const mongoose = require('mongoose');
 
-const {youtube} = require('./routes/');
+const {youtube, shuffler} = require('./routes/');
 
 const app = express();
 const db = mongoose.connect(
@@ -19,10 +19,11 @@ app.set('port', process.env.PORT || '3001');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use('/youtube', youtube);
+app.use('/shuffler', shuffler);
 
 app.use((req, res, next) => next(createError(404)));
 

@@ -1,28 +1,56 @@
-import React from 'react';
-import {Wrapper, Inner, VideoImg, ChannelImg, Buttons, Button, Link, ListTopicIds} from './styles';
+import React, {useState} from 'react';
+import {connect} from 'react-redux';
+import {Wrapper, Inner, ChannelImg, Buttons, Button, Link, ListTopicIds} from './styles';
 import {youtubeURL} from '../../data/url';
-import main from '../../style/main';
+import {createChannel} from '../../apis/shuffler';
 
 import {noDup} from '../../utils/func';
+import {setState} from '../../utils/commonEvent';
+import {modalMode} from '../../actions/modal';
+import {ConditionalLoader} from '../Conditional/';
+import main from '../../style/main';
 
 const {colors} = main;
 
-export default function(props) {
-	const {snippet: data} = props;
+const mapStateToProps = () => ({});
+const mapDispatchToProps = {
+	modalMode
+};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
+
+export default connectFunction(function(props) {
+	const {modalMode} = props;
+	const {snippet: data, statistics} = props;
 	const {url} = data.thumbnails.medium;
-	const isChannel = props.kind === 'youtube#channel';
 	const topicIdList = noDup(props.topicDetails.topicIds)
 		.map(num => props.topicIds[num])
 		.filter(topicId => topicId && topicId !== 'Music');
 
+	const [isInUserChannels, setIsInUserChannels] = useState(false);
+
+	const createChannelHandle = e => {
+		modalMode(true, true);
+		return createChannel({
+			youtubeId: props.id,
+			kind: props.kind,
+			etag: props.etag,
+			title: data.title,
+			thumbnail_url: url,
+			videoCount: statistics.videoCount,
+			topicIds: topicIdList
+		})
+			.then(setState(modalMode, true, false, {
+				channelTitle: data.title,
+				thumbnail_url: url
+			}))
+			.then(setState(setIsInUserChannels, true))
+			.catch(console.error);
+	}
+
 	return (
 		<Wrapper>
 			<div>
-				{
-					isChannel ?
-						<ChannelImg src={url} alt={data.title}/> :
-						<VideoImg src={url} alt={data.title}/>
-				}
+				<ChannelImg src={url} alt={data.title}/>
 				<Inner>
 					<h4>{data.title}</h4>
 					{
@@ -35,22 +63,20 @@ export default function(props) {
 								}	
 							</ListTopicIds>
 					}
-					<p>
-						{
-							isChannel ? 
-								`${props.statistics.videoCount} videos`: 
-								`Duration: ${props.duration}`
-						}
-					</p>
+					<p>{`${props.statistics.videoCount} videos`}</p>
 				</Inner>
 			</div>
 			<Buttons>
-				<Button 
+				<ConditionalLoader
 					color={colors.color3}
 					background={colors.color1}
+					bool={props.inUserChannels || isInUserChannels}
 				>
+					<Button>Go to Library</Button>
+					<Button onClick={createChannelHandle}>
 						Add to Library
-				</Button>
+					</Button>
+				</ConditionalLoader>
 				<Link
 					href={youtubeURL.channel + props.id}
 					color={colors.color3}
@@ -62,4 +88,4 @@ export default function(props) {
 			</Buttons>
 		</Wrapper>
 	);
-};
+});

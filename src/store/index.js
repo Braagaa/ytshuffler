@@ -3,12 +3,13 @@ import thunk from 'redux-thunk';
 import pagination from '../reducers/pagination';
 import searchResults from '../reducers/searchResults';
 import initialLoad from '../reducers/initialLoad';
+import modal from '../reducers/modal';
 
 import {getYotubeTopicIds} from '../apis/shuffler';
 import {fetchingSuccess} from '../actions/initialLoad';
 
 const store = createStore(
-	combineReducers({pagination, searchResults, initialLoad}), 
+	combineReducers({pagination, searchResults, initialLoad, modal}), 
 	applyMiddleware(thunk)
 );
 

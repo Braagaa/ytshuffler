@@ -104,3 +104,8 @@ export const Link = styled.a`
 	text-align: center;
 	${shardedProps}
 `;
+
+export const Message = styled.p`
+	font-size: 1.4em;
+	text-align: center;
+`;
