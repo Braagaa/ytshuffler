@@ -17,6 +17,7 @@ const reThrow = fn => arg => {
 
 const validateErrors = next => error => {
 	if (error.errors) {
+		console.log(error);
 		const errors = Object.entries(error.errors)
 			.reduce(
 				(acc, [key, value]) => [...acc, {[key]: value.message}], []);

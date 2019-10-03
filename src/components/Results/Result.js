@@ -38,6 +38,7 @@ export default connectFunction(function(props) {
 			thumbnail_url: url,
 			videoCount: statistics.videoCount,
 			topicIds: topicIdList
+			//order: date || viewCount (with user here)
 		})
 			.then(setState(modalMode, true, false, {
 				channelTitle: data.title,

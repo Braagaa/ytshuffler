@@ -18,11 +18,34 @@ const replaceAt = (index, item) => arr => {
 	return newArr;
 };
 
+const splitEvery = num => arr => arr.length > 0 ?
+	[arr.slice(0, num), ...splitEvery(num)(arr.slice(num))] : arr;
+
+const flat = arr => arr.length > 0 ?
+	[].concat(arr[0], flat(arr.slice(1))) : arr;
+
 const reverse = arr => clone(arr).reverse();
+
+const map = fn => arr => arr.map(fn);
+
+const method = (name, ...args) => obj => obj[name](...args);
+
+const asyncMap = fn => async arr => {
+	const newArr = [];
+	for (let i = 0; i < arr.length; i++) {
+		newArr[i] = await fn(arr[i]);
+	}
+	return newArr;
+};
 
 module.exports = {
 	tap,
 	pairs,
 	reverse,
-	replaceAt
+	replaceAt,
+	splitEvery,
+	method,
+	flat,
+	map,
+	asyncMap
 };

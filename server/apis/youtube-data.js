@@ -6,6 +6,7 @@ const YOUTUBE_API_KEY = process.env.REACT_APP_YOUTUBE_DATA_API_KEY;
 const baseUrl = 'https://www.googleapis.com/youtube/v3';
 const searchUrl = baseUrl + '/search';
 const channelUrl = baseUrl + '/channels';
+const videosUrl = baseUrl + '/videos';
 
 const getAxios = (url, initlQuery) => (query = {}) => 
 	axios.get(url, {
@@ -22,12 +23,20 @@ const getAxios = (url, initlQuery) => (query = {}) =>
 		//log this here
 		.catch(reThrow(console.error));
 
-const getSearch = getAxios(searchUrl, {
+const getSearchChannels = getAxios(searchUrl, {
 	part: 'snippet',
 	maxResults: 50,
 	safeSearch: 'none',
 	topicId: TOPIC_ID_MUSIC,
 	type: 'channel',
+	key: YOUTUBE_API_KEY
+});
+
+const getSearchVideos = getAxios(searchUrl, {
+	part: 'id',
+	safeSearch: 'none',
+	type: 'video',
+	maxResults: 50,
 	key: YOUTUBE_API_KEY
 });
 
@@ -37,7 +46,15 @@ const getChannels = getAxios(channelUrl, {
 	key: YOUTUBE_API_KEY
 });
 
+const getVideos = getAxios(videosUrl, {
+	part: 'snippet,contentDetails,topicDetails',
+	maxResults: 50,
+	key: YOUTUBE_API_KEY
+});
+
 module.exports = {
-	getSearch,
-	getChannels
+	getSearchChannels,
+	getSearchVideos,
+	getChannels,
+	getVideos
 };

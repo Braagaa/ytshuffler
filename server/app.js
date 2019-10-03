@@ -16,6 +16,7 @@ const db = mongoose.connect(
 
 app.set('env', process.env.NODE_ENV || 'DEV');
 app.set('port', process.env.PORT || '3001');
+app.set('maxSongs', process.env.REACT_APP_MAX_NUMBER_SONGS || 100);
 
 app.use(logger('dev'));
 app.use(express.json());

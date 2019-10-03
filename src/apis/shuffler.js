@@ -16,7 +16,7 @@ const getAxios = (url, initalQuery = {}) => (query = {}) =>
 const postAxios = (url, initialData = {}) => (data = {}) => 
 	axios.post(url, {...initialData, ...data});
 
-export const getYoutubeSearch = q => getAxios(youtubeURL + 'search')({q});
+export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});
 export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids});
 export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
 export const createChannel = postAxios(shufflerURL + 'channels');
