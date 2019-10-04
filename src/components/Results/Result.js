@@ -22,7 +22,7 @@ export default connectFunction(function(props) {
 	const {modalMode} = props;
 	const {snippet: data, statistics} = props;
 	const {url} = data.thumbnails.medium;
-	const topicIdList = noDup(props.topicDetails.topicIds)
+	const topicList = noDup(props.topicDetails.topicIds)
 		.map(num => props.topicIds[num])
 		.filter(topicId => topicId && topicId !== 'Music');
 
@@ -36,7 +36,7 @@ export default connectFunction(function(props) {
 			etag: props.etag,
 			title: data.title,
 			thumbnail_url: url,
-			topicIds: topicIdList
+			topics: topicList
 			//order: date || viewCount (with user here)
 		})
 			.then(setState(modalMode, true, false, {
@@ -54,10 +54,10 @@ export default connectFunction(function(props) {
 				<Inner>
 					<h4>{data.title}</h4>
 					{
-						topicIdList && 
+						topicList && 
 							<ListTopicIds>
 								{
-									topicIdList.map(
+									topicList.map(
 										topicId => <li key={topicId}>{topicId}</li>
 									)
 								}	

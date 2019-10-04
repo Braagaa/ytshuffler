@@ -67,7 +67,7 @@ const songsForChannel = (req, res, next) => {
 			title: video.snippet.title,
 			thumbnail_url: video.snippet.thumbnails.medium.url,
 			duration: video.contentDetails.duration,
-			topicIds: video.topicDetails.topicIds
+			topics: video.topicDetails.topicIds
 		})))
 		.then(videos => {
 			//side effects

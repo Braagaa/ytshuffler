@@ -18,7 +18,7 @@ const channelSchema = new Schema({
 		required: true
 	},
 	videoCount: Number,
-	topicIds: [String],
+	topics: [String],
 	songs: [songSchema]
 });
 

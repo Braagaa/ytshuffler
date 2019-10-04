@@ -1,7 +1,7 @@
 const express = require('express');
 const {Channel} = require('../modals'); 
 const {nextError, validateErrors} = require('../utils/errors');
-const {parseChannel, songsForChannel} = require('../middle-ware/validateYoutube');
+const {parseChannel, songsForChannel, requiredQuery} = require('../middle-ware/validateYoutube');
 const defaultProps = require('../middle-ware/defaultQueries');
 
 const router = express.Router();
@@ -9,6 +9,16 @@ const router = express.Router();
 const success = res => fetched => res.status(200).json(fetched);
 const getData = fetched => fetched.data;
 const toData = data => ({items: data});
+
+//GET channels
+router.get('/channels', (req, res, next) => {
+	return Channel.find({})
+		.then(toData)
+		.then(success(res))
+		.catch(
+			nextError(500, 'Your channels could not be obtained.', next)
+		);
+});
 
 //POST channels
 router.post(
