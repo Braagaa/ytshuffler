@@ -36,7 +36,6 @@ export default connectFunction(function(props) {
 			etag: props.etag,
 			title: data.title,
 			thumbnail_url: url,
-			videoCount: statistics.videoCount,
 			topicIds: topicIdList
 			//order: date || viewCount (with user here)
 		})
@@ -64,7 +63,7 @@ export default connectFunction(function(props) {
 								}	
 							</ListTopicIds>
 					}
-					<p>{`${props.statistics.videoCount} videos`}</p>
+					<p>{`${statistics.videoCount} videos`}</p>
 				</Inner>
 			</div>
 			<Buttons>

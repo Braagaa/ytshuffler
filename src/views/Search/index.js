@@ -42,10 +42,8 @@ export default connectFunction(function(props) {
 	};
 
 	useEffect(() => {
-		if (q) {
-			initalizePage(10, 1, 50, 0);
-			getSearchResults(q, 10);
-		}
+		initalizePage(10, 1, 50, 0);
+		getSearchResults(q, 10);
 	}, [q, initalizePage, getSearchResults]);
 
 	useEffect(() => {

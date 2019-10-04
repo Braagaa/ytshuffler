@@ -22,6 +22,11 @@ const channelSchema = new Schema({
 	songs: [songSchema]
 });
 
+channelSchema.pre('save', function(next) {
+	this.videoCount = this.songs.length;
+	next();
+});
+
 const Channel = model('Channel', channelSchema);
 
 module.exports = Channel;

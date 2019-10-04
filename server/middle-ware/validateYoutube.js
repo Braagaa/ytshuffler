@@ -70,6 +70,7 @@ const songsForChannel = (req, res, next) => {
 			topicIds: video.topicDetails.topicIds
 		})))
 		.then(videos => {
+			//side effects
 			req.channel.songs = videos;
 			next();
 		})

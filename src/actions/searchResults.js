@@ -24,11 +24,14 @@ const getChannelIds = (channels, start, itemsPerPage) => channels
 	.join(',');
 
 export const getSearchResults = (query, itemsPerPage) => dispatch => {
-	dispatch(searchBegin());
-	return getYoutubeSearchChannels(query)
-		.then(pathItems)
-		.then(items => getChannels(items, 0, 1, itemsPerPage))
-		.then(actionCreatorToDispatch(setResults, dispatch));
+	if (query) {
+		dispatch(searchBegin());
+		return getYoutubeSearchChannels(query)
+			.then(pathItems)
+			.then(items => getChannels(items, 0, 1, itemsPerPage))
+			.then(actionCreatorToDispatch(setResults, dispatch));
+	}
+	return dispatch(setResults([]));
 };
 
 export const getChannels = (items, offset, page, itemsPerPage) => 
