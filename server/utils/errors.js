@@ -25,9 +25,18 @@ const validateErrors = next => error => {
 	}
 };
 
+const duplicateError = (msg, next) => error => {
+	if (error.name === 'MongoError' && error.code === 11000) {
+		return next(createError(422, msg));
+	}
+
+	throw error;
+};
+
 module.exports = {
 	nextError,
 	reThrow,
 	requiredParamter,
-	validateErrors
+	validateErrors,
+	duplicateError
 };

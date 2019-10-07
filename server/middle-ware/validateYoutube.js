@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const {capitalize} = require('../utils/capitalize');
 const {getSearchVideos, getVideos} = require('../apis/youtube-data');
 const {nextError} = require('../utils/errors');
+const checkPassword = require('../utils/password');
 const {map, asyncMap, splitEvery, flat, method} = require('../utils/func');
 
 const maxSongs = process.env.REACT_APP_MAX_NUMBER_SONGS || 100;
@@ -18,26 +19,38 @@ const parse = type => (req, res, next) => {
 const parseChannel = parse('channel');
 const parseSong = parse('song');
 
-const requiredQuery = query => (req, res, next) => {
-	if (!req.query[query])
-		next(createError(422, `Required paramter: ${query}`));
+const required = type => prop => (req, res, next) => {
+	if (!req[type][prop])
+		next(createError(422, `Required paramter: '${prop}'`));
 	next();
 };
 
-const requiredQueries = queries => (req, res, next) => {
-	const neededQueries = queries
-		.filter(query => !req.query[query])
-		.reduce((acc, query) => [...acc, {[query]: `Required paramter: ${query}`}], []);
+const requiredQuery = required('query');
+const requiredBody = required('body');
 
-	if (neededQueries.length === 1) {
-		return next(createError(422, neededQueries[0][queries[0]]));
+const requiredMany = type => props => (req, res, next) => {
+	const neededProps = props
+		.filter(prop => !req[type][prop])
+		.reduce((acc, prop) => [...acc, {[prop]: `Required paramter: '${prop}'`}], []);
+
+	if (neededProps.length === 1) {
+		return next(createError(422, Object.values(neededProps[0])[0]));
 	}
 
-	if (neededQueries.length > 1) {
-		return next(createError(422, 'Required paramters missing', neededQueries));
+	if (neededProps.length > 1) {
+		return next(createError(422, 'Required paramters missing', {errors: neededProps}));
 	}
 
 	next();
+};
+
+const requiredBodyProps = requiredMany('body');
+
+const validatePassword = (req, res, next) => {
+	if (checkPassword(req.body.password)) {
+		return next();
+	}
+	return next(createError(400, 'Username or password is invalid.'));
 };
 
 const collectItems = max => (data, params = {}, videos = []) => {
@@ -82,5 +95,7 @@ module.exports = {
 	parseSong,
 	songsForChannel,
 	requiredQuery,
-	requiredQueries
+	requiredBody,
+	requiredBodyProps,
+	validatePassword
 };
