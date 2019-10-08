@@ -33,10 +33,26 @@ const duplicateError = (msg, next) => error => {
 	throw error;
 };
 
+const errorIf = fn => (status, msg) => data => {
+	if (fn(data)) {
+		throw createError(status, msg);
+	}
+	return data;
+};
+
+const asyncErrorIf = fn => (status, msg) => async data => {
+	if (await fn(data)) {
+		throw createError(status, msg);
+	}
+	return data;
+};
+
 module.exports = {
 	nextError,
 	reThrow,
 	requiredParamter,
 	validateErrors,
-	duplicateError
+	duplicateError,
+	errorIf,
+	asyncErrorIf
 };
