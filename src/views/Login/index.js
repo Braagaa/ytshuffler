@@ -35,7 +35,7 @@ export default function (props) {
 				<div className="mb-4 mb-md-0">
 					<Button clickHandle={loginModalHandle}>Login</Button>
 					<Modal color={colors.color3} on={modalsOn.login}>
-						<Login exitHandle={loginModalHandle}/>
+						<Login history={props.history} exitHandle={loginModalHandle}/>
 					</Modal>
 				</div>
 				<div>

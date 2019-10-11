@@ -23,3 +23,4 @@ export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
 export const getChannels = getAxios(shufflerURL + 'channels');
 export const createChannel = postAxios(shufflerURL + 'channels');
 export const registerUser = postAxios(authURL + 'register');
+export const loginUser = postAxios(authURL + 'login');

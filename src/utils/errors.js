@@ -6,6 +6,11 @@ const ifError = (checkRange) => (setFn, message) => error => {
 	throw error;
 };
 
+export const ifAnyError = (setFn, message) => error => {
+	const {response: {data}} = error;
+	return setFn(message || data.error.message);
+};
+
 export const setStateThrow = (fn, ...args) => mainArg => {
 	fn(...args);	
 	throw mainArg

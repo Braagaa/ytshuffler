@@ -40,8 +40,8 @@ export default connectFunction(function(props) {
 	const [clientErrorMsg, setClientErrorMsg] = useState('');
 	const [disableSubmit, setDisableSubmit] = useState(false);
 
-	const exitHandle = () => {
-		props.exitHandle();
+	const exitHandle = e => {
+		props.exitHandle(e);
 		setClientErrorMsg('');
 	};
 
