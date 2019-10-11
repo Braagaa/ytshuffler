@@ -5,12 +5,13 @@ import main from '../../style/main';
 const Modal = styled.div`
 	visibility: ${props => props.on ? 'visible' : 'hidden'};
 	position: fixed;
+	display: flex;
+	justify-content: center;
 	top: 50%;
 	left: 50%;
-	width: 50%;
-	max-width: 320px;
-	min-width: 320px;
-	height: auto;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100vh;
 	z-index: 200;
 	transform: translateX(-50%) translateY(-50%);
 
@@ -22,8 +23,8 @@ const Modal = styled.div`
 const ContentWrapper = styled.div`
 	color: ${props => props.color || main.colors.color3};
 	position: relative;
+	margin: auto;
 	border-radius: 3px;
-	margin: 0 auto;
 	transform: scale(${props => props.on ? '1' : '0'});
 	opacity: ${props => props.on ? '1' : '0'};
 	background: transparent;

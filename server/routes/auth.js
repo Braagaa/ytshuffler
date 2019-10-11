@@ -20,6 +20,10 @@ const success = (status, res) => data => res
 const toCookie = (name, options, res) => data => 
 	res.cookie(name, data, options);
 const end = (status, res) => () => res.status(status).end();
+const userCreateToken = user => createToken({
+	id: user.id,
+	settings: user.settings
+});
 
 const errorIfNull = errorIf(data => data === null);
 const errorIfWrongPassword = errorIf(([valid]) => !valid);
@@ -34,8 +38,12 @@ router.post(
 			.then(toObj('password'))
 			.then(merge({email}))
 			.then(data => User.create(data))
-			.then(toObj('data'))
-			.then(success(201, res))
+			.then(userCreateToken)
+			.then(toCookie('JWT', {
+				secure: nodeEnv === 'production',
+				maxAge: 1000 * 60 * 60 * 5
+			}, res))
+			.then(end(201, res))
 			.catch(duplicateError(`${email} is already registered.`, next))
 			.catch(nextError(500, 'Registration cannot be completed.', next));
 	}
@@ -51,13 +59,10 @@ router.post(
 			.then(user => Promise.all([compare(password, user.password), user]))
 			.then(errorIfWrongPassword(401, 'Incorrect email or password.'))
 			.then(getProp(1))
-			.then(user => createToken({
-				id: user.id, 
-				settings: user.settings
-			}))
+			.then(userCreateToken)
 			.then(toCookie('JWT', {
 				secure: nodeEnv === 'production',
-				maxAge: 60 * 60 * 10
+				maxAge: 1000 * 60 * 60 * 5
 			}, res))
 			.then(end(200, res))
 			.catch(next);

@@ -4,6 +4,7 @@ import axios from 'axios';
 const databaseURL = 'http://localhost:3000/';
 const youtubeURL = databaseURL + 'youtube/';
 const shufflerURL = databaseURL + 'shuffler/';
+const authURL = databaseURL + 'auth/';
 
 const getAxios = (url, initalQuery = {}) => (query = {}) => 
 	axios.get(url, {
@@ -21,3 +22,4 @@ export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids}
 export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
 export const getChannels = getAxios(shufflerURL + 'channels');
 export const createChannel = postAxios(shufflerURL + 'channels');
+export const registerUser = postAxios(authURL + 'register');

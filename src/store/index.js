@@ -4,12 +4,13 @@ import pagination from '../reducers/pagination';
 import searchResults from '../reducers/searchResults';
 import initialLoad from '../reducers/initialLoad';
 import modal from '../reducers/modal';
+import input from '../reducers/input';
 
 import {getYotubeTopicIds} from '../apis/shuffler';
 import {fetchingSuccess} from '../actions/initialLoad';
 
 const store = createStore(
-	combineReducers({pagination, searchResults, initialLoad, modal}), 
+	combineReducers({pagination, searchResults, initialLoad, modal, input}), 
 	applyMiddleware(thunk)
 );
 

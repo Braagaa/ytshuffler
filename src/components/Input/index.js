@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {connect} from 'react-redux';
+import {write} from '../../actions/input';
 import styled from 'styled-components';
 import main from '../../style/main';
 
@@ -22,6 +24,7 @@ const Label = styled.label`
 const Input = styled.input`
 	padding: 10px;
 	width: 100%;
+	height: 50px;
 	border: 2px solid ${props => props.bc};
 	background: transparent;
 	color: ${colors.color3};
@@ -43,16 +46,24 @@ const Submit = styled.input`
 	outline: none;
 `;
 
-export default function(props) {
+const mapStateToProps = storeData => ({
+	input: storeData.input
+});
+const mapDispatchToProps = {write};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
+
+export default connectFunction(function(props) {
+	const {input} = props;
 	const [focusColor, setFocusColor] = useState(colors.color2);
 
 	const handleInput = color => e => setFocusColor(color);
 	const handleFocus = handleInput(colors.colors3);
 	const handleBlur = handleInput(colors.color2);
+	const onChange = e => props.write(props.text, e.target.value);
 
 	return props.type === 'submit' ? (
 		<P>
-			<Submit type="submit" value={props.text.toUpperCase()}/>
+			<Submit disabled={props.disabled} type="submit" value={props.text.toUpperCase()}/>
 		</P>
 	) : (
 		<P>
@@ -62,7 +73,9 @@ export default function(props) {
 				bc={focusColor}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
+				onChange={onChange}
+				value={input[props.text] || ''}
 			/>
 		</P>
 	);
-};
+});

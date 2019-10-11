@@ -18,3 +18,5 @@ export const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => set(value, key)(acc), {});
 
 export const noDup = arr => Array.from(new Set(arr));
+
+export const call = (...arg) => fn => fn(...arg);

@@ -14,7 +14,7 @@ const H2 = styled.h2`
 
 export default function Form(props) {
 	return (
-		<div className="text-left position-relative">
+		<form className="text-left position-relative">
 			<Close exitHandle={props.exitHandle}/>
 			<H2>{props.text}</H2>
 			{
@@ -27,6 +27,6 @@ export default function Form(props) {
 				)
 			}
 			<Input type="submit" text={props.text}/>
-		</div>
+		</form>
 	);
 };
