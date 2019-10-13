@@ -41,6 +41,8 @@ const asyncMap = fn => async arr => {
 const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => ({...acc, [value]: key}), {});
 
+const mapTo = arg => () => arg;
+
 module.exports = {
 	tap,
 	pairs,
@@ -51,5 +53,6 @@ module.exports = {
 	flat,
 	map,
 	asyncMap,
-	flipObject
+	flipObject,
+	mapTo
 };

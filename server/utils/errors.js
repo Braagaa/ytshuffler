@@ -47,6 +47,8 @@ const asyncErrorIf = fn => (status, msg) => async data => {
 	return data;
 };
 
+const errorIfNull = errorIf(data => data === null);
+
 module.exports = {
 	nextError,
 	reThrow,
@@ -54,5 +56,6 @@ module.exports = {
 	validateErrors,
 	duplicateError,
 	errorIf,
+	errorIfNull,
 	asyncErrorIf
 };
