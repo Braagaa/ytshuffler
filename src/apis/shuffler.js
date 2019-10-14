@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {getCSRFStorage} from '../utils/auth';
 
 //For now use local for calling the database server
 const databaseURL = 'http://localhost:3000/';
@@ -8,14 +9,14 @@ const authURL = databaseURL + 'auth/';
 
 const getAxios = (url, initalQuery = {}) => (query = {}) => 
 	axios.get(url, {
+		...initalQuery,
 		params: {
-			...initalQuery,
 			...query
 		}
 	});
 
-const postAxios = (url, initialData = {}) => (data = {}) => 
-	axios.post(url, {...initialData, ...data});
+const postAxios = (url, config = {}) => (data = {}) => 
+	axios.post(url, {...data}, {...config});
 
 export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});
 export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids});

@@ -20,10 +20,12 @@ const auth = (req, res, next) => {
 		return next(createError(401, unauthorizedMsg));
 
 	const jwtEncoded = cookies['JWT-HP'] + '.' + cookies['JWT-S'];
-	const token = jwt.verify(jwtEncoded, secret);
-
-	if (!token)
+	let token;
+	try {
+		token = jwt.verify(jwtEncoded, secret);
+	} catch(error) {
 		return next(createError(401, unauthorizedMsg));
+	};
 
 	return User.findById(token.useruuid, {email: 0, password: 0})
 		.then(errorIfNull(404, 'User cannot be found.'))

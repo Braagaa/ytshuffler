@@ -2,7 +2,9 @@ const express = require('express');
 const {hash, compare} = require('bcrypt');
 const {nextError, duplicateError, errorIf, errorIfNull} = require('../utils/errors');
 const {generateJWT, splitJWTEncoded, toCookies} = require('../utils/jwt');
+const {generateCSRF, toCSRFHeader} = require('../utils/csrf');
 const {requiredBodyProps, validatePassword} = require('../middle-ware/validateYoutube');
+const {tap} = require('../utils/func');
 
 const {User} = require('../modals/');
 
@@ -17,8 +19,11 @@ const success = (status, res) => data => res
 	.status(status)
 	.json(data);
 const end = (status, res) => () => res.status(status).end();
-const userCreateToken = user => createToken({
+
+const userCSRFHeader = res => ({csrf}) => toCSRFHeader(res)(csrf);
+const userTokenData = user => ({
 	useruuid: user.id,
+	csrf: generateCSRF(),
 	audience: 'user'
 });
 
@@ -34,7 +39,9 @@ router.post(
 			.then(toObj('password'))
 			.then(merge({email}))
 			.then(data => User.create(data))
-			.then(userCreateToken)
+			.then(userTokenData)
+			.then(tap(userCSRFHeader(res)))
+			.then(createToken)
 			.then(splitJWTEncoded)
 			.then(toCookies(res))
 			.then(end(201, res))
@@ -53,7 +60,9 @@ router.post(
 			.then(user => Promise.all([compare(password, user.password), user]))
 			.then(errorIfWrongPassword(401, 'Incorrect email or password.'))
 			.then(getProp(1))
-			.then(userCreateToken)
+			.then(userTokenData)
+			.then(tap(userCSRFHeader(res)))
+			.then(createToken)
 			.then(splitJWTEncoded)
 			.then(toCookies(res))
 			.then(end(200, res))

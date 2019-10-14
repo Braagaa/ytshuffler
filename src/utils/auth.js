@@ -1,7 +1,8 @@
-export const isAuthenticatedUser = () => {
-	const jwtHPCookie = document.cookie
-		.split(' ')
-		.find(str => str.startsWith('JWT-HP'));
+export const isAuthenticatedUser = () => document.cookie
+	.split(' ')
+	.some(str => str.startsWith('JWT-HP'));
 
-	return jwtHPCookie !== undefined;
-};
+export const setCSRFStorage = res => 
+	localStorage.setItem('CSRF', res.headers.csrf);
+
+export const getCSRFStorage = () => localStorage.getItem('CSRF');

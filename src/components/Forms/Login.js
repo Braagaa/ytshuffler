@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {loginUser} from '../../apis/shuffler';
 import {ifAnyError, setStateThrow} from '../../utils/errors';
+import {setCSRFStorage} from '../../utils/auth';
 
 import Close from '../Close';
 import Input from '../Input';
@@ -33,6 +34,7 @@ export default connectFunction(function(props) {
 
 		setDisableSubmit(true);
 		loginUser({email, password})
+			.then(setCSRFStorage)
 			.then(() => props.history.push('/channels'))
 			.catch(setStateThrow(setDisableSubmit, false))
 			.catch(ifAnyError(setClientErrorMsg));

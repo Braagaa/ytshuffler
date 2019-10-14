@@ -11,6 +11,7 @@ import {
 } from '../../utils/validation';
 import {registerUser} from '../../apis/shuffler';
 import {if400Error, setStateThrow} from '../../utils/errors';
+import {setCSRFStorage} from '../../utils/auth';
 
 import Close from '../Close';
 import Input from '../Input';
@@ -54,6 +55,7 @@ export default connectFunction(function(props) {
 			setDisableSubmit(true);
 
 			registerUser({email, password})
+				.then(setCSRFStorage)
 				.then(() => props.history.push('/channels'))
 				.catch(setStateThrow(setDisableSubmit, false))
 				.catch(if400Error(setClientErrorMsg));
