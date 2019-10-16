@@ -2,8 +2,6 @@ const {Schema, model} = require('mongoose');
 const {validate: isEmail} = require('email-validator');
 const validatePassword = require('../utils/password');
 
-const {ObjectId} = Schema.Types;
-
 const userSchema = new Schema({
 	email: {
 		type: String,
@@ -18,9 +16,8 @@ const userSchema = new Schema({
 		type: String,
 		required: true
 	},
-	channels: [{type: ObjectId, ref: 'Channel'}],
 	settings: {
-		playMode: {
+		playmode: {
 			type: String,
 			default: 'date'
 		}
@@ -29,4 +26,4 @@ const userSchema = new Schema({
 
 const User = model('User', userSchema);
 
-module.exports = User;
+module.exports = {User, userSchema};

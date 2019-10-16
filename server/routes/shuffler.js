@@ -1,8 +1,9 @@
 const express = require('express');
 const {Channel} = require('../modals'); 
 const {nextError, validateErrors} = require('../utils/errors');
-const {parseChannel, songsForChannel, requiredQuery} = require('../middle-ware/validateYoutube');
+const {parseChannel, songsForChannel, requiredQuery, userForChannel} = require('../middle-ware/validateYoutube');
 const defaultProps = require('../middle-ware/defaultQueries');
+const {auth} = require('../middle-ware/auth');
 
 const router = express.Router();
 
@@ -24,8 +25,10 @@ router.get('/channels', (req, res, next) => {
 router.post(
 	'/channels', 
 	defaultProps('body', {order: 'date'}), 
+	auth,
 	parseChannel, 
 	songsForChannel,
+	userForChannel,
 	(req, res, next) => {
 		return Channel.create(req.channel)
 			.then(success(res))

@@ -16,7 +16,11 @@ const getAxios = (url, initalQuery = {}) => (query = {}) =>
 	});
 
 const postAxios = (url, config = {}) => (data = {}) => 
-	axios.post(url, {...data}, {...config});
+	axios.post(url, {...data}, {
+		xsrfHeaderName: 'CSRF',
+		headers: {CSRF: getCSRFStorage()},
+		...config
+	});
 
 export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});
 export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids});

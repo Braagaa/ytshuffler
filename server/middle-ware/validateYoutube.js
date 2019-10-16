@@ -53,49 +53,78 @@ const validatePassword = (req, res, next) => {
 	return next(createError(400, 'Username or password is invalid.'));
 };
 
-const collectItems = max => (data, params = {}, videos = []) => {
-	videos = [...videos, ...data.items];
-	if (videos.length >= max || !data.nextPageToken) 
-		return Promise.resolve(videos.slice(0, max));
-	return getSearchVideos({...params, pageToken: data.nextPageToken})
-		.then(fetched => fetched.data)
-		.then(data => getMaximumItems(data, params, videos));
+const songsForChannel = async (req, res, next) => {
+	try {
+		const {youtubeId: channelId, order} = req.channel;
+		let searchResults = await getSearchVideos({channelId, order});
+		let etags = [searchResults.data.etag];
+		let videos = searchResults.data.items;
+
+		while (videos.length < maxSongs && searchResults.data.nextPageToken) {
+			searchResults = await getSearchVideos({
+				channelId, 
+				order, 
+				pageToken: searchResults.data.nextPageToken
+			});
+			etags = etags.concat(searchResults.data.etag);
+			videos = [...videos, ...searchResults.data.items];
+		}
+		
+		videos = videos.slice(0, maxSongs)
+			.map(searchVideo => searchVideo.id.videoId);
+
+		let videosString = splitEvery(50)(videos)
+			.map(method('join', ','));
+
+		videos = await asyncMap(videoIdsString => getVideos({id: videoIdsString}))(videosString);
+		videos = videos.map(videos => videos.data.items);
+		videos = flat(videos)
+			.map(video => ({
+				youtubeId: video.id,
+				playmodes: [order],
+				title: video.snippet.title,
+				thumbnail_url: video.snippet.thumbnails.medium.url,
+				duration: video.contentDetails.duration,
+				topics: video.topicDetails.topicIds
+			}));
+
+		req.channel.songs = videos;
+		req.channel.etags = {[order]: etags};
+
+		return next();
+	} catch(e) {
+		console.log(e);
+		next(createError(500, 'Cannot create channel.'));
+	};
 };
-const getMaximumItems = collectItems(maxSongs);
-//This is where we obtain the songs for the selected channel through
-//a youtube search
-const songsForChannel = (req, res, next) => {
-	const {youtubeId: channelId, order} = req.channel;
-	getSearchVideos({channelId, order})
-		.then(fetched => fetched.data)
-		.then(data => getMaximumItems(data, {channelId, order}))
-		.then(map(searchVideo => searchVideo.id.videoId))
-		.then(splitEvery(50))
-		.then(map(method('join', ',')))
-		.then(asyncMap(videoIdsString => getVideos({id: videoIdsString})))
-		.then(map(videos => videos.data.items))
-		.then(flat)
-		.then(map(video => ({
-			youtubeId: video.id,
-			title: video.snippet.title,
-			thumbnail_url: video.snippet.thumbnails.medium.url,
-			duration: video.contentDetails.duration,
-			topics: video.topicDetails.topicIds
-		})))
-		.then(videos => {
-			//side effects
-			req.channel.songs = videos;
-			next();
-		})
-		.catch(nextError(500, 'Songs cannot be obtained.', next));
+
+const userForChannel = (req, res, next) => {
+	const {user, channel} = req;
+	if (!user || !channel) {
+		return next(createError(422, 'User or channel not found.'));
+	}
+
+	const userObj = {
+		id: user.id,
+		playmode: user.settings.playmode
+	};
+
+	if (channel.users) {
+		req.channel.users = channel.users.concat(userObj);
+	} else {
+		req.channel.users = [userObj];
+	}
+
+	return next();
 };
 
 module.exports = {
 	parseChannel,
 	parseSong,
 	songsForChannel,
+	userForChannel,
 	requiredQuery,
 	requiredBody,
 	requiredBodyProps,
-	validatePassword
+	validatePassword,
 };

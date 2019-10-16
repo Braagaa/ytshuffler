@@ -7,7 +7,7 @@ const songSchema = new Schema({
 		unique: true,
 		require: true
 	},
-	etag: String,
+	playmodes: [],
 	title: String,
 	thumbnail_url: String,
 	duration: String,

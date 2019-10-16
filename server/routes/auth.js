@@ -6,7 +6,7 @@ const {generateCSRF, toCSRFHeader} = require('../utils/csrf');
 const {requiredBodyProps, validatePassword} = require('../middle-ware/validateYoutube');
 const {tap} = require('../utils/func');
 
-const {User} = require('../modals/');
+const {User} = require('../modals/User');
 
 const createToken = generateJWT({expiresIn: '1h'});
 

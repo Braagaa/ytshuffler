@@ -1,6 +1,8 @@
 const {Schema, model} = require('mongoose');
 const {songSchema} = require('./Song');
-const {getChannels} = require('../apis/youtube-data');
+const {userSchema} = require('./User');
+
+const {ObjectId} = Schema.Types;
 
 const channelSchema = new Schema({
 	youtubeId: {
@@ -8,7 +10,6 @@ const channelSchema = new Schema({
 		unique: true,
 		required: true
 	},
-	etag: String,
 	title: {
 		type: String,
 		required: true
@@ -17,14 +18,17 @@ const channelSchema = new Schema({
 		type: String,
 		required: true
 	},
-	videoCount: Number,
+	etags: {
+		date: [],
+		viewCount: []
+	},
+	users: [{
+		_id: false,
+		id: ObjectId,
+		playmode: String
+	}],
 	topics: [String],
 	songs: [songSchema]
-});
-
-channelSchema.pre('save', function(next) {
-	this.videoCount = this.songs.length;
-	next();
 });
 
 const Channel = model('Channel', channelSchema);
