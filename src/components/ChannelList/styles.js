@@ -59,3 +59,14 @@ export const P = styled.p`
 	font-weight: 700;
 	margin-bottom: 5px;
 `;
+
+export const Ul = styled.ul`
+	${textStyles}
+	padding: 0px;
+	list-style-type: none;
+
+	p {
+		margin: 0px;
+		color: ${main.colors.color6};
+	}
+`;

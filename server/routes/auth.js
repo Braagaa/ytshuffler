@@ -8,7 +8,7 @@ const {tap} = require('../utils/func');
 
 const {User} = require('../modals/User');
 
-const createToken = generateJWT({expiresIn: '1h'});
+const createToken = generateJWT({expiresIn: '1d'});
 
 const router = express.Router();
 

@@ -76,6 +76,7 @@ export const Icon = styled.span`
 `;
 
 export const PageNum = styled.div`
+	visibility: ${hidden};
 	font-size: 1.2em;
 	align-self: center;
 `;

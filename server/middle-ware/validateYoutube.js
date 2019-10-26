@@ -1,5 +1,8 @@
 const app = require('../app');
 const createError = require('http-errors');
+const isNumber = require('is-number');
+const sanitize = require('mongo-sanitize');
+
 const {capitalize} = require('../utils/capitalize');
 const {getSearchVideos, getVideos} = require('../apis/youtube-data');
 const {nextError} = require('../utils/errors');
@@ -51,6 +54,23 @@ const validatePassword = (req, res, next) => {
 		return next();
 	}
 	return next(createError(400, 'Username or password is invalid.'));
+};
+
+const tryParseNumber = type => prop => (req, res, next) => {
+	const num = req[type][prop];
+	if (!num)
+		return next();
+	if (!isNumber(num))
+		return next(createError(422, `Paramter ${prop} is not a number: '${num}'.`));
+	req[type][prop] = parseInt(num);
+	next();
+};
+
+const trySanitizeInput = type => prop => (req, res, next) => {
+	const input = req[type][prop];
+	if (!input) return next();
+	req[type][prop] = sanitize(input);
+	next();
 };
 
 const songsForChannel = async (req, res, next) => {
@@ -127,4 +147,6 @@ module.exports = {
 	requiredBody,
 	requiredBodyProps,
 	validatePassword,
+	tryParseNumber,
+	trySanitizeInput
 };

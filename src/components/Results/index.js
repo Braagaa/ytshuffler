@@ -39,7 +39,6 @@ export default connectFunction(function(props) {
 	const {modalMode} = props;
 
 	const endModal = setState(modalMode, false);
-
 	return (
 		<Wrapper>
 			<Modal on={modal.on}>

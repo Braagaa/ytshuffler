@@ -51,7 +51,7 @@ export default connectFunction(function(props) {
 			checkToChannels(items, offset, page, itemsPerPage);
 		}
 	}, [offset, items, page, itemsPerPage, checkToChannels, isLoading])
-
+		
 	return (
 		<div>
 			<form onSubmit={onSubmitHandle}>

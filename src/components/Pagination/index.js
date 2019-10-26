@@ -21,14 +21,17 @@ const mapStateToProps = storeData => ({
 const mapDispatchToProps = {prevPage, nextPage};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
+const checkNext = props => props.page <= 1;
+const checkPrev = props => props.page >= props.maximumItems / props.itemsPerPage;
+
 export default connectFunction(function(props) {
 	return(
 		<Wrappper>
-			<Prev hidden={props.page <= 1} onClick={props.prevPage}>
+			<Prev hidden={checkNext(props)} onClick={props.prevPage}>
 				<Icon/>
 			</Prev>
 			<Next 
-				hidden={props.page >= props.maximumItems / props.itemsPerPage} 
+				hidden={checkPrev(props)} 
 				onClick={props.nextPage}
 			>
 				<Icon/>

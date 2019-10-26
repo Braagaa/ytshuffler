@@ -9,17 +9,20 @@ export default function(storeData = {}, action) {
 				itemsPerPage: action.payload.itemsPerPage,
 				page: action.payload.page,
 				maximumItems: action.payload.maximumItems,
-				offset: action.payload.offset
+				offset: action.payload.offset,
+				initalized: true
 			};
 		case CURRENT_PAGE:
 			return {
 				...storeData,
+				initalized: false,
 				page: action.payload.page
 			};
 		case PREV_PAGE:
 			return getOffset(itemsPerPage, page) > 0 ? {
 				...storeData,
 				page: page - 1,
+				initalized: false,
 				offset: getOffset(itemsPerPage, page) - itemsPerPage
 			} : storeData;
 		case NEXT_PAGE:
@@ -28,7 +31,8 @@ export default function(storeData = {}, action) {
 			return pred ? {
 				...storeData,
 				page: page + 1,
-				offset: getOffset(itemsPerPage, page) + itemsPerPage
+				offset: getOffset(itemsPerPage, page) + itemsPerPage,
+				initalized: false,
 			} : storeData;
 		default:
 			return {
@@ -36,6 +40,7 @@ export default function(storeData = {}, action) {
 				itemsPerPage: 10,
 				maximumItems: 50,
 				offset: 0,
+				initalized: true,
 				...storeData
 			};
 	}

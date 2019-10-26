@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import dataStore from './store';
+import ProtectedRoute from './components/AuthRoute';
+import {isAuthenticatedUser} from './utils/auth';
 
 import NavBar from './components/NavBar';
 import Login from './views/Login';
@@ -18,6 +20,8 @@ const MainWrapper = styled.div`
 	margin: 0 auto;
 `;
 
+const AuthRoute = ProtectedRoute(isAuthenticatedUser);
+
 export default function App() {
 	return (
 		<Provider store={dataStore}>
@@ -29,7 +33,12 @@ export default function App() {
 							<Route path="/" exact component={Login}/>
 							<Route path="/search" exact component={Search}/>
 							<Route path="/settings" exact component={Settings}/>
-							<Route path="/channels" exact component={Channels}/>
+							<AuthRoute 
+								path="/channels" 
+								redirectTo={'/'}
+								exact 
+								component={Channels}
+							/>
 							<Route path="/channels/songs" exact component={Songs}/>
 						</Switch>
 						<Player/>

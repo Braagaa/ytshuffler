@@ -24,11 +24,14 @@ const auth = (req, res, next) => {
 	try {
 		token = jwt.verify(jwtEncoded, secret);
 	} catch(error) {
+		console.log(error);
 		return next(unauthorizedError);
 	};
 
-	if (!req.get('CSRF') || req.get('CSRF') !== token.csrf)
-		return next(unauthorizedError);
+	if (req.method === 'POST') {
+		if (!req.get('CSRF') || req.get('CSRF') !== token.csrf)
+			return next(unauthorizedError);
+	}
 
 	return User.findById(token.useruuid, {email: 0, password: 0})
 		.then(errorIfNull(404, 'User cannot be found.'))

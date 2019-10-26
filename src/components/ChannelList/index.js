@@ -17,7 +17,8 @@ export default function(props) {
 				props.channels.map((c, i) => {
 					return <Channel 
 						{...c} 
-						key={c.id}
+						key={c._id}
+						history={props.history}
 					/>
 				})
 			}

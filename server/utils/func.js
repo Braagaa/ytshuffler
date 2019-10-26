@@ -43,6 +43,8 @@ const flipObject = obj => Object.entries(obj)
 
 const mapTo = arg => () => arg;
 
+const prop = prop => obj => obj[prop];
+
 module.exports = {
 	tap,
 	pairs,
@@ -54,5 +56,6 @@ module.exports = {
 	map,
 	asyncMap,
 	flipObject,
-	mapTo
+	mapTo,
+	prop
 };
