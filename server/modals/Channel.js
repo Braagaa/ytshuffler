@@ -24,11 +24,18 @@ const channelSchema = new Schema({
 	},
 	users: [{
 		_id: false,
-		id: ObjectId,
+		id: {
+			type: ObjectId,
+			unique: true,
+			required: true
+		},
 		playmode: String
 	}],
 	topics: [String],
-	songs: [songSchema]
+	songs: {
+		date: [],
+		viewCount: []
+	}
 });
 
 channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text) {

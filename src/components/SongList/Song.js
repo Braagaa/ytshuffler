@@ -4,19 +4,19 @@ import {Wrapper, Img, ButtonsWrapper, InfoWrapper, Info, Artist, Duration, SongB
 import main from '../../style/main';
 
 export default function(props) {
-	const {snippet} = props;
-	const {contentDetails} = props;
-	const {snippet: {thumbnails}} = props;
-	const [artist, song] = snippet.title.split('-')
+	const {title, duration, thumbnail_url} = props;
+	const [artist, song] = title.split('-')
 		.map(str => str.trim());
 
 	return(
 		<li>
 			<Wrapper>
-				<Img src={thumbnails.default.url} alt={snippet.title}/>
+				<Img src={thumbnail_url} alt={title}/>
 				<InfoWrapper>
-					<Info>{song}</Info>
-					<Artist>{artist}</Artist>
+					<div>
+						<Info>{song}</Info>
+						<Artist>{artist}</Artist>
+					</div>
 				</InfoWrapper>
 				<ButtonsWrapper>
 					<SongButton 
@@ -32,7 +32,7 @@ export default function(props) {
 							Delete
 					</SongButton>
 				</ButtonsWrapper>
-				<Duration>{contentDetails.duration}</Duration>
+				<Duration>{duration}</Duration>
 			</Wrapper>
 		</li>
 	);

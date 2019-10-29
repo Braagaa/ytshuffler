@@ -33,6 +33,14 @@ const duplicateError = (msg, next) => error => {
 	throw error;
 };
 
+const castError = next => error => {
+	if (error.name === 'CastError') {
+		return next(createError(422, `Path '${error.path}' failed for value '${error.value}'`));
+	}
+
+	throw error;
+};
+
 const errorIf = fn => (status, msg) => data => {
 	if (fn(data)) {
 		throw createError(status, msg);
@@ -49,6 +57,12 @@ const asyncErrorIf = fn => (status, msg) => async data => {
 
 const errorIfNull = errorIf(data => data === null);
 
+const errorStatus = (status, next) => error => {
+	if (error.status === status)
+		return next(error);
+	throw error;
+};
+
 module.exports = {
 	nextError,
 	reThrow,
@@ -57,5 +71,7 @@ module.exports = {
 	duplicateError,
 	errorIf,
 	errorIfNull,
-	asyncErrorIf
+	asyncErrorIf,
+	castError,
+	errorStatus
 };

@@ -30,6 +30,8 @@ export const Wrapper = styled.div`
 
 export const InfoWrapper = styled.div`
 	margin-left: 14px;
+	display: flex;
+	align-items: center;
 `;
 
 export const ButtonsWrapper = styled.div`
@@ -38,8 +40,8 @@ export const ButtonsWrapper = styled.div`
 `;
 
 export const Img = styled.img`
-	width: 70px;
-	height: 70px;
+	width: 120px;
+	height: 90px;
 `;
 
 export const Info = styled.p`

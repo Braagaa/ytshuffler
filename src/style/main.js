@@ -6,6 +6,6 @@ export default {
 		color4: 'rgba(0,0,0,0.2)',
 		color5: 'black',
 		color6: '#a84c3a',
-		color7: 'darkgreen'
+		color7: 'darkgreen',
 	}
 };

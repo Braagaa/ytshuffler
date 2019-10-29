@@ -39,7 +39,7 @@ export default function App() {
 								exact 
 								component={Channels}
 							/>
-							<Route path="/channels/songs" exact component={Songs}/>
+							<Route path="/channels/:id" exact component={Songs}/>
 						</Switch>
 						<Player/>
 					</MainWrapper>

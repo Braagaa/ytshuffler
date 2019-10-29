@@ -8,6 +8,11 @@ export const set = (key, value) => obj => {
 	return obj;
 };
 
+export const adjustProp = (key, fn) => obj => ({
+	...obj,
+	[key]: fn(obj[key])
+});
+
 export const spliceInto = (arr1, start, deleteCount) => arr2 => {
 	const newArr = [...arr1];
 	newArr.splice(start, deleteCount, ...arr2);
@@ -20,3 +25,5 @@ export const flipObject = obj => Object.entries(obj)
 export const noDup = arr => Array.from(new Set(arr));
 
 export const call = (...arg) => fn => fn(...arg);
+
+export const isEmpty = obj => Object.keys(obj).length === 0;

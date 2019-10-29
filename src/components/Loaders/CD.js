@@ -18,11 +18,13 @@ const Wrapper = styled(MainWrapper)`
 		font-weight: bold;
 		text-align: center;
 	}
+
+	${({lm}) => lm ? 'margin-top: ' + lm : ''}
 `;
 
 export default function(props) {
 	return (
-		<Wrapper isLoading={props.isLoading}>
+		<Wrapper lm={props.lm} isLoading={props.isLoading}>
 			<DiscSVG fill={props.fill} size={props.size}/>
 			<p>Loading</p>
 		</Wrapper>

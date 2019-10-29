@@ -12,14 +12,14 @@ const LoaderWrap = styled.div`
 `;
 
 export default function(LoaderComponent) {
-	return function({isLoading, fill, size, css, children}) {
+	return function({isLoading, fill, size, css, lm, children}) {
 		return (
 			<React.Fragment>
 				{
 					!LoaderComponent ? (
-						<CD isLoading={isLoading} size={size} fill={fill}/>
+						<CD isLoading={isLoading} size={size} lm={lm} fill={fill}/>
 					) : (
-						<LoaderComponent isLoading={isLoading} size={size} fill={fill}/>
+						<LoaderComponent isLoading={isLoading} lm={lm} size={size} fill={fill}/>
 					)
 				}
 				<LoaderWrap css={css} isLoading={isLoading}>

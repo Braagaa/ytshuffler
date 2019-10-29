@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
+import {handleChecked} from '../../utils/commonEvent';
+
 import RadioButton from '../RadioButton';
 import Tooltip from '../Tooltip/InfoTooltip';
 
@@ -20,6 +22,15 @@ const ToolWrapper = styled.div`
 `;
 
 export default function(props) {
+	const [playmodeChecked, setPlaymodeChecked] = useState({});
+	const handlePlaymodeChecked = handleChecked(setPlaymodeChecked);
+	const checked = playmodeChecked.playmode || props.values[0][0];
+
+	const onChange = e => {
+		handlePlaymodeChecked(e);
+		props.onChange(e);
+	};
+
 	return (
 		<Wrapper>
 			<ToolWrapper>
@@ -31,11 +42,11 @@ export default function(props) {
 					<RadioButton 
 						key={id}
 						name={props.name} 
-						checked={id.toLowerCase() === props.checked}
+						checked={id.toLowerCase() === checked.toLowerCase()}
 						id={id.toLowerCase()}
 						value={id.toLowerCase()}
 						text={value}
-						handler={props.handler}
+						handler={onChange}
 					/>
 				)
 			}

@@ -69,6 +69,7 @@ const tryParseNumber = type => prop => (req, res, next) => {
 const trySanitizeInput = type => prop => (req, res, next) => {
 	const input = req[type][prop];
 	if (!input) return next();
+	console.log(sanitize(input));
 	req[type][prop] = sanitize(input);
 	next();
 };
@@ -103,7 +104,7 @@ const songsForChannel = async (req, res, next) => {
 				youtubeId: video.id,
 				playmodes: [order],
 				title: video.snippet.title,
-				thumbnail_url: video.snippet.thumbnails.medium.url,
+				thumbnail_url: video.snippet.thumbnails.default.url,
 				duration: video.contentDetails.duration,
 				topics: video.topicDetails.topicIds
 			}));
@@ -124,16 +125,10 @@ const userForChannel = (req, res, next) => {
 		return next(createError(422, 'User or channel not found.'));
 	}
 
-	const userObj = {
+	req.channelUser = {
 		id: user.id,
 		playmode: user.settings.playmode
 	};
-
-	if (channel.users) {
-		req.channel.users = channel.users.concat(userObj);
-	} else {
-		req.channel.users = [userObj];
-	}
 
 	return next();
 };
