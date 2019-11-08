@@ -10,7 +10,7 @@ const {youtube, shuffler, auth, users} = require('./routes/');
 const app = express();
 const db = mongoose.connect(
 	process.env.REACT_APP_DB_URL, 
-	{useNewUrlParser: true, useUnifiedTopology: true}
+	{useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}
 )
 	.then(() => console.log('DataBase connected!'));
 

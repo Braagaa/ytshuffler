@@ -36,8 +36,8 @@ export default connectFunction(function(props) {
 			etag: props.etag,
 			title: data.title,
 			thumbnail_url: url,
-			topics: topicList
-			//order: date || viewCount (with user here)
+			topics: topicList,
+			videoCount: statistics.videoCount
 		})
 			.then(setState(modalMode, true, false, {
 				channelTitle: data.title,

@@ -54,7 +54,7 @@ export default connectFunction(function(props) {
 				if (data.metaData)
 					initalizePage(channelsPerPage, 1, data.metaData.totalChannels, 0);
 				return data;
-			});
+			})
 
 		return () => {
 			fetchClear();

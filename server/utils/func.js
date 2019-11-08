@@ -45,6 +45,14 @@ const mapTo = arg => () => arg;
 
 const prop = prop => obj => obj[prop];
 
+const props = str => obj => str.split(',')
+	.map(str => str.split('.'))
+	.map(arr => arr.reduce((acc, str) => acc[str], obj));
+
+const path = str => obj => str
+	.split('.')
+	.reduce((acc, str) => acc[str], obj);
+
 module.exports = {
 	tap,
 	pairs,
@@ -57,5 +65,7 @@ module.exports = {
 	asyncMap,
 	flipObject,
 	mapTo,
-	prop
+	prop,
+	props,
+	path
 };

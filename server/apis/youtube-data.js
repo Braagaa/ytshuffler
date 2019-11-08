@@ -7,13 +7,15 @@ const baseUrl = 'https://www.googleapis.com/youtube/v3';
 const searchUrl = baseUrl + '/search';
 const channelUrl = baseUrl + '/channels';
 const videosUrl = baseUrl + '/videos';
+const activitiesUrl = baseUrl + '/activities';
 
-const getAxios = (url, initlQuery) => (query = {}) => 
+const getAxios = (url, initlQuery) => (query = {}, config = {}) => 
 	axios.get(url, {
 		params: {
 			...initlQuery,
 			...query
-		}
+		},
+		...config
 	})
 		.then(({status, statusText, data}) => ({
 			status,
@@ -24,6 +26,7 @@ const getAxios = (url, initlQuery) => (query = {}) =>
 		.catch(reThrow(console.error));
 
 const getSearchChannels = getAxios(searchUrl, {
+	part: 'id',
 	part: 'snippet',
 	maxResults: 50,
 	safeSearch: 'none',
@@ -46,15 +49,24 @@ const getChannels = getAxios(channelUrl, {
 	key: YOUTUBE_API_KEY
 });
 
-const getVideos = getAxios(videosUrl, {
+const getChannelUpdate = getAxios(channelUrl, {
+	part: 'statistics',
+	maxResults: 1,
+	key: YOUTUBE_API_KEY
+});
+
+const getVideosObj = {
 	part: 'snippet,contentDetails,topicDetails',
 	maxResults: 50,
 	key: YOUTUBE_API_KEY
-});
+};
+
+const getVideos = getAxios(videosUrl, getVideosObj);
 
 module.exports = {
 	getSearchChannels,
 	getSearchVideos,
 	getChannels,
+	getChannelUpdate,
 	getVideos
 };

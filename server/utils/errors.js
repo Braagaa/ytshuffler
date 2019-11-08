@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const {path} = require('./func');
 
 const nextError = (status, message, next) => e => {
 	console.log(e);
@@ -55,12 +56,23 @@ const asyncErrorIf = fn => (status, msg) => async data => {
 	return data;
 };
 
-const errorIfNull = errorIf(data => data === null);
+const errorIfNull = errorIf(data => data === null || data === undefined);
 
 const errorStatus = (status, next) => error => {
 	if (error.status === status)
 		return next(error);
 	throw error;
+};
+
+const pathError = (pathStr, status, msg) => data => {
+	try {
+		const path = path(pathStr)(data);
+		if (path === null || path === undefined)
+			throw data;
+		return data;
+	} catch(e) {
+		throw createError(status, msg);
+	};
 };
 
 module.exports = {
@@ -71,6 +83,7 @@ module.exports = {
 	duplicateError,
 	errorIf,
 	errorIfNull,
+	pathError,
 	asyncErrorIf,
 	castError,
 	errorStatus

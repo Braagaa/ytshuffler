@@ -4,10 +4,8 @@ const getTopics = require('../utils/getTopics');
 const songSchema = new Schema({
 	youtubeId: {
 		type: String,
-		unique: true,
 		require: true
 	},
-	playmodes: [],
 	title: String,
 	thumbnail_url: String,
 	duration: String,

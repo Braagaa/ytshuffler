@@ -1,6 +1,7 @@
 const {Schema, model, Types: {ObjectId: toObjectId}} = require('mongoose');
 const {songSchema} = require('./Song');
 const {userSchema} = require('./User');
+const {errorIfNull} = require('../utils/errors');
 
 const {ObjectId} = Schema.Types;
 
@@ -18,24 +19,35 @@ const channelSchema = new Schema({
 		type: String,
 		required: true
 	},
-	etags: {
-		date: [],
-		viewCount: []
-	},
 	users: [{
 		_id: false,
-		id: {
-			type: ObjectId,
-			unique: true,
-			required: true
-		},
+		id: ObjectId,
 		playmode: String
 	}],
+	totalVideoCounts: {
+		date: {
+			type: Number,
+			default: 0
+		},
+		viewCount: {
+			type: Number,
+			default: 0
+		}
+	},
 	topics: [String],
-	songs: {
-		date: [],
-		viewCount: []
+	playlists: {
+		date: [songSchema],
+		viewCount: [songSchema]
 	}
+});
+
+const frontEndFields = channel => ({
+	youtubeId: channel.youtubeId,
+	title: channel.title,
+	thumbnail_url: channel.thumbnail_url,
+	topics: channel.topics,
+	playmode: channel.users[0].playmode,
+	songs: channel.playlists[channel.users[0].playmode]
 });
 
 channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text) {
@@ -74,25 +86,29 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 									}
 								}
 							}
+						},
+						songs: {
+							$objectToArray: '$playlists'
 						}
 					}},
-					{
-						$project: {
-							youtubeId: 1,
-							title: 1,
-							thumbnail_url: 1,
-							topics: 1,
-							songs: {
-								$filter: {
-									input: '$songs',
-									as: 'song',
-									cond: {
-										$in: ['$playmode', '$$song.playmodes']
+					{$addFields: {
+						songs: {
+							$reduce: {
+								input: '$songs',
+								initialValue: '',
+								in: {
+									$cond: {
+										if: ['$$this.k', '$playmode'],
+										then: '$$this.v',
+										else: '$$value'
 									}
 								}
 							}
 						}
-					}
+					}},
+					{$project: {
+						users: 0
+					}}
 				]
 			}
 		}
@@ -101,6 +117,47 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 			metaData: data[0].metaData[0],
 			channels: data[0].channels
 		}));
+});
+
+channelSchema.static('findOneChannel', function(id, user) {
+	return Channel.findOne(
+		{_id: id, 'users.id': user._id}, 
+		{
+			youtubeId: 1,
+			title: 1, 
+			thumbnail_url: 1,
+			topics: 1,
+			playlists: 1,
+			users: {$elemMatch: {id: user._id}}
+		}
+	)
+		.then(frontEndFields);
+});
+
+channelSchema.static('findOneChannelForUpdate', function(id, user) {
+	return Channel.findOne(
+		{_id: id},
+		{
+			totalVideoCounts: 1,
+			youtubeId: 1,
+			playlists: 1
+		}
+	)
+		.then(errorIfNull(404, 'Channel cannot be found.'));
+});
+
+channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {
+	const {playmode} = channelUser;
+	return Channel.findOneAndUpdate(
+		{_id: channel.id, 'users.id': channelUser.id},
+		{
+			totalVideoCounts: channel.totalVideoCounts, 
+			[`playlists.${playmode}`]: channel.playlists[playmode],
+			$set: {'users.$.playmode': playmode}
+		},
+		{new: true}
+	)
+		.then(frontEndFields);
 });
 
 channelSchema.index({title: 1});

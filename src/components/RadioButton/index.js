@@ -53,6 +53,7 @@ export default function(props) {
 				type="radio" 
 				checked={props.checked}
 				onChange={props.handler}
+				disabled={props.disabled}
 			/>
 			<Label 
 				htmlFor={props.id} 

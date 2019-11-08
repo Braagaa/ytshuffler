@@ -3,6 +3,11 @@ const {Channel} = require('../modals');
 const defaultProps = require('../middle-ware/defaultQueries');
 const {auth} = require('../middle-ware/auth');
 const {
+	songsForChannel, 
+	userForChannel, 
+	channelUpdate
+} = require('../middle-ware/youtube');
+const {
 	nextError, 
 	validateErrors, 
 	castError, 
@@ -11,11 +16,11 @@ const {
 } = require('../utils/errors');
 const {
 	parseChannel, 
-	songsForChannel, 
 	requiredQuery, 
-	userForChannel,
 	tryParseNumber,
-	trySanitizeInput
+	trySanitizeInput,
+	checkPlaylist,
+	checkObjectId
 } = require('../middle-ware/validateYoutube');
 
 const router = express.Router();
@@ -45,6 +50,16 @@ const getChannelMW = [
 	trySanitizeInput('params')('id')
 ];
 
+const putChannelMW = [
+	auth,
+	trySanitizeInput('params')('id'),
+	trySanitizeInput('params')('playlist'),
+	checkObjectId('params'),
+	checkPlaylist,
+	channelUpdate,
+	userForChannel
+];
+
 //GET channels
 router.get('/channels', getChannelsMW, (req, res, next) => {
 	const{page, skip, text} = req.query;
@@ -61,7 +76,7 @@ router.post('/channels', postChannelsMW, (req, res, next) => {
 	return Channel.findOneAndUpdate(
 		{youtubeId: channel.youtubeId},
 		{...channel, $push: {'users': req.channelUser}},
-		{upsert: true}
+		{upsert: true, setDefaultsOnInsert: true}
 	)
 		.then(success(201, res))
 		.catch(validateErrors(next))
@@ -74,15 +89,20 @@ router.post('/channels', postChannelsMW, (req, res, next) => {
 
 //GET channels/:id
 router.get('/channels/:id', getChannelMW, (req, res, next) => {
-	return Channel.findOne(
-		{_id: req.params.id, 'users.id': req.user._id}, 
-		{users: 0, 'songs.playmodes': 0}
-	)
+	return Channel.findOneChannel(req.params.id, req.user)
 		.then(errorIfNull(404, 'Cannot find channel.'))
 		.then(success(200, res))
 		.catch(castError(next))
 		.catch(errorStatus(404, next))
 		.catch(nextError(500, 'Could not obtain channel.', next));
+});
+
+//PUT channels/:id
+router.put('/channels/:id/playlist/:playlist', putChannelMW, (req, res, next) => {
+	const {channel, channelUser} = req;
+	return Channel.updateChannelPlaylist(channel, channelUser)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not update channel playlist mode.', next));
 });
 
 module.exports = router;

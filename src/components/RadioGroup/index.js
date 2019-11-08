@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
-import {handleChecked} from '../../utils/commonEvent';
 
 import RadioButton from '../RadioButton';
 import Tooltip from '../Tooltip/InfoTooltip';
@@ -21,13 +21,13 @@ const ToolWrapper = styled.div`
 	}
 `;
 
-export default function(props) {
-	const [playmodeChecked, setPlaymodeChecked] = useState({});
-	const handlePlaymodeChecked = handleChecked(setPlaymodeChecked);
-	const checked = playmodeChecked.playmode || props.values[0][0];
+const mapStateToProps = dataStore => ({
+	isLoading: dataStore.fetching.isLoading
+});
+const connectFunction = connect(mapStateToProps);
 
+export default connectFunction(function(props) {
 	const onChange = e => {
-		handlePlaymodeChecked(e);
 		props.onChange(e);
 	};
 
@@ -42,14 +42,15 @@ export default function(props) {
 					<RadioButton 
 						key={id}
 						name={props.name} 
-						checked={id.toLowerCase() === checked.toLowerCase()}
-						id={id.toLowerCase()}
-						value={id.toLowerCase()}
+						checked={id === props.checked}
+						id={id}
+						value={id}
 						text={value}
 						handler={onChange}
+						disabled={props.isLoading}
 					/>
 				)
 			}
 		</Wrapper>
 	);
-};
+});
