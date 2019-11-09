@@ -60,6 +60,12 @@ const putChannelMW = [
 	userForChannel
 ];
 
+const deleteChannelMW = [
+	auth,
+	trySanitizeInput('params')('id'),
+	checkObjectId('params')
+];
+
 //GET channels
 router.get('/channels', getChannelsMW, (req, res, next) => {
 	const{page, skip, text} = req.query;
@@ -103,6 +109,15 @@ router.put('/channels/:id/playlist/:playlist', putChannelMW, (req, res, next) =>
 	return Channel.updateChannelPlaylist(channel, channelUser)
 		.then(success(200, res))
 		.catch(nextError(500, 'Could not update channel playlist mode.', next));
+});
+
+//DELETE channels/:id
+router.delete('/channels/:id', deleteChannelMW, (req, res, next) => {
+	const {id} = req.params;
+	return Channel.deleteUserInChannel(id, req.user)
+		.then(success(200, res))
+		.catch(errorStatus(404, next))
+		.catch(nextError(500, 'Channel could not be deleted.', next));
 });
 
 module.exports = router;

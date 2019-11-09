@@ -13,7 +13,7 @@ export const OverLay = styled.div`
 	height: 100%;
 	top: 0;
 	left: 0;
-	z-index: 100;
+	z-index: 999;
 	background: ${props => props.background || main.colors.color1};
 	transition: all 0.3s;
 	${props => visibility}

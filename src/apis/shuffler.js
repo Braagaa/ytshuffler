@@ -28,6 +28,11 @@ const putAxios = (url, config = {}) => (data = {}) =>
 		...config
 	});
 
+const deleteAxios = (url, config = {}) => (data = {}) =>
+	axios.delete(url, data, {
+		...config
+	});
+
 export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});
 export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids});
 export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
@@ -37,5 +42,6 @@ export const createChannel = postAxios(shufflerURL + 'channels');
 export const registerUser = postAxios(authURL + 'register');
 export const loginUser = postAxios(authURL + 'login');
 export const getUserVideoInfo = id => getAxios(usersURL + 'video_info/' + id)();
+export const deleteChannel = id => deleteAxios(shufflerURL + 'channels/' + id)();
 export const changeChannelPlaylist = (channelId, playmode) => 
 	putAxios(shufflerURL + `channels/${channelId}/playlist/${playmode}`)();

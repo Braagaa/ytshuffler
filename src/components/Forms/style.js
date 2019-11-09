@@ -38,3 +38,23 @@ export const HideRule = styled.p`
 	color: ${props => props.valid ? color7 : color3};
 	transition: all 0.5s;
 `;
+
+export const SongForm = styled.form`
+	@media (min-width: 624px) {
+		display: flex;
+	}
+
+	button {
+		margin-bottom: 1.5em;
+
+		@media (min-width: 624px) {
+			align-self: center;
+			margin-left: 50px;
+		}
+	}
+`;
+
+export const FlexForm = styled.form`
+	display: flex;
+	justify-content: space-between;
+`;

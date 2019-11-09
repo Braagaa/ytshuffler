@@ -9,10 +9,10 @@ const Modal = styled.div`
 	justify-content: center;
 	top: 50%;
 	left: 50%;
-	overflow-y: scroll;
+	overflow-y: ${props => props.on ? 'scroll' : 'visible'};
 	width: 100%;
 	height: 100vh;
-	z-index: 200;
+	z-index: 1000;
 	transform: translateX(-50%) translateY(-50%);
 
 	@media (max-width: 400px) {

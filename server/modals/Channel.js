@@ -155,9 +155,34 @@ channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {
 			[`playlists.${playmode}`]: channel.playlists[playmode],
 			$set: {'users.$.playmode': playmode}
 		},
-		{new: true}
+		{
+			new: true,
+			fields: {
+				youtubeId: 1,
+				title: 1,
+				thumbnail_url: 1,
+				users: {$elemMatch: {id: channelUser.id}},
+				topics: 1,
+				playlists: 1
+			}
+		}
 	)
 		.then(frontEndFields);
+});
+
+channelSchema.static('deleteUserInChannel', function(id, user) {
+	return Channel.findOneAndUpdate(
+		{_id: id, 'users.id': user.id},
+		{$pull: {users: {id: user.id}}},
+		{new: true}
+	)
+		.then(channel => {
+			if (channel.users.length === 0) {
+				return Channel.findByIdAndRemove(id);
+			}
+			return channel;
+		})
+		.then(errorIfNull(404, 'Channel or user cannot be found.'));
 });
 
 channelSchema.index({title: 1});
