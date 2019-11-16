@@ -83,8 +83,6 @@ export default connectFunction(function(props) {
 		}
 	}; 
 
-	console.log(data.channels);
-
 	return (
 		<div>
 			<Header>My Channels</Header>

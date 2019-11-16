@@ -11,12 +11,19 @@ import {
 	CLEAR
 } from '../actions/player';
 
+
+const statuses = {
+	unstarted: -1,
+	stop: 0,
+	play: 1,
+	pause: 2,
+};
+
 const defaultState = {
 	type: 'STOP',
-	status: 0,
+	status: statuses.stop,
 	playlist: null,
 	isExpanded: false,
-	isNext: false,
 	playingCurrent: {},
 	YTPlayer: null
 };
@@ -35,10 +42,9 @@ export default function playerReducer(state = defaultState, action) {
 			YTPlayer.loadVideoById(video.youtubeId);
 			return {
 				type: 'SINGLE',
-				status: 1,
+				status: statuses.unstarted,
 				playlist: video,
 				playingCurrent: video,
-				isNext: true,
 				isExpanded: true,
 				YTPlayer: state.YTPlayer
 			};
@@ -47,22 +53,21 @@ export default function playerReducer(state = defaultState, action) {
 			YTPlayer.loadVideoById(randomVideo.youtubeId);
 			return {
 				type: 'LIST',
-				status: 1,
+				status: statuses.unstarted,
 				playlist: videos,
 				playingCurrent: randomVideo,
-				isNext: true,
 				isExpanded: true,
 				YTPlayer: state.YTPlayer
 			};
 		case PLAY_NEXT:
-			if (state.status === 0) return state;
+			if (state.status === statuses.stop) return state;
 
 			if (state.type === 'SINGLE') {
 				YTPlayer.stopVideo();
 				return {
 					...defaultState,
 					isExpanded: state.isExpanded,
-					YTPlayer: state.YTPlayer
+					YTPlayer: state.YTPlayer,
 				};
 			}
 
@@ -70,27 +75,27 @@ export default function playerReducer(state = defaultState, action) {
 			YTPlayer.loadVideoById(randomVideo.youtubeId);
 			return {
 				...state,
-				isNext: true,
+				status: statuses.unstarted,
 				playingCurrent: randomVideo
 			};
 		case PLAY:
 			YTPlayer.playVideo();
 			return {
 				...state,
-				status: 1
+				status: statuses.play
 			};
 		case PAUSE:
-			if (state.isNext) {
+			if (state.status === statuses.unstarted) {
+				YTPlayer.playVideo();
 				return {
 					...state,
-					status: 2,
-					isNext: false
+					status: statuses.play
 				};
-			}
+			};
 			YTPlayer.pauseVideo();
 			return {
 				...state,
-				status: 2
+				status: statuses.pause
 			};
 		case STOP:
 			YTPlayer.stopVideo();
