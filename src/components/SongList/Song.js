@@ -1,12 +1,27 @@
 import React from 'react';
+import {connect} from 'react-redux';
+
+import {playSingle} from '../../actions/player';
 
 import {Wrapper, Img, ButtonsWrapper, InfoWrapper, Info, Artist, Duration, SongButton} from './styles';
 import main from '../../style/main';
 
-export default function(props) {
-	const {title, duration, thumbnail_url} = props;
-	const [artist, song] = title.split('-')
-		.map(str => str.trim());
+const mapStateToProps = () => ({});
+const mapDispatchToProps = {playSingle};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
+
+export default connectFunction(function(props) {
+	const {youtubeId, title, artist, duration, thumbnail_url} = props;
+	const {playSingle} = props;
+
+	const onPlay = e => {
+		playSingle({
+			youtubeId,
+			title,
+			artist,
+			thumbnail_url, 
+		});
+	};
 
 	return(
 		<li>
@@ -14,7 +29,7 @@ export default function(props) {
 				<Img src={thumbnail_url} alt={title}/>
 				<InfoWrapper>
 					<div>
-						<Info>{song}</Info>
+						<Info>{title}</Info>
 						<Artist>{artist}</Artist>
 					</div>
 				</InfoWrapper>
@@ -22,18 +37,19 @@ export default function(props) {
 					<SongButton 
 						bg={main.colors.color3} 
 						color={main.colors.color1}
+						onClick={onPlay}
 					>
-							Play
+						Play
 					</SongButton>
 					<SongButton 
 						bg={main.colors.color3} 
 						color={main.colors.color1}
 					>
-							Delete
+						Delete
 					</SongButton>
 				</ButtonsWrapper>
 				<Duration>{duration}</Duration>
 			</Wrapper>
 		</li>
 	);
-}; 
+}); 

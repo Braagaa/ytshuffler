@@ -40,16 +40,15 @@ export const HideRule = styled.p`
 `;
 
 export const SongForm = styled.form`
-	@media (min-width: 624px) {
+	@media (min-width: 725px) {
 		display: flex;
 	}
 
 	button {
-		margin-bottom: 1.5em;
+		margin: 0 0 1.5em 1em;
 
-		@media (min-width: 624px) {
+		@media (min-width: 725px) {
 			align-self: center;
-			margin-left: 50px;
 		}
 	}
 `;

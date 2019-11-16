@@ -21,10 +21,10 @@ export const StyledButton = styled.button`
 `;
 
 export const SmallButton = styled.button`
+	${props => props.display ? `display: ${props.display};` : ''}
 	padding: 13px 20px;
 	color: ${props => props.color};
 	background: ${props => props.background};
-
 	box-shadow: ${props => 
 		props.bs ? '10px 10px 5px 0px rgba(50, 50, 50, 0.75)' : 'none'};
 	letter-spacing: 1px;

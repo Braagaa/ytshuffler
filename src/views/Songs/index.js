@@ -15,6 +15,7 @@ import {Message, ChannelImg} from '../../components/Results/styles';
 import {getChannel, changeChannelPlaylist, deleteChannel} from '../../apis/shuffler';
 import {fetching, fetchClear} from '../../actions/fetching';
 import {modalMode} from '../../actions/modal';
+import {playList} from '../../actions/player';
 import {setState} from '../../utils/commonEvent';
 import main from '../../style/main';
 
@@ -32,11 +33,12 @@ const mapStateToProps = dataStore => ({
 	isLoading: dataStore.fetching.isLoading,
 	modal: dataStore.modal
 });
-const mapDispatchToProps = {fetching, fetchClear, modalMode};
+const mapDispatchToProps = {fetching, fetchClear, modalMode, playList};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {fetching, fetchClear, modalMode, channel, isLoading, modal} = props;
+	const {channel, isLoading, modal} = props;
+	const {fetching, fetchClear, modalMode, playList} = props;
 	const {id} = props.match.params;
 
 	const onChange = e => {
@@ -44,7 +46,7 @@ export default connectFunction(function(props) {
 		fetching(changeChannelPlaylist, 'channel', id, e.target.value);
 	};
 
-	const onSubmit = e => {
+	const onDelete = e => {
 		e.preventDefault();
 		modalMode(true);
 	};
@@ -62,6 +64,11 @@ export default connectFunction(function(props) {
 			.then(setState(modalMode, false));
 	};
 
+	const onPlay = e => {
+		e.preventDefault();
+		playList(channel.songs);
+	};
+
 	useEffect(() => {
 		fetching(getChannel, 'channel', id);
 		return () => fetchClear();
@@ -77,7 +84,7 @@ export default connectFunction(function(props) {
 				<Header src={channel.thumbnail_url}>
 					{channel.title}
 				</Header>
-				<Form onSubmit={onSubmit}>
+				<Form onSubmit={onDelete}>
 					<RadioGroup 
 						title="Play Mode"
 						hint={songsAddedHint}
@@ -90,8 +97,17 @@ export default connectFunction(function(props) {
 						color={main.colors.color3}
 						background={main.colors.color1}
 						bs={true}
+						type="submit"
 					>
 						Delete Channel
+					</SmallButton>
+					<SmallButton
+						color={main.colors.color3}
+						background={main.colors.color1}
+						bs={true}
+						onClick={onPlay}
+					>
+						Play
 					</SmallButton>
 				</Form>
 				<SongList songs={channel.songs || []}/>

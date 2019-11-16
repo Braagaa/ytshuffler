@@ -107,7 +107,8 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 						}
 					}},
 					{$project: {
-						users: 0
+						users: 0,
+						playlists: 0
 					}}
 				]
 			}

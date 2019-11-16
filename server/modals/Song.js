@@ -6,15 +6,19 @@ const songSchema = new Schema({
 		type: String,
 		require: true
 	},
-	title: String,
+	title: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	artist: {
+		type: String,
+		default: '',
+		trim: true
+	},
 	thumbnail_url: String,
 	duration: String,
 	topics: [String]
-});
-
-songSchema.pre('save', function(next) {
-	this.topics = getTopics(this.topics);
-	next();
 });
 
 const Song = model('Song', songSchema);

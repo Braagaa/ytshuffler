@@ -1,11 +1,22 @@
+const createError = require('http-errors');
 const {Channel} = require('../modals/');
 const {getSearchVideos, getVideos, getChannelUpdate} = require('../apis/youtube-data');
 const {errorIfNull, castError} = require('../utils/errors');
+const getTopics = require('../utils/getTopics');
 const {map, asyncMap, splitEvery, flat, method, path} = require('../utils/func');
 
 const maxSongs = process.env.REACT_APP_MAX_NUMBER_SONGS || 100;
 
-const getAllSongs = async (channelId, order) => {
+const getTitle = youtubeTitle => {
+	const [artist, title] = youtubeTitle.split('-');
+	return title ? title : artist;
+};
+const getArtist = (channelTitle, youtubeTitle) => {
+	const [artist, title] = youtubeTitle.split('-');
+	return title ? artist : channelTitle;
+};
+
+const getAllSongs = async (channelId, channelTitle, order) => {
 	let searchResults = await getSearchVideos({channelId, order});
 	let videos = searchResults.data.items;
 
@@ -28,10 +39,11 @@ const getAllSongs = async (channelId, order) => {
 	videos = flat(videos.map(path('data.items')))
 		.map(video => ({
 			youtubeId: video.id,
-			title: video.snippet.title,
+			title: getTitle(video.snippet.title),
+			artist: getArtist(channelTitle, video.snippet.title),
 			thumbnail_url: video.snippet.thumbnails.default.url,
 			duration: video.contentDetails.duration,
-			topics: video.topicDetails.topicIds
+			topics: getTopics(video.topicDetails.relevantTopicIds)
 		}));
 
 	return videos;
@@ -39,8 +51,8 @@ const getAllSongs = async (channelId, order) => {
 
 const songsForChannel = async (req, res, next) => {
 	try {
-		const {youtubeId: channelId, order, videoCount} = req.channel;
-		let videos = await getAllSongs(channelId, order);
+		const {youtubeId: channelId, title, order, videoCount} = req.channel;
+		let videos = await getAllSongs(channelId, title, order);
 
 		req.channel.playlists = {[order]: videos};
 		req.channel.totalVideoCounts = Object.keys(Channel.schema.obj.playlists)
@@ -74,7 +86,7 @@ const channelUpdate = async (req, res, next) => {
 		const {params: {id, playlist}} = req;
 	
 		const channel = await Channel.findOneChannelForUpdate(id, req.user);
-		const {totalVideoCounts, youtubeId, playlists, user} = channel;
+		const {totalVideoCounts, youtubeId, title, playlists, user} = channel;
 
 		const channelVideoCount = await getChannelUpdate({id: youtubeId})
 			.then(path('data.items.0.statistics.videoCount'));
@@ -83,7 +95,7 @@ const channelUpdate = async (req, res, next) => {
 		const playlistCount = totalVideoCounts[playlist];
 
 		if (playlistCount !== parseInt(channelVideoCount)) {
-			videos = await getAllSongs(youtubeId, playlist);
+			videos = await getAllSongs(youtubeId, title, playlist);
 		} else {
 			videos = playlists[playlist];
 		};

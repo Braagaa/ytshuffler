@@ -4,6 +4,7 @@ const {flipObject} = require('./func');
 const topicIdsFliped = flipObject(topicIds);
 const convert = topicIdList => topicId => topicIdList[topicId];
 
-module.exports = topicIds => topicIds
+module.exports = (topicIds = []) => Array.from(new Set(topicIds
 	.map(convert(topicIdsFliped))
-	.filter(topic => topic && topic !== 'Music');
+	.filter(topic => topic && topic !== 'Music')
+));

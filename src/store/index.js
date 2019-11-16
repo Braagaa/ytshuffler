@@ -6,12 +6,14 @@ import initialLoad from '../reducers/initialLoad';
 import modal from '../reducers/modal';
 import input from '../reducers/input';
 import fetching from '../reducers/fetching';
+import player from '../reducers/player';
 
 import {getYotubeTopicIds} from '../apis/shuffler';
 import {fetchingSuccess} from '../actions/initialLoad';
+import {createYTPlayer} from '../actions/player';
 
 const store = createStore(
-	combineReducers({pagination, searchResults, initialLoad, modal, input, fetching}), 
+	combineReducers({pagination, searchResults, initialLoad, modal, input, fetching, player}), 
 	applyMiddleware(thunk)
 );
 
@@ -20,3 +22,6 @@ export default store;
 getYotubeTopicIds()
 	.then(res => res.data)
 	.then(topicIds => store.dispatch(fetchingSuccess('topicIds', topicIds)))
+
+//Creates youtube player object
+store.dispatch(createYTPlayer());

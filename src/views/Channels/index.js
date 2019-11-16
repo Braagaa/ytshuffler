@@ -12,6 +12,7 @@ import Pagination from '../../components/Pagination';
 import SearchBar from '../../components/SearchBar';
 import Conditional from '../../components/Conditional';
 import Message from '../../components/Message';
+import {SmallButton} from '../../components/Buttons';
 
 import mainStyle from '../../style/main';
 
@@ -19,6 +20,7 @@ const {colors} = mainStyle;
 const Loader = Loaders();
 const PaginationOrNull = Conditional(Pagination);
 const MessageOrNull = Conditional(Message);
+const ButtonOrNull = Conditional(SmallButton);
 const channelsPerPage = 50;
 const noChannelsMessage = [
 	"You have no channels. Why don't you <link>add<link> some?",
@@ -81,9 +83,20 @@ export default connectFunction(function(props) {
 		}
 	}; 
 
+	console.log(data.channels);
+
 	return (
 		<div>
 			<Header>My Channels</Header>
+			<ButtonOrNull
+				bool={data.channels && data.channels.length > 0}
+				color={colors.color3}
+				background={colors.color1}
+				bs={true}
+				display="block"
+			>
+				Play All
+			</ButtonOrNull>
 			<SearchBar clickHandler={searchHandler}/>
 			<PaginationOrNull
 				bool={metaData && metaData.pageLimit > 1}
