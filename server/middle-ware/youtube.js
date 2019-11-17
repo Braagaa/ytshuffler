@@ -49,9 +49,43 @@ const getAllSongs = async (channelId, channelTitle, order) => {
 	return videos;
 };
 
+const getSongsForUpdate = async (channel, playlist) => {
+	const {totalVideoCounts, youtubeId, title, playlists} = channel;
+
+	const channelVideoCount = await getChannelUpdate({id: youtubeId})
+		.then(path('data.items.0.statistics.videoCount'));
+
+	let videos = [];
+	const playlistCount = totalVideoCounts[playlist];
+
+	if (playlistCount !== parseInt(channelVideoCount)) {
+		videos = await getAllSongs(youtubeId, title, playlist);
+	} else {
+		videos = playlists[playlist];
+	};
+
+	return {videos, channelVideoCount};
+};
+
 const songsForChannel = async (req, res, next) => {
 	try {
-		const {youtubeId: channelId, title, order, videoCount} = req.channel;
+		const channel = await Channel.findOneChannelForUpdate({
+			youtubeId: req.channel.youtubeId
+		});
+		const {settings: {playmode: order}} = req.user;
+
+		if (channel) {
+			const {videos, channelVideoCount} = await getSongsForUpdate(channel, order);
+
+			req.channel = channel.toObject();
+			req.channel.totalVideoCounts[order] = channelVideoCount;
+			req.channel.playlists[order] = videos;
+
+			return next();
+		};
+
+		const {youtubeId: channelId, title, videoCount} = req.channel;
+
 		let videos = await getAllSongs(channelId, title, order);
 
 		req.channel.playlists = {[order]: videos};
@@ -85,20 +119,11 @@ const channelUpdate = async (req, res, next) => {
 	try {
 		const {params: {id, playlist}} = req;
 	
-		const channel = await Channel.findOneChannelForUpdate(id, req.user);
-		const {totalVideoCounts, youtubeId, title, playlists, user} = channel;
+		const channel = await Channel.findOneChannelForUpdate({_id: id})
+			.then(errorIfNull(404, 'Channel cannot be found.'));
+		const {totalVideoCounts, youtubeId, title, playlists} = channel;
 
-		const channelVideoCount = await getChannelUpdate({id: youtubeId})
-			.then(path('data.items.0.statistics.videoCount'));
-
-		let videos = [];
-		const playlistCount = totalVideoCounts[playlist];
-
-		if (playlistCount !== parseInt(channelVideoCount)) {
-			videos = await getAllSongs(youtubeId, title, playlist);
-		} else {
-			videos = playlists[playlist];
-		};
+		const {videos, channelVideoCount} = await getSongsForUpdate(channel, playlist);
 
 		req.channel = channel;
 		req.channel.playmode = playlist;

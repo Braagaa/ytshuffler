@@ -120,6 +120,36 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 		}));
 });
 
+channelSchema.static('findAllSongs', function(user) {
+	//user = {id: '5dba5cf7ef241f13f07f129b'};
+	user = {id: '5dc621557f11a21054eded91'};
+	return Channel.aggregate([
+		{$match: {'users.id': toObjectId(user.id)}},
+		{$addFields: {
+			userIndex: {$indexOfArray: ['$users.id', toObjectId(user.id)]},
+			playlistsArr: {$objectToArray: '$playlists'}
+		}},
+		{$addFields: {
+			user: {$arrayElemAt: ['$users', '$userIndex']}
+		}},
+		{$addFields: {
+			playlist: {$reduce: {
+				input: '$playlistsArr',
+				initialValue: {},
+				in: {
+					$cond: {
+						if: {$eq: ['$$this.k', '$user.playmode']},
+						then: '$$this.v',
+						else: '$$value'
+					}
+				}
+			}
+		}}},
+		{$group: {_id: null, s: {$push: '$playlist'}}},
+		{$project: {_id: 0, songs: '$s'}}
+	]);
+});
+
 channelSchema.static('findOneChannel', function(id, user) {
 	return Channel.findOne(
 		{_id: id, 'users.id': user._id}, 
@@ -135,16 +165,16 @@ channelSchema.static('findOneChannel', function(id, user) {
 		.then(frontEndFields);
 });
 
-channelSchema.static('findOneChannelForUpdate', function(id, user) {
+channelSchema.static('findOneChannelForUpdate', function(filter) {
 	return Channel.findOne(
-		{_id: id},
+		filter,
 		{
+			title: 1,
 			totalVideoCounts: 1,
 			youtubeId: 1,
 			playlists: 1
 		}
-	)
-		.then(errorIfNull(404, 'Channel cannot be found.'));
+	);
 });
 
 channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {

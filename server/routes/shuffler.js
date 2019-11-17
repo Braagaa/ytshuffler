@@ -37,6 +37,10 @@ const getChannelsMW = [
 	trySanitizeInput('query')('text')
 ];
 
+const getChannelsSongsMW = [
+	auth
+];
+
 const postChannelsMW = [
 	defaultProps('body', {order: 'date'}), 
 	auth,
@@ -74,6 +78,13 @@ router.get('/channels', getChannelsMW, (req, res, next) => {
 		.catch(
 			nextError(500, 'Your channels could not be obtained.', next)
 		);
+});
+
+//GET channels/songs
+router.get('/channels/songs', getChannelsSongsMW, (req, res, next) => {
+	return Channel.findAllSongs(req.user)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not get all of users songs at this time.', next));
 });
 
 //POST channels
