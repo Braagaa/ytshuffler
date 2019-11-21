@@ -24,7 +24,7 @@ const List = styled.ul`
 	  background-color: #aaa; /* or add it to the track */
 	}
 	::-webkit-scrollbar-thumb {
-		background: #6d54f0;
+		background: ${main.colors.purple};
 	}
 
 	li:last-child div {
@@ -38,7 +38,7 @@ export default function(props) {
 			{
 				props.songs
 					.map(adjustProp('duration', ytDuration))
-					.map(s => <Song key={s._id} {...s}/>)
+					.map(s => <Song key={s._id} channelTitle={props.channelTitle} {...s}/>)
 			}
 		</List>
 	);

@@ -11,11 +11,12 @@ const mapDispatchToProps = {playSingle};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {youtubeId, title, artist, duration, thumbnail_url} = props;
+	const {channelTitle, youtubeId, title, artist, duration, thumbnail_url} = props;
 	const {playSingle} = props;
 
 	const onPlay = e => {
 		playSingle({
+			channelTitle,
 			youtubeId,
 			title,
 			artist,

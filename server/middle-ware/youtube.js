@@ -3,7 +3,24 @@ const {Channel} = require('../modals/');
 const {getSearchVideos, getVideos, getChannelUpdate} = require('../apis/youtube-data');
 const {errorIfNull, castError} = require('../utils/errors');
 const getTopics = require('../utils/getTopics');
-const {map, asyncMap, splitEvery, flat, method, path} = require('../utils/func');
+const {
+	adjust,
+	adjustProp,
+	applyTo,
+	map, 
+	asyncMap, 
+	splitEvery, 
+	flat, 
+	method, 
+	pairBy,
+	path, 
+	pick, 
+	prop, 
+	props,
+	toObj, 
+	filter,
+	zipWith
+} = require('../utils/func');
 
 const maxSongs = process.env.REACT_APP_MAX_NUMBER_SONGS || 100;
 
@@ -136,8 +153,52 @@ const channelUpdate = async (req, res, next) => {
 	}
 };
 
+const channelsUpdate = async (req, res, next) => {
+	try {
+		user = {id: '5dba5cf7ef241f13f07f129b'}
+		const channels = await Channel.findChannelsForUpdate(user);
+
+		const channelsIdsObjs = splitEvery(50)(channels)
+			.map(map(prop('youtubeId')))
+			.map(method('join', ','))
+			.map(toObj('id'));
+
+		const neededChannelsToUpdate = await Promise
+			.all(channelsIdsObjs.map(getChannelUpdate))
+			.then(map(path('data.items')))
+			.then(flat)
+			.then(map(pick('id,statistics.videoCount')))
+			.then(map(adjustProp('videoCount', parseInt)))
+			.then(pairBy(channels, 'youtubeId', 'id'))
+			.then(filter(([channel, data]) => channel.videoCount !== data.videoCount))
+			.then(map(([channel, resChannel]) => ({
+				...channel, 
+				newViewCount: resChannel.videoCount
+			})));
+		
+		const updatedChannels = await Promise.resolve(neededChannelsToUpdate)
+			.then(map(props('youtubeId,title,playmode')))
+			.then(map(applyTo(getAllSongs)))
+			.then(channels => Promise.all(channels))
+			.then(zipWith((channel, videos) => ({
+				_id: channel._id,
+				playmode: channel.playmode,
+				videoCount: channel.newViewCount,
+				videos
+			}), neededChannelsToUpdate));
+		
+		req.channels = updatedChannels;
+
+		next();
+	} catch(e) {
+		console.error(e);
+		next(createError(500, 'Could not update channels.'));
+	};
+};
+
 module.exports = {
 	songsForChannel,
 	userForChannel,
-	channelUpdate
+	channelUpdate,
+	channelsUpdate
 };

@@ -5,7 +5,8 @@ const {auth} = require('../middle-ware/auth');
 const {
 	songsForChannel, 
 	userForChannel, 
-	channelUpdate
+	channelUpdate,
+	channelsUpdate
 } = require('../middle-ware/youtube');
 const {
 	nextError, 
@@ -27,6 +28,8 @@ const router = express.Router();
 
 const success = (status, res) => fetched => res.status(status)
 	.json(fetched);
+const successEnd = (status, res) => () => res.status(status)
+	.end();
 const getData = fetched => fetched.data;
 const toData = data => ({items: data});
 
@@ -62,6 +65,11 @@ const putChannelMW = [
 	checkPlaylist,
 	channelUpdate,
 	userForChannel
+];
+
+const putChannelsUpdate = [
+	//auth
+	channelsUpdate
 ];
 
 const deleteChannelMW = [
@@ -120,6 +128,18 @@ router.put('/channels/:id/playlist/:playlist', putChannelMW, (req, res, next) =>
 	return Channel.updateChannelPlaylist(channel, channelUser)
 		.then(success(200, res))
 		.catch(nextError(500, 'Could not update channel playlist mode.', next));
+});
+
+//PUT channels/update
+router.put('/channels/update', putChannelsUpdate, (req, res, next) => {
+	const {channels} = req;
+	console.log(channels);
+	if (channels.length > 0) { 
+		return Channel.updateManyChannels(channels)
+			.then(successEnd(200, res))
+			.catch(nextError(500, 'Could not update channels.', next));
+	}
+	return successEnd(200, res)();
 });
 
 //DELETE channels/:id

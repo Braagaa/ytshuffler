@@ -66,7 +66,9 @@ export default connectFunction(function(props) {
 
 	const onPlay = e => {
 		e.preventDefault();
-		playList(channel.songs);
+		const songs = channel.songs
+			.map(song => ({...song, channelTitle: channel.title}));
+		playList(songs);
 	};
 
 	useEffect(() => {
@@ -110,7 +112,7 @@ export default connectFunction(function(props) {
 						Play
 					</SmallButton>
 				</Form>
-				<SongList songs={channel.songs || []}/>
+				<SongList channelTitle={channel.title} songs={channel.songs || []}/>
 			</div>
 			<Modal on={modal.on}>
 				<ModalLoader 

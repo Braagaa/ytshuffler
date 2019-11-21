@@ -9,6 +9,7 @@ import {ReactComponent as MusicIcon} from '../../imgs/music-player.svg';
 import {ReactComponent as MinimizeIcon} from '../../imgs/minimize.svg';
 import {ReactComponent as ShuffleButton} from '../../imgs/shuffle.svg';
 import {ConditionalHidden, Conditions} from '../Conditional/';
+import Loaders from '../Loaders/';
 
 import {inverseBool} from '../../utils/commonEvent';
 import main from '../../style/main';
@@ -17,7 +18,8 @@ import {
 	pauseVideo, 
 	stopVideo, 
 	openPlayer,
-	playNext
+	playNext,
+	playAllSongs
 } from '../../actions/player';
 
 import {
@@ -25,6 +27,7 @@ import {
 	ImgHolder, 
 	SongTitle, 
 	Artist, 
+	ChannelTitle,
 	ButtonsWrapper, 
 	ButtonWrapper,
 	MinimizeWrapper,
@@ -42,7 +45,10 @@ const playmodes = createPlaymode(
 	['STOP', 'PLAY', 'PAUSE', 'SHUFFLE'], 
 	[StopButton, PlayButton, PauseButton, ShuffleButton]
 )({});
+
 const modeButtonColor = main.colors.color5;
+
+const Loader = Loaders();
 
 const mapStateToProps = storeData => ({
 	player: storeData.player
@@ -52,17 +58,16 @@ const mapDispatchToProps = {
 	pauseVideo,
 	stopVideo,
 	openPlayer,
-	playNext
+	playNext,
+	playAllSongs
 };
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
 	const {SHUFFLE, PLAY, PAUSE} = playmodes;
-	const {player, playVideo, playNext, pauseVideo, stopVideo, openPlayer} = props;
+	const {player, playVideo, playNext, pauseVideo, stopVideo, openPlayer, playAllSongs} = props;
 	const {playingCurrent} = player;
 
-	const pauseOrPlay = e => player.status === 0 || player.status === 2 
-		? playVideo() : pauseVideo();
 	const expandOrMinimize = inverseBool(openPlayer, player.isExpanded);
 
 	return(
@@ -70,12 +75,15 @@ export default connectFunction(function(props) {
 			<Wrapper minimize={player.isExpanded}>
 				<ImgHolder>
 					<ConditionalHidden bool={player.status === 0}>
-						<MusicIcon fill={main.colors.color3}/>
+						<Loader isLoading={player.isLoading} fill={main.colors.color3}>
+							<MusicIcon fill={main.colors.color3}/>
+						</Loader>
 						<div id="player"></div>
 					</ConditionalHidden>
 				</ImgHolder>
 				<SongTitle>{playingCurrent.title}</SongTitle>
 				<Artist>{playingCurrent.artist}</Artist>
+				<ChannelTitle>{playingCurrent.channelTitle}</ChannelTitle>
 				<ButtonsWrapper>
 					<MinimizeWrapper onClick={expandOrMinimize}>
 						<MinimizeIcon fill={modeButtonColor}/>
@@ -86,14 +94,14 @@ export default connectFunction(function(props) {
 							fill={modeButtonColor}
 						/>
 					</MinimizeWrapper>
-					<ButtonWrapper onClick={pauseOrPlay}>
+					<ButtonWrapper>
 						<Conditions bools={[
 								player.status === 0, 
 								player.status === 1
 						]}>
-							<SHUFFLE.component fill={modeButtonColor}/>
-							<PAUSE.component fill={modeButtonColor}/>
-							<PLAY.component fill={modeButtonColor}/>
+							<SHUFFLE.component onClick={playAllSongs} fill={modeButtonColor}/>
+							<PAUSE.component onClick={pauseVideo} fill={modeButtonColor}/>
+							<PLAY.component onClick={playVideo} fill={modeButtonColor}/>
 						</Conditions>
 					</ButtonWrapper>
 					<ButtonWrapper>

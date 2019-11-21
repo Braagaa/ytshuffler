@@ -121,8 +121,6 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 });
 
 channelSchema.static('findAllSongs', function(user) {
-	//user = {id: '5dba5cf7ef241f13f07f129b'};
-	user = {id: '5dc621557f11a21054eded91'};
 	return Channel.aggregate([
 		{$match: {'users.id': toObjectId(user.id)}},
 		{$addFields: {
@@ -145,9 +143,15 @@ channelSchema.static('findAllSongs', function(user) {
 				}
 			}
 		}}},
+		{$set: {'playlist.channelTitle': '$title'}},
 		{$group: {_id: null, s: {$push: '$playlist'}}},
-		{$project: {_id: 0, songs: '$s'}}
-	]);
+		{$project: {_id: 0, songs: {$reduce: {
+			input: '$s',
+			initialValue: [],
+			in: {$concatArrays: ['$$value', '$$this']}
+		}}}}
+	])
+		.then(data => data[0]);
 });
 
 channelSchema.static('findOneChannel', function(id, user) {
@@ -214,6 +218,48 @@ channelSchema.static('deleteUserInChannel', function(id, user) {
 			return channel;
 		})
 		.then(errorIfNull(404, 'Channel or user cannot be found.'));
+});
+
+channelSchema.static('findChannelsForUpdate', function(user) {
+	return Channel.aggregate([
+		{$match: {'users.id': toObjectId(user.id)}},
+		{$addFields: {
+			userIndex: {$indexOfArray: ['$users.id', toObjectId(user.id)]},
+			temp: {$objectToArray: '$totalVideoCounts'}
+		}},
+		{$addFields: {
+			user: {$arrayElemAt: ['$users', '$userIndex']},
+		}},
+		{$addFields: {
+			playmode: '$user.playmode',
+			videoCount: {$reduce: {
+				input: '$temp',
+				initialValue: {},
+				in: {
+					$cond: {
+						if: {$eq: ['$$this.k', '$user.playmode']},
+						then: '$$this.v',
+						else: '$$value'
+					}
+				}
+			}
+		}}},
+		{$project: {youtubeId: 1, title: 1, playmode: 1, videoCount: 1}}
+	]);
+});
+
+channelSchema.static('updateManyChannels', function(channels) {
+	const toBulkWrite = channels
+		.map(({_id, playmode, videoCount, videos}) => ({
+			updateOne: {
+				filter: {_id},
+				update: {
+					[`totalVideoCounts.${playmode}`]: videoCount,
+					[`playlists.${playmode}`]: videos,
+				}
+			}
+		}));
+	return Channel.bulkWrite(toBulkWrite);
 });
 
 channelSchema.index({title: 1});

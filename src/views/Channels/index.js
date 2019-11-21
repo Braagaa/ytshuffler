@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {getChannels} from '../../apis/shuffler';
 import {initalizePage} from '../../actions/pagination';
 import {fetching, fetchClear} from '../../actions/fetching';
+import {playList} from '../../actions/player';
 import {useMessages} from '../../hooks/';
 
 import Header from '../../components/Headers';
@@ -15,6 +16,7 @@ import Message from '../../components/Message';
 import {SmallButton} from '../../components/Buttons';
 
 import mainStyle from '../../style/main';
+import {assoc} from '../../utils/func';
 
 const {colors} = mainStyle;
 const Loader = Loaders();
@@ -34,12 +36,12 @@ const mapStateToProps = storeData => ({
 	page: storeData.pagination.page,
 	initalized: storeData.pagination.initalized
 });
-const mapDispatchToProps = {initalizePage, fetching, fetchClear};
+const mapDispatchToProps = {initalizePage, fetching, fetchClear, playList};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
 	const {data, isLoading, page, initalized} = props;
-	const {initalizePage, fetching, fetchClear} = props;
+	const {initalizePage, fetching, fetchClear, playList} = props;
 	const {metaData} = data;
 
 	const [messageObj, setMessage] = useMessages(false);
@@ -83,6 +85,14 @@ export default connectFunction(function(props) {
 		}
 	}; 
 
+	const playAllSongs = e => {
+		const allSongs = data.channels
+			.map(channel => channel.songs.map(assoc('channelTitle', channel.title)))
+			.reduce((acc, songs) => acc.concat(songs), []);
+
+		playList(allSongs);
+	};
+
 	return (
 		<div>
 			<Header>My Channels</Header>
@@ -92,6 +102,7 @@ export default connectFunction(function(props) {
 				background={colors.color1}
 				bs={true}
 				display="block"
+				onClick={playAllSongs}
 			>
 				Play All
 			</ButtonOrNull>

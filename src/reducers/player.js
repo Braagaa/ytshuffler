@@ -8,7 +8,8 @@ import {
 	PAUSE, 
 	STOP, 
 	EXPAND, 
-	CLEAR
+	CLEAR,
+	START_LOADING
 } from '../actions/player';
 
 
@@ -24,6 +25,7 @@ const defaultState = {
 	status: statuses.stop,
 	playlist: null,
 	isExpanded: false,
+	isLoading: false,
 	playingCurrent: {},
 	YTPlayer: null
 };
@@ -46,6 +48,7 @@ export default function playerReducer(state = defaultState, action) {
 				playlist: video,
 				playingCurrent: video,
 				isExpanded: true,
+				isLoading: false,
 				YTPlayer: state.YTPlayer
 			};
 		case PLAY_LIST:
@@ -57,6 +60,7 @@ export default function playerReducer(state = defaultState, action) {
 				playlist: videos,
 				playingCurrent: randomVideo,
 				isExpanded: true,
+				isLoading: false,
 				YTPlayer: state.YTPlayer
 			};
 		case PLAY_NEXT:
@@ -108,6 +112,11 @@ export default function playerReducer(state = defaultState, action) {
 			return {
 				...state,
 				isExpanded: action.payload.isExpanded
+			};
+		case START_LOADING:
+			return {
+				...state,
+				isLoading: true
 			};
 		case CLEAR:
 			return defaultState;

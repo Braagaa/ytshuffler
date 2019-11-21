@@ -26,7 +26,7 @@ export default function(props) {
 	return (
 		<Wrapper lm={props.lm} isLoading={props.isLoading}>
 			<DiscSVG fill={props.fill} size={props.size}/>
-			<p>Loading</p>
+			<p>{props.message || 'Loading'}</p>
 		</Wrapper>
 	);
 };

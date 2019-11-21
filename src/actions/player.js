@@ -1,3 +1,5 @@
+import {getAllSongs} from '../apis/shuffler';
+
 export const CREATE_PLAYER = 'CREATE_PLAYER';
 export const PLAY_SINGLE = 'PLAY_SINGLE';
 export const PLAY_LIST = 'PLAY_LIST';
@@ -7,6 +9,8 @@ export const STOP = 'STOP';
 export const PAUSE = 'PAUSE'
 export const CLEAR = 'CLEAR';
 export const EXPAND = 'EXPAND';
+export const START_LOADING = 'START_LOADING';
+export const ERROR = 'ERROR';
 
 export const playSingle = video => ({
 	type: PLAY_SINGLE,
@@ -28,6 +32,11 @@ export const sendYTPlayer = YTPlayer => ({
 	payload: {YTPlayer}
 });
 
+export const foundError = e => ({
+	type: ERROR,
+	payload: {error: e}
+});
+
 const action = action => () => ({type: action});
 
 export const playVideo = action(PLAY);
@@ -35,6 +44,15 @@ export const playNext = action(PLAY_NEXT);
 export const stopVideo = action(STOP);
 export const pauseVideo = action(PAUSE);
 export const clearPlayer = action(CLEAR);
+export const startLoading = action(START_LOADING);
+
+export const playAllSongs = () => dispatch => {
+	dispatch(startLoading());
+	return getAllSongs()
+		.then(res => res.data.songs)
+		.then(songs => dispatch(playList(songs)))
+		.catch(e => dispatch(foundError(e)));
+};
 
 const checkState = (state, e) => e.data === window.YT.PlayerState[state];
 

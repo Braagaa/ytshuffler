@@ -27,3 +27,5 @@ export const noDup = arr => Array.from(new Set(arr));
 export const call = (...arg) => fn => fn(...arg);
 
 export const isEmpty = obj => Object.keys(obj).length === 0;
+
+export const assoc = (prop, value) => obj => ({...obj,  [prop]: value});

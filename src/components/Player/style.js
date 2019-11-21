@@ -33,10 +33,14 @@ export const Textt = styled.div`
 export const SongTitle = styled(Textt)`
 	color: ${main.colors.color5};
 `;
+export const ChannelTitle = styled(Textt)`
+	font-size: 0.8em;
+	color: ${main.colors.purple};
+	margin-bottom: 20px;
+`;
 
 export const Artist = styled(Textt)`
 	color: ${main.colors.color3};
-	margin-bottom: 20px;
 `;
 
 export const ButtonWrapper = styled.div`
