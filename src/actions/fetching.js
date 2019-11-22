@@ -1,6 +1,7 @@
 import {FETCHING_BEGIN, FETCHING_SUCCESS, FETCHING_FAIL} from './initialLoad';
 import {tap} from '../utils/func';
 
+export const MERGE_FETCHED = 'MERGE_FETCHED';
 export const CLEAR_FETCH = 'CLEAR_FETCH';
 
 export const fetchStart = () => ({type: FETCHING_BEGIN});
@@ -8,6 +9,10 @@ export const fetchFail = error => ({type: FETCHING_FAIL, error});
 export const fetchClear = key => ({type: CLEAR_FETCH})
 export const fetchSuccess = key => data => ({
 	type: FETCHING_SUCCESS,
+	payload: {key, data}
+});
+export const mergeFetched = (key, data) => ({
+	type: MERGE_FETCHED,
 	payload: {key, data}
 });
 

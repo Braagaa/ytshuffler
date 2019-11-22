@@ -1,12 +1,24 @@
 const express = require('express');
 const {nextError, errorIfNull} = require('../utils/errors');
-const {User, Channel} = require('../modals');
+const {Channel} = require('../modals');
+const {User} = require('../modals/User');
 const {auth} = require('../middle-ware/auth'); 
-const {trySanitizeInput} = require('../middle-ware/validateYoutube');
+const {prop} = require('../utils/func');
+const {
+	checkValidSettings, 
+	trySanitizeInput, 
+	sanitizeInputs
+} = require('../middle-ware/validateYoutube');
 
 const video_infoMW = [
 	auth,
 	trySanitizeInput('params')('id')
+];
+
+const settingsMW = [
+	auth,
+	sanitizeInputs('body'),
+	checkValidSettings
 ];
 
 const router = express.Router();
@@ -29,6 +41,23 @@ router.get('/video_info/:id', video_infoMW, (req, res, next) => {
 		.then(data => data.users[0])
 		.then(success(200, res))
 		.catch(next);
+});
+
+router.get('/settings', auth, (req, res, next) => {
+	const {settings} = req.user;
+	return res.status(200)
+		.json(settings);
+});
+
+router.put('/settings', settingsMW, (req, res, next) => {
+	return User.findByIdAndUpdate(
+		req.user.id,
+		{settings: req.body},
+		{new: true, select: {settings: 1}}
+	)
+		.then(prop('settings'))
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not change settings', next));
 });
 
 module.exports = router;

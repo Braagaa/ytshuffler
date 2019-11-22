@@ -155,8 +155,7 @@ const channelUpdate = async (req, res, next) => {
 
 const channelsUpdate = async (req, res, next) => {
 	try {
-		user = {id: '5dba5cf7ef241f13f07f129b'}
-		const channels = await Channel.findChannelsForUpdate(user);
+		const channels = await Channel.findChannelsForUpdate(req.user);
 
 		const channelsIdsObjs = splitEvery(50)(channels)
 			.map(map(prop('youtubeId')))

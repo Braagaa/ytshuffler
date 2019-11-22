@@ -27,6 +27,7 @@ export const SmallButton = styled.button`
 	background: ${props => props.background};
 	box-shadow: ${props => 
 		props.bs ? '10px 10px 5px 0px rgba(50, 50, 50, 0.75)' : 'none'};
+	margin: ${props => props.margin};
 	letter-spacing: 1px;
 	font-size: 1.2em;
 	font-weight: bold;

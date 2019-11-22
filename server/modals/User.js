@@ -1,5 +1,6 @@
 const {Schema, model} = require('mongoose');
 const {validate: isEmail} = require('email-validator');
+const Channel = require('./index');
 const validatePassword = require('../utils/password');
 
 const userSchema = new Schema({

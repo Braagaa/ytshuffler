@@ -23,16 +23,14 @@ const postAxios = (url, config = {}) => (data = {}) =>
 		...config
 	});
 
-const putAxios = (url, config = {}) => (data = {}) => 
-	axios.put(url, data, {
+const createAxios = type => (url, config = {}) => (data = {}) => 
+	axios[type](url, data, {
 		...config
 	});
+const putAxios = createAxios('put');
+const deleteAxios = createAxios('delete');
 
-const deleteAxios = (url, config = {}) => (data = {}) =>
-	axios.delete(url, data, {
-		...config
-	});
-
+//shuffler
 export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});
 export const getYoutubeChannels = ids => getAxios(youtubeURL + 'channels')({ids});
 export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
@@ -40,10 +38,16 @@ export const getChannels = getAxios(shufflerURL + 'channels');
 export const getChannel = id => getAxios(shufflerURL + 'channels/' + id)();
 export const getAllSongs = getAxios(shufflerURL + 'channels/songs');
 export const createChannel = postAxios(shufflerURL + 'channels');
-export const registerUser = postAxios(authURL + 'register');
-export const loginUser = postAxios(authURL + 'login');
-export const getUserVideoInfo = id => getAxios(usersURL + 'video_info/' + id)();
 export const deleteChannel = id => deleteAxios(shufflerURL + 'channels/' + id)();
 export const updateAllChannels = putAxios(shufflerURL + 'channels/update');
 export const changeChannelPlaylist = (channelId, playmode) => 
 	putAxios(shufflerURL + `channels/${channelId}/playlist/${playmode}`)();
+
+//auth
+export const registerUser = postAxios(authURL + 'register');
+export const loginUser = postAxios(authURL + 'login');
+
+//users
+export const getUserVideoInfo = id => getAxios(usersURL + 'video_info/' + id)();
+export const getUserSettings = getAxios(usersURL + 'settings/');
+export const updateUserSettings = putAxios(usersURL + 'settings/');

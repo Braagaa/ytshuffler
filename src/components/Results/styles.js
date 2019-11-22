@@ -106,6 +106,7 @@ export const Link = styled.a`
 `;
 
 export const Message = styled.p`
-	font-size: 1.4em;
+	font-size:${props => props.fs ? props.fs : '1.4em'};
 	text-align: center;
+	margin-bottom: ${props => props.mb};
 `;

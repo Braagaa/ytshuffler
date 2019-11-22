@@ -71,10 +71,18 @@ const trySanitizeInput = type => prop => (req, res, next) => {
 	next();
 };
 
+const sanitizeInputs = type => (req, res, next) => {
+	Object.entries(req[type])
+		.forEach(([key, value]) => req[type][key] = sanitize(value));
+
+	next();
+};
+
 const checkPlaylist = (req, res, next) => {
 	const check = Object
 		.keys(Channel.schema.obj.playlists)
 		.includes(req.params.playlist);
+	
 	if (check) return next();
 	return next(createError(404, `Playlist '${req.params.playlist}' does not exist.`));
 };
@@ -83,6 +91,15 @@ const checkObjectId = prop => (req, res, next) => {
 	if (!mongoose.Types.ObjectId.isValid(req[prop].id))
 		return next(createError(422, 'Param id is invalid.'));
 	return next();
+};
+
+const checkValidSettings = (req, res, next) => {
+	const check = Object
+		.keys(Channel.schema.obj.playlists)
+		.includes(req.body.playmode);
+
+	if (check) return next();
+	return next(createError(422, `'${req.body.playmode}' is not a valid setting value.`));
 };
 
 module.exports = {
@@ -94,6 +111,8 @@ module.exports = {
 	validatePassword,
 	tryParseNumber,
 	trySanitizeInput,
+	sanitizeInputs,
 	checkPlaylist,
-	checkObjectId
+	checkObjectId,
+	checkValidSettings
 };

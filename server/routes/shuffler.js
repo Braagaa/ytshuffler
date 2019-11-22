@@ -68,7 +68,7 @@ const putChannelMW = [
 ];
 
 const putChannelsUpdate = [
-	//auth
+	auth,
 	channelsUpdate
 ];
 
