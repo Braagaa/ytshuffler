@@ -38,6 +38,7 @@ export const getChannels = getAxios(shufflerURL + 'channels');
 export const getChannel = id => getAxios(shufflerURL + 'channels/' + id)();
 export const getAllSongs = getAxios(shufflerURL + 'channels/songs');
 export const createChannel = postAxios(shufflerURL + 'channels');
+export const deleteChannels = deleteAxios(shufflerURL + 'channels/');
 export const deleteChannel = id => deleteAxios(shufflerURL + 'channels/' + id)();
 export const updateAllChannels = putAxios(shufflerURL + 'channels/update');
 export const changeChannelPlaylist = (channelId, playmode) => 

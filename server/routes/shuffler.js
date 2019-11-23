@@ -72,6 +72,10 @@ const putChannelsUpdate = [
 	channelsUpdate
 ];
 
+const deleteChannelsMW = [
+	auth
+];
+
 const deleteChannelMW = [
 	auth,
 	trySanitizeInput('params')('id'),
@@ -140,6 +144,12 @@ router.put('/channels/update', putChannelsUpdate, (req, res, next) => {
 			.catch(nextError(500, 'Could not update channels.', next));
 	}
 	return successEnd(200, res)();
+});
+
+router.delete('/channels', deleteChannelsMW, (req, res, next) => {
+	return Channel.deleteUserInChannels(req.user)
+		.then(successEnd(200, res))
+		.catch(nextError(500, 'Could not delete all channels.', next));
 });
 
 //DELETE channels/:id

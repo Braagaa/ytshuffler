@@ -2,6 +2,7 @@ const {Schema, model, Types: {ObjectId: toObjectId}} = require('mongoose');
 const {songSchema} = require('./Song');
 const {userSchema} = require('./User');
 const {errorIfNull} = require('../utils/errors');
+const {tap} = require('../utils/func');
 
 const {ObjectId} = Schema.Types;
 
@@ -203,6 +204,14 @@ channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {
 		}
 	)
 		.then(frontEndFields);
+});
+
+channelSchema.static('deleteUserInChannels', function(user) {
+	return Channel.updateMany(
+		{'users.id': user.id},
+		{$pull: {users: {id: user.id}}}
+	)
+		.then(() => Channel.deleteMany({users: {$size: 0}}));
 });
 
 channelSchema.static('deleteUserInChannel', function(id, user) {

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
-import {getUserSettings, updateUserSettings} from '../../apis/shuffler';
+import {getUserSettings, updateUserSettings, deleteChannels} from '../../apis/shuffler';
 import {fetching, mergeFetched, fetchClear} from '../../actions/fetching';
 import {modalMode} from '../../actions/modal';
 
@@ -15,6 +15,7 @@ import OverLay from '../../components/Modal/OverLay';
 import {Message} from '../../components/Results/styles';
 
 import main from '../../style/main';
+import {setState} from '../../utils/commonEvent';
 
 const radioDefaultPlaymodeButtons = [
 	['date', 'Most Recent Songs'],
@@ -51,6 +52,8 @@ export default connectFunction(function(props) {
 	const yesDelete = e => {
 		e.preventDefault();
 		modalMode(true, true);
+		deleteChannels()
+			.then(setState(modalMode, false, false));
 	};
 
 	const noDelete = e => {
