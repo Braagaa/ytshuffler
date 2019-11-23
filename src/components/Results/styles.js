@@ -107,6 +107,7 @@ export const Link = styled.a`
 
 export const Message = styled.p`
 	font-size:${props => props.fs ? props.fs : '1.4em'};
+	font-weight: ${props => props.fw};
 	text-align: center;
 	margin-bottom: ${props => props.mb};
 `;

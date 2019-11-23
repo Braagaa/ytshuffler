@@ -12,6 +12,7 @@ import Search from './views/Search';
 import Channels from './views/Channels';
 import Songs from './views/Songs';
 import Settings from './views/Settings';
+import NoMatch from './views/404';
 import Player from './components/Player/';
 import Logout from './components/Logout';
 
@@ -32,16 +33,37 @@ export default function App() {
 					<MainWrapper>
 						<Switch>
 							<Route path="/" exact component={Login}/>
-							<Route path="/search" exact component={Search}/>
-							<Route path="/settings" exact component={Settings}/>
+							<AuthRoute 
+								path="/search" 
+								redirectTo={'/'}
+								exact 
+								component={Search}
+							/>
+							<AuthRoute 
+								path="/settings" 
+								redirectTo={'/'}
+								exact 
+								component={Settings}
+							/>
 							<AuthRoute 
 								path="/channels" 
 								redirectTo={'/'}
 								exact 
 								component={Channels}
 							/>
-							<Route path="/channels/:id" exact component={Songs}/>
-							<Route path="/signout" exact component={Logout}/>
+							<AuthRoute 
+								path="/channels/:id" 
+								redirectTo={'/'}
+								exact 
+								component={Songs}
+							/>
+							<AuthRoute 
+								path="/signout" 
+								redirectTo={'/'}
+								exact 
+								component={Logout}
+							/>
+							<Route path="*" component={NoMatch}/>
 						</Switch>
 						<Player/>
 					</MainWrapper>
