@@ -93,6 +93,8 @@ export default connectFunction(function(props) {
 		playList(allSongs);
 	};
 
+	console.log(data);
+
 	return (
 		<div>
 			<Header>My Channels</Header>

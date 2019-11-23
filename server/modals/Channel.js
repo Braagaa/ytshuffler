@@ -81,7 +81,7 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 								initialValue: '',
 								in: {
 									$cond: {
-										if: ['$$this.id', toObjectId(user.id)],
+										if: {$eq: ['$$this.id', toObjectId(user.id)]},
 										then: '$$this.playmode',
 										else: '$$value'
 									}
@@ -99,7 +99,7 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 								initialValue: '',
 								in: {
 									$cond: {
-										if: ['$$this.k', '$playmode'],
+										if: {$eq: ['$$this.k', '$playmode']},
 										then: '$$this.v',
 										else: '$$value'
 									}
