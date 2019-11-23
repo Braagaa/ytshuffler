@@ -13,6 +13,7 @@ import Channels from './views/Channels';
 import Songs from './views/Songs';
 import Settings from './views/Settings';
 import Player from './components/Player/';
+import Logout from './components/Logout';
 
 const MainWrapper = styled.div`
 	max-width: 992px;
@@ -40,6 +41,7 @@ export default function App() {
 								component={Channels}
 							/>
 							<Route path="/channels/:id" exact component={Songs}/>
+							<Route path="/signout" exact component={Logout}/>
 						</Switch>
 						<Player/>
 					</MainWrapper>
