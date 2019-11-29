@@ -28,7 +28,7 @@ const auth = (req, res, next) => {
 		return next(unauthorizedError);
 	};
 
-	if (req.method === 'POST') {
+	if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
 		if (!req.get('CSRF') || req.get('CSRF') !== token.csrf)
 			return next(unauthorizedError);
 	}

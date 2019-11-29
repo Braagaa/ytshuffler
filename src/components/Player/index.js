@@ -11,7 +11,6 @@ import {ReactComponent as ShuffleButton} from '../../imgs/shuffle.svg';
 import {ConditionalHidden, Conditions} from '../Conditional/';
 import Loaders from '../Loaders/';
 
-import {inverseBool} from '../../utils/commonEvent';
 import main from '../../style/main';
 import {
 	playVideo, 
@@ -68,13 +67,18 @@ export default connectFunction(function(props) {
 	const {player, playVideo, playNext, pauseVideo, stopVideo, openPlayer, playAllSongs} = props;
 	const {playingCurrent} = player;
 
-	const expandOrMinimize = inverseBool(openPlayer, player.isExpanded);
+	const expandOrMinimize = e => {
+		if (player.status === 3) {
+			return openPlayer(false);
+		};
+		return openPlayer(!player.isExpanded);
+	};
 
 	return(
 		<div>
-			<Wrapper minimize={player.isExpanded}>
+			<Wrapper minimize={player.isExpanded && player.status !== 3}>
 				<ImgHolder>
-					<ConditionalHidden bool={player.status === 0}>
+					<ConditionalHidden bool={player.status === 0 || player.status === 3}>
 						<Loader isLoading={player.isLoading} fill={main.colors.color3}>
 							<MusicIcon fill={main.colors.color3}/>
 						</Loader>
@@ -109,7 +113,7 @@ export default connectFunction(function(props) {
 					</ButtonWrapper>
 				</ButtonsWrapper>
 			</Wrapper>
-			<ExpandWrapper minimize={player.isExpanded}>
+			<ExpandWrapper minimize={player.isExpanded && player.status !== 3}>
 				<ButtonWrapper onClick={expandOrMinimize}>
 					<MusicIcon fill={main.colors.color6}/>
 				</ButtonWrapper>

@@ -9,7 +9,8 @@ import {
 	STOP, 
 	EXPAND, 
 	CLEAR,
-	START_LOADING
+	START_LOADING,
+	ERROR
 } from '../actions/player';
 
 
@@ -18,6 +19,7 @@ const statuses = {
 	stop: 0,
 	play: 1,
 	pause: 2,
+	error: 3
 };
 
 const defaultState = {
@@ -117,6 +119,11 @@ export default function playerReducer(state = defaultState, action) {
 			return {
 				...state,
 				isLoading: true
+			};
+		case ERROR:
+			return {
+				...state,
+				status: statuses.error
 			};
 		case CLEAR:
 			return defaultState;

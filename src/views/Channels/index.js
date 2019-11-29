@@ -17,6 +17,7 @@ import {SmallButton} from '../../components/Buttons';
 
 import mainStyle from '../../style/main';
 import {assoc} from '../../utils/func';
+import {unauthorized} from '../../utils/auth';
 
 const {colors} = mainStyle;
 const Loader = Loaders();
@@ -50,7 +51,7 @@ export default connectFunction(function(props) {
 		if (data.channels.length === 0) setMessage(message, links);
 		return data;
 	};
-
+	
 	useEffect(() => {
 		fetching(getChannels, 'data', {page: 1, skip: channelsPerPage})
 			.then(checkIfNoChannels(...noChannelsMessage))
@@ -81,7 +82,8 @@ export default connectFunction(function(props) {
 				skip: channelsPerPage, 
 				text: searchText
 			})
-				.then(checkIfNoChannels(`No channels found for '${searchText}'.`));
+				.then(checkIfNoChannels(`No channels found for '${searchText}'.`))
+				.catch(unauthorized(props.history));
 		}
 	}; 
 

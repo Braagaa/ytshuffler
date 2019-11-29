@@ -1,6 +1,12 @@
 import {MODAL_OFF, MODAL_ON} from '../actions/modal';
 
-export default function modalReducer(state = {}, action) {
+const defaultState = {
+	on: false,
+	isLoading: false,
+	data: {}
+};
+
+export default function modalReducer(state = defaultState, action) {
 	switch (action.type) {
 		case MODAL_OFF:
 			return {
@@ -15,10 +21,6 @@ export default function modalReducer(state = {}, action) {
 				data: action.payload.data
 			};
 		default:
-			return {
-				on: false,
-				isLoading: false,
-				data: state
-			}
+			return state;
 	}
 };

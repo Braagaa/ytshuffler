@@ -16,19 +16,21 @@ const getAxios = (url, initalQuery = {}) => (query = {}) =>
 		}
 	});
 
-const postAxios = (url, config = {}) => (data = {}) => 
-	axios.post(url, {...data}, {
+const createAxios = type => (url, config = {}) => (data = {}) => 
+	axios[type](url, data, {
 		xsrfHeaderName: 'CSRF',
 		headers: {CSRF: getCSRFStorage()},
 		...config
 	});
+const postAxios = createAxios('post');
+const putAxios = createAxios('put');
 
-const createAxios = type => (url, config = {}) => (data = {}) => 
-	axios[type](url, data, {
+const deleteAxios = (url, config = {}) => () => 
+	axios.delete(url, {
+		xsrfHeaderName: 'CSRF',
+		headers: {CSRF: getCSRFStorage()},
 		...config
 	});
-const putAxios = createAxios('put');
-const deleteAxios = createAxios('delete');
 
 //shuffler
 export const getYoutubeSearchChannels = q => getAxios(youtubeURL + 'search/channels')({q});

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import dataStore from './store';
-import ProtectedRoute from './components/AuthRoute';
+import ProtectedRoute, {LoggedIn} from './components/AuthRoute';
 import {isAuthenticatedUser} from './utils/auth';
 
 import NavBar from './components/NavBar';
@@ -29,10 +29,16 @@ export default function App() {
 		<Provider store={dataStore}>
 			<div>
 				<Router>
-					<NavBar/>
+					<Route path="/" component={NavBar}/>
 					<MainWrapper>
 						<Switch>
-							<Route path="/" exact component={Login}/>
+							<LoggedIn 
+								path="/" 
+								redirectTo={'/channels'}
+								exact 
+								auth={isAuthenticatedUser}
+								component={Login}
+							/>
 							<AuthRoute 
 								path="/search" 
 								redirectTo={'/'}

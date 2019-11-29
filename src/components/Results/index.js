@@ -7,6 +7,8 @@ import PreLoader from '../Loaders/';
 import WaitingDots from '../Loaders/WaitingDots';
 import Modal from '../Modal/';
 import OverLay from '../Modal/OverLay';
+import InfoModal from '../InfoModal/';
+import {ConditionalLoader as Conditional} from '../Conditional/';
 
 import {flipObject} from '../../utils/func';
 import {setState} from '../../utils/commonEvent';
@@ -28,31 +30,36 @@ const isNotSearchResult = item => item.kind !== 'youtube#searchResult';
 
 const mapStateToProps = storeData => ({
 	topicIds: storeData.initialLoad.topicIds,
-	modal: storeData.modal
+	modal: storeData.modal,
+	searchResults: storeData.searchResults
 });
 const mapDispatchToProps = {modalMode};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {topicIds, modal} = props;
+	const {topicIds, modal, searchResults} = props;
 	const {data: modalData} = modal;
 	const {modalMode} = props;
 
 	const endModal = setState(modalMode, false);
+
 	return (
 		<Wrapper>
 			<Modal on={modal.on}>
-				<Loader size="50px" fill={modalColor} isLoading={modal.isLoading}>
-					<ChannelImg src={modalData.thumbnail_url}/>
-					<Message>{modalData.channelTitle} is added to your Channels!</Message>
-					<ModalButton 
-						color={modalBackground} 
-						background={modalColor}
-						onClick={endModal}
-					>
-						OK
-					</ModalButton>
-				</Loader>
+				<Conditional bool={!searchResults.isError}>
+					<Loader size="50px" fill={modalColor} isLoading={modal.isLoading}>
+						<ChannelImg src={modalData.thumbnail_url}/>
+						<Message>{modalData.channelTitle} is added to your Channels!</Message>
+						<ModalButton 
+							color={modalBackground} 
+							background={modalColor}
+							onClick={endModal}
+						>
+							OK
+						</ModalButton>
+					</Loader>
+					<InfoModal/>
+				</Conditional>
 			</Modal>
 			<OverLay on={modal.on}/>
 			{
@@ -61,6 +68,7 @@ export default connectFunction(function(props) {
 					.map(item => <Result 
 						key={item.id} 
 						topicIds={flipObject(topicIds)} 
+						history={props.history}
 						{...item}
 					/>)
 			}

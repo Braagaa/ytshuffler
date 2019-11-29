@@ -9,10 +9,11 @@ import {setState} from '../../utils/commonEvent';
 import {modalMode} from '../../actions/modal';
 import {ConditionalLoader} from '../Conditional/';
 import main from '../../style/main';
+import {unauthorized} from '../../utils/auth';
 
 const {colors} = main;
 
-const mapStateToProps = () => ({});
+const mapStateToProps = storeData => ({});
 const mapDispatchToProps = {
 	modalMode
 };
@@ -20,7 +21,7 @@ const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
 	const {modalMode} = props;
-	const {snippet: data, statistics} = props;
+	const {snippet: data, statistics, foundChannel} = props;
 	const {url} = data.thumbnails.medium;
 	const topicList = noDup(props.topicDetails.topicIds)
 		.map(num => props.topicIds[num])
@@ -44,7 +45,7 @@ export default connectFunction(function(props) {
 				thumbnail_url: url
 			}))
 			.then(setState(setIsInUserChannels, true))
-			.catch(console.error);
+			.catch(unauthorized(props.history));
 	}
 
 	return (
@@ -70,9 +71,15 @@ export default connectFunction(function(props) {
 				<ConditionalLoader
 					color={colors.color3}
 					background={colors.color1}
-					bool={props.inUserChannels || isInUserChannels}
+					bool={foundChannel || isInUserChannels}
 				>
-					<Button>Go to Library</Button>
+					<Link
+						href={`/channels/${foundChannel ? foundChannel._id : ''}`}
+						color={colors.color3}
+						background={colors.color1}
+					>
+						Go to Channel
+					</Link>
 					<Button onClick={createChannelHandle}>
 						Add to Library
 					</Button>

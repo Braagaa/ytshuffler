@@ -9,6 +9,7 @@ import Pagination from '../../components/Pagination';
 
 import {initalizePage, currentPage} from '../../actions/pagination';
 import {getSearchResults, checkToChannels} from '../../actions/searchResults';
+import {modalMode} from '../../actions/modal';
 import main from '../../style/main';
 
 const Loader = PreLoader();
@@ -16,20 +17,21 @@ const PaginationOrNull = Conditional(Pagination);
 
 const mapStateToProps = storeData => ({
 	pagination: storeData.pagination,
-	searchResults: storeData.searchResults,
+	searchResults: storeData.searchResults
 });
 const mapDispatchToProps = {
 	initalizePage, 
 	currentPage,
 	getSearchResults,
-	checkToChannels
+	checkToChannels,
+	modalMode
 };
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
 	const {initalizePage, getSearchResults, checkToChannels} = props;
 	const {page, itemsPerPage, offset} = props.pagination;
-	const {isLoading, results: items} = props.searchResults;
+	const {isLoading, results: items, isError} = props.searchResults;
 
 	const query = new URLSearchParams(props.history.location.search)
 		.get('q');
@@ -47,10 +49,10 @@ export default connectFunction(function(props) {
 	}, [q, initalizePage, getSearchResults]);
 
 	useEffect(() => {
-		if (!isLoading) {
+		if (!isLoading && !isError) {
 			checkToChannels(items, offset, page, itemsPerPage);
 		}
-	}, [offset, items, page, itemsPerPage, checkToChannels, isLoading]);
+	}, [offset, items, page, itemsPerPage, checkToChannels, isLoading, isError]);
 
 	return (
 		<div>
@@ -67,7 +69,7 @@ export default connectFunction(function(props) {
 				bool={!isLoading && items.length > 0}
 			/>
 			<Loader fill={main.colors.color1} isLoading={isLoading}>
-				<Results items={displayedItems}/>
+				<Results history={props.history} items={displayedItems}/>
 			</Loader>
 			<PaginationOrNull 
 				bool={!isLoading && items.length > 0}

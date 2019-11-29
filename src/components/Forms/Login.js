@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {loginUser, updateAllChannels} from '../../apis/shuffler';
-import {ifAnyError, setStateThrow} from '../../utils/errors';
+import {ifClientError, ifServerError, setStateThrow} from '../../utils/errors';
 import {setCSRFStorage} from '../../utils/auth';
 
 import Loaders from '../Loaders';
@@ -37,12 +37,19 @@ export default connectFunction(function(props) {
 	const onSubmit = e => {
 		e.preventDefault();
 
+		const defaultLoading = {
+			isLoading: false,
+			message: ''
+		};
+
 		if (!email || !password) {
-			return setClientErrorMsg('Email and password must be filled');
+			return setClientErrorMsg('Email and password must be filled.');
 		}
 
-		setDisableSubmit(true);
 		setLoading({isLoading: true, message: 'Logging In...'});
+		setDisableSubmit(true);
+		setClientErrorMsg('');
+
 		loginUser({email, password})
 			.then(setCSRFStorage)
 			.then(setState(setLoading, {
@@ -50,9 +57,11 @@ export default connectFunction(function(props) {
 				message: 'Updating Channels...'
 			}))
 			.then(updateAllChannels)
+			.catch(ifServerError(setLoading, defaultLoading))
 			.then(() => props.history.push('/channels'))
 			.catch(setStateThrow(setDisableSubmit, false))
-			.catch(ifAnyError(setClientErrorMsg));
+			.catch(setStateThrow(setLoading, defaultLoading))
+			.catch(ifClientError(setClientErrorMsg));
 	};
 
 	return (

@@ -23,7 +23,7 @@ const getAxios = (url, initlQuery) => (query = {}, config = {}) =>
 			data
 		}))
 		//log this here
-		.catch(reThrow(console.error));
+		//.catch(reThrow(console.error));
 
 const getSearchChannels = getAxios(searchUrl, {
 	part: 'id',

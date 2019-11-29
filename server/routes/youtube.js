@@ -1,5 +1,5 @@
 const express = require('express');
-const {nextError, requiredParamter} = require('../utils/errors');
+const {nextError, requiredParamter, quotaExceeded} = require('../utils/errors');
 const {requiredQuery} = require('../middle-ware/validateYoutube');
 const {getSearchChannels, getChannels} = require('../apis/youtube-data');
 const {Channel} = require('../modals/'); 
@@ -19,6 +19,7 @@ const getItems = fetched => fetched.data.items;
 router.get('/search/channels', requiredQuery('q'), (req, res, next) => {
 	return getSearchChannels({q: req.query.q})
 		.then(fetched => res.status(200).json(fetched.data))
+		.catch(quotaExceeded(next))
 		.catch(
 			nextError(500, 'No Channels can not be found at this time.', next)
 		);
@@ -39,11 +40,12 @@ router.get('/channels',
 			.then(([channels, foundChannelIds]) => 
 				channels.map(channel => ({
 					...channel, 
-					inUserChannels: foundChannelIds
-						.some(({youtubeId}) => channel.id === youtubeId)
+					foundChannel: foundChannelIds
+						.reduce((acc, c) => channel.id === c.youtubeId ? c : acc, null)
 			})))
 			.then(toData)
 			.then(success(res))
+			.catch(quotaExceeded(next))
 			.catch(nextError(500, 'Channels cannot be retrieved at this time.', next));
 	}
 );

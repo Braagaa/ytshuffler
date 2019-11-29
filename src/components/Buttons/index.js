@@ -64,6 +64,7 @@ export const Pill = styled.button`
 export const ModalButton = styled(SmallButton)`
 	display: block;
 	margin: 0 auto;
+	margin-top: ${props => props.mt || '2em'};
 `;
 
 export default function Button(props) {

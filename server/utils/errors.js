@@ -75,7 +75,22 @@ const pathError = (pathStr, status, msg) => data => {
 	};
 };
 
+const checkQuotaError = e => e.response && e.response.data.error.code === 403;
+const createQuotaExceededError = () => createError(
+	403, 
+	'Youtube quoata has been reached. Try again after 3:00 AM EST'
+);
+
+const quotaExceeded = next => e => {
+	if (checkQuotaError(e)) {
+		return next(createQuotaExceededError());
+	}
+	throw e;
+};
+
 module.exports = {
+	checkQuotaError,
+	createQuotaExceededError,
 	nextError,
 	reThrow,
 	requiredParamter,
@@ -86,5 +101,6 @@ module.exports = {
 	pathError,
 	asyncErrorIf,
 	castError,
-	errorStatus
+	errorStatus,
+	quotaExceeded
 };

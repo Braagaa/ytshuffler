@@ -1,8 +1,13 @@
 const createError = require('http-errors');
 const {Channel} = require('../modals/');
-const {getSearchVideos, getVideos, getChannelUpdate} = require('../apis/youtube-data');
-const {errorIfNull, castError} = require('../utils/errors');
 const getTopics = require('../utils/getTopics');
+const {getSearchVideos, getVideos, getChannelUpdate} = require('../apis/youtube-data');
+const {
+	errorIfNull, 
+	castError, 
+	checkQuotaError, 
+	createQuotaExceededError
+} = require('../utils/errors');
 const {
 	adjust,
 	adjustProp,
@@ -113,8 +118,8 @@ const songsForChannel = async (req, res, next) => {
 
 		return next();
 	} catch(e) {
-		console.log(e);
-		next(createError(500, 'Cannot create channel.'));
+		if (checkQuotaError(e)) return next(createQuotaExceededError());
+		return next(createError(500, 'Cannot create channel.'));
 	};
 };
 
@@ -149,7 +154,9 @@ const channelUpdate = async (req, res, next) => {
 		
 		next();
 	} catch(e) {
-		next(e);
+		if (checkQuotaError(e)) return next(createQuotaExceededError());
+		if (e.status === 404) return next(e);
+		return next(createError(500, 'Channel cannot be updated.'));
 	}
 };
 
@@ -190,7 +197,7 @@ const channelsUpdate = async (req, res, next) => {
 
 		next();
 	} catch(e) {
-		console.error(e);
+		if (checkQuotaError(e)) return next(createQuotaExceededError());
 		next(createError(500, 'Could not update channels.'));
 	};
 };

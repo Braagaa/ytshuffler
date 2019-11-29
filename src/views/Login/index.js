@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 
 import Button from '../../components/Buttons';
@@ -7,15 +8,26 @@ import OverLay from '../../components/Modal/OverLay';
 import Register from '../../components/Forms/Register';
 import Login from '../../components/Forms/Login';
 import main from '../../style/main';
+import InfoModal from '../../components/InfoModal';
+
+import {Header, Wrapper, Inner, ButtonsWrap, MusicNote} from './style';
+import {modalMode} from '../../actions/modal';
 
 const {colors} = main;
 
-const Wrapper = styled.div`
+const test = styled.div`
 	max-width: 800px;
 	margin: 0 auto;
 `;
 
-export default function (props) {
+const mapStateToProps = storeData => ({
+	errorModal: storeData.modal
+});
+const mapDispatchToProps = {modalMode};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
+
+export default connectFunction(function (props) {
+	const {errorModal} = props;
 	const [modalsOn, setModalsOn] = useState({
 		login: false, 
 		register: false
@@ -29,26 +41,28 @@ export default function (props) {
 	const registerModalHandle = modalHandle('register');
 
 	return (
-		<div className="text-center">
-			<h1 className="display-3 my-5 font-weight-bold">YT Shuffler</h1>
-			<Wrapper className="d-flex flex-column flex-md-row justify-content-md-around">
-				<div className="mb-4 mb-md-0">
+		<Wrapper>
+			<Inner>
+				<Header>YT Shuffler</Header>
+				<MusicNote/>
+				<ButtonsWrap>
 					<Button clickHandle={loginModalHandle}>Login</Button>
 					<Modal color={colors.color3} on={modalsOn.login}>
 						<Login history={props.history} exitHandle={loginModalHandle}/>
 					</Modal>
-				</div>
-				<div>
 					<Button clickHandle={registerModalHandle}>Register</Button>
 					<Modal color={colors.color3} on={modalsOn.register}>
 						<Register history={props.history} exitHandle={registerModalHandle}/>
 					</Modal>
-				</div>
-			</Wrapper>
+				</ButtonsWrap>
+			</Inner>
+			<Modal on={errorModal.on}>
+				<InfoModal img="auth"/>
+			</Modal>
 			<OverLay 
 				background={colors.color1} 
-				on={modalsOn.login || modalsOn.register}
+				on={modalsOn.login || modalsOn.register || errorModal.on}
 			/>
-		</div>	
+		</Wrapper>	
 	);
-};
+});

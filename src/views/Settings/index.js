@@ -6,16 +6,16 @@ import {modalMode} from '../../actions/modal';
 
 import Header from '../../components/Headers';
 import RadioGroup from '../../components/RadioGroup';
-import {SmallButton, ModalButton} from '../../components/Buttons';
-import {FlexForm} from '../../components/Forms/style';
+import {SmallButton} from '../../components/Buttons';
 import Loaders from '../../components/Loaders';
 import WaitingDots from '../../components/Loaders/WaitingDots';
 import Modal from '../../components/Modal';
 import OverLay from '../../components/Modal/OverLay';
-import {Message} from '../../components/Results/styles';
+import InfoModal from '../../components/InfoModal';
 
 import main from '../../style/main';
 import {setState} from '../../utils/commonEvent';
+import {unauthorized} from '../../utils/auth';
 
 const radioDefaultPlaymodeButtons = [
 	['date', 'Most Recent Songs'],
@@ -53,17 +53,14 @@ export default connectFunction(function(props) {
 		e.preventDefault();
 		modalMode(true, true);
 		deleteChannels()
-			.then(setState(modalMode, false, false));
-	};
-
-	const noDelete = e => {
-		e.preventDefault();
-		modalMode(false);
+			.then(setState(modalMode, false, false))
+			.catch(unauthorized(props.history));
 	};
 
 	const saveSettings = e => {
 		e.preventDefault();
-		fetching(updateUserSettings, 'settings', settings);
+		fetching(updateUserSettings, 'settings', settings)
+			.catch(unauthorized(props.history));
 	};
 
 	useEffect(() => {
@@ -109,25 +106,11 @@ export default connectFunction(function(props) {
 					fill={redish}
 					size="100px"
 				>
-					<Message fs='1.6em' mb='2em'>
-						Are you sure you want to delete all of your channels?
-					</Message>
-					<FlexForm>
-						<ModalButton 
-							background={redish} 
-							color={white}
-							onClick={yesDelete}
-						>
-							Yes
-						</ModalButton>
-						<ModalButton 
-							background={redish} 
-							color={white} 
-							onClick={noDelete}
-						>
-							No
-						</ModalButton>
-					</FlexForm>
+					<InfoModal 
+						message="Are you sure you want to delete all of your channels?"
+						type="options"
+						yes={yesDelete}
+					/>
 				</WaitingDotsLoader>
 			</Modal>
 			<OverLay on={modal.on}/>

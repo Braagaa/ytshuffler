@@ -3,13 +3,13 @@ import main from '../../style/main';
 
 const {colors:{color1: white}} = main;
 
-const offsetAnimation = keyframes`
+export const offsetAnimation = keyframes`
 	100% {
 		stroke-dashoffset: 0;
 	}
 `;
 
-const fillItAnimation = keyframes`
+export const fillItAnimation = keyframes`
 	100% {
 		fill: ${white};
 	}
@@ -30,6 +30,5 @@ export const LogoWrapper = styled.div`
 		stroke-dasharray: 5683;
 		stroke-dashoffset: 5683;
 		animation: ${offsetAnimation} 5s linear forwards, ${fillItAnimation} 0.8s 2s forwards;
-				
 	}
 `;

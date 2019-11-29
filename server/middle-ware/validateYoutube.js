@@ -51,7 +51,7 @@ const validatePassword = (req, res, next) => {
 	if (checkPassword(req.body.password)) {
 		return next();
 	}
-	return next(createError(400, 'Username or password is invalid.'));
+	return next(createError(422, 'Username or password is invalid.'));
 };
 
 const tryParseNumber = type => prop => (req, res, next) => {

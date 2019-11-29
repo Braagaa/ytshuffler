@@ -34,7 +34,7 @@ export const sendYTPlayer = YTPlayer => ({
 
 export const foundError = e => ({
 	type: ERROR,
-	payload: {error: e}
+	payload: {error: e.response.data.error}
 });
 
 const action = action => () => ({type: action});

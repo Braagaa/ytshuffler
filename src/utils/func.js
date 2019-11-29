@@ -3,6 +3,11 @@ export const tap = fn => arg => {
 	return arg;
 };
 
+export const reThrow = fn => value => {
+	fn(value);
+	throw value;
+};
+
 export const set = (key, value) => obj => {
 	obj[key] = value;
 	return obj;
@@ -29,3 +34,7 @@ export const call = (...arg) => fn => fn(...arg);
 export const isEmpty = obj => Object.keys(obj).length === 0;
 
 export const assoc = (prop, value) => obj => ({...obj,  [prop]: value});
+
+export const complement = fn => (...args) => !fn(...args);
+
+export const thunk = (fn, ...args) => () => fn(...args);
