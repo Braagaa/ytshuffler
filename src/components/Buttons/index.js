@@ -6,6 +6,7 @@ import main from '../../style/main';
 export const StyledButton = styled.button`
 	background-color: ${props => props.color || 'white'};
 	color: ${main.colors.color3};
+	box-shadow: 10px 10px 5px 0px rgba(50, 50, 50, 0.75);
 	border: none;
 	width: 300px;
 	height: 80px;

@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import LinkedItems from '../LinkedItems';
 import main from '../../style/main';
-import {isAuthenticatedUser} from '../../utils/auth';
 
 const {colors} = main;
 
@@ -34,7 +33,6 @@ const navItems = [
 ].map(toData);
 
 export default function(props) {
-	if (!isAuthenticatedUser()) return null;
 	return (
 		<Wrapper>
 			<Inner>

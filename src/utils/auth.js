@@ -1,5 +1,6 @@
 import store from '../store';
 import {modalMode} from '../actions/modal';
+import {stopVideo, openPlayer} from '../actions/player'; 
 
 export const isAuthenticatedUser = () => {
 	const checkJWTHP = document.cookie
@@ -17,6 +18,8 @@ export const getCSRFStorage = () => localStorage.getItem('CSRF');
 export const logoutUser = () => {
 	document.cookie = 'JWT-HP= ; expires = Thu, 01 Jan 1970 00:00:01 GMT';
 	localStorage.removeItem('CSRF');
+	store.dispatch(stopVideo());
+	store.dispatch(openPlayer(false));
 };
 
 export const unauthorized = history => err => {

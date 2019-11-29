@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import dataStore from './store';
-import ProtectedRoute, {LoggedIn} from './components/AuthRoute';
+import ProtectedRoute, {LoggedIn, LoggedInOrNull, LoggedInOrHide} from './components/AuthRoute';
 import {isAuthenticatedUser} from './utils/auth';
 
 import NavBar from './components/NavBar';
@@ -23,13 +23,15 @@ const MainWrapper = styled.div`
 `;
 
 const AuthRoute = ProtectedRoute(isAuthenticatedUser);
+const LoggedInNavBar = LoggedInOrNull(NavBar, isAuthenticatedUser);
+const LoggedInPlayer = LoggedInOrHide(Player, isAuthenticatedUser);
 
 export default function App() {
 	return (
 		<Provider store={dataStore}>
 			<div>
 				<Router>
-					<Route path="/" component={NavBar}/>
+					<Route path="/" component={LoggedInNavBar}/>
 					<MainWrapper>
 						<Switch>
 							<LoggedIn 
@@ -71,7 +73,7 @@ export default function App() {
 							/>
 							<Route path="*" component={NoMatch}/>
 						</Switch>
-						<Player/>
+						<Route path="/" component={LoggedInPlayer}/>
 					</MainWrapper>
 				</Router>
 			</div>

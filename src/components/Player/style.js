@@ -25,6 +25,11 @@ export const ButtonsWrapper = styled.div`
 	justify-content: space-evenly;
 `;
 
+export const Hide = styled.div`
+	opacity: ${props => props.auth ? '0' : '1'};
+	visibility: ${props => props.auth ? 'hidden' : 'visible'};
+`;
+
 export const Textt = styled.div`
 	font-size: 1.1em;
 	font-weight: bold;

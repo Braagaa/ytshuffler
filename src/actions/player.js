@@ -77,7 +77,7 @@ export const createYTPlayer = () => dispatch => {
 		}
 	};
 
-	const onError = e => console.error(e.data);
+	const onError = e => dispatch(foundError(e));
 
 	tag.onload = function() {
 		window.onYouTubeIframeAPIReady = function() {
