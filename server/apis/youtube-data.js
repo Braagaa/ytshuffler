@@ -55,6 +55,12 @@ const getChannelUpdate = getAxios(channelUrl, {
 	key: YOUTUBE_API_KEY
 });
 
+const getChannelUpdateImage = getAxios(channelUrl, {
+	part: 'snippet',
+	maxResults: 1,
+	key: YOUTUBE_API_KEY
+});
+
 const getVideosObj = {
 	part: 'snippet,contentDetails,topicDetails',
 	maxResults: 50,
@@ -68,5 +74,6 @@ module.exports = {
 	getSearchVideos,
 	getChannels,
 	getChannelUpdate,
+	getChannelUpdateImage,
 	getVideos
 };

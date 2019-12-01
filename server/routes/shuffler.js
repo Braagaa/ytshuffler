@@ -6,7 +6,8 @@ const {
 	songsForChannel, 
 	userForChannel, 
 	channelUpdate,
-	channelsUpdate
+	channelsUpdate,
+	channelUpdateImage
 } = require('../middle-ware/youtube');
 const {
 	nextError, 
@@ -65,6 +66,13 @@ const putChannelMW = [
 	checkPlaylist,
 	channelUpdate,
 	userForChannel
+];
+
+const putChannelImageMW = [
+	auth,
+	trySanitizeInput('params')('id'),
+	checkObjectId('params'),
+	channelUpdateImage
 ];
 
 const putChannelsUpdate = [
@@ -146,6 +154,18 @@ router.put('/channels/update', putChannelsUpdate, (req, res, next) => {
 	return successEnd(200, res)();
 });
 
+//PUT channels/:id/update/image
+router.put('/channels/:id/update/image', putChannelImageMW, (req, res, next) => {
+	return Channel.findByIdAndUpdate(
+		req.channel.id, 
+		{thumbnail_url: req.channel.thumbnail_url},
+		{new: true, select: {playlists: 0, totalVideoCounts: 0, users: 0}}
+	)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not update channels image.'));
+});
+
+//DELETE channels/
 router.delete('/channels', deleteChannelsMW, (req, res, next) => {
 	return Channel.deleteUserInChannels(req.user)
 		.then(successEnd(200, res))

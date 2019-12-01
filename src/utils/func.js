@@ -24,6 +24,10 @@ export const spliceInto = (arr1, start, deleteCount) => arr2 => {
 	return newArr;
 };
 
+export const path = str => obj => str
+	.split('.')
+	.reduce((acc, str) => acc[str], obj);
+
 export const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => set(value, key)(acc), {});
 

@@ -88,6 +88,8 @@ const pairBy = (arr1, prop1, prop2 = prop1) => arr2 => {
 
 const applyTo = func => arr => func(...arr);
 
+const merge = obj1 => obj2 => ({...obj2, ...obj1});
+
 module.exports = {
 	tap,
 	adjust,
@@ -104,6 +106,7 @@ module.exports = {
 	asyncMap,
 	flipObject,
 	mapTo,
+	merge,
 	pairBy,
 	prop,
 	props,

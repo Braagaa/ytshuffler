@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import styled from 'styled-components';
 
 import Button from '../../components/Buttons';
 import Modal from '../../components/Modal';
@@ -14,11 +13,6 @@ import {Header, Wrapper, Inner, ButtonsWrap, MusicNote} from './style';
 import {modalMode} from '../../actions/modal';
 
 const {colors} = main;
-
-const test = styled.div`
-	max-width: 800px;
-	margin: 0 auto;
-`;
 
 const mapStateToProps = storeData => ({
 	errorModal: storeData.modal

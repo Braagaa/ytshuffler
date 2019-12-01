@@ -90,7 +90,7 @@ export default connectFunction(function(props) {
 			lm={'5em'}
 		>
 			<div>
-				<Header src={channel.thumbnail_url}>
+				<Header id={id} src={channel.thumbnail_url}>
 					{channel.title}
 				</Header>
 				<Form onSubmit={onDelete}>

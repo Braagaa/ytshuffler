@@ -31,7 +31,6 @@ import {
 	ButtonWrapper,
 	MinimizeWrapper,
 	ExpandWrapper,
-	Hide
 } from './style';
 
 const createPlaymode = (modes, components) => playmodeObj => {

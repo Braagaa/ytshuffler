@@ -1,12 +1,18 @@
 const createError = require('http-errors');
 const {Channel} = require('../modals/');
 const getTopics = require('../utils/getTopics');
-const {getSearchVideos, getVideos, getChannelUpdate} = require('../apis/youtube-data');
 const {
-	errorIfNull, 
+	getSearchVideos, 
+	getVideos, 
+	getChannelUpdate, 
+	getChannelUpdateImage
+} = require('../apis/youtube-data');
+const {
 	castError, 
 	checkQuotaError, 
-	createQuotaExceededError
+	createQuotaExceededError,
+	errorIfNull, 
+	quotaExceeded,
 } = require('../utils/errors');
 const {
 	adjust,
@@ -17,6 +23,7 @@ const {
 	splitEvery, 
 	flat, 
 	method, 
+	merge,
 	pairBy,
 	path, 
 	pick, 
@@ -202,9 +209,29 @@ const channelsUpdate = async (req, res, next) => {
 	};
 };
 
+const channelUpdateImage = (req, res, next) => {
+	const channel = Channel.findOne(
+		{_id: req.params.id, 'users.id': req.user.id},
+		{youtubeId: 1}
+	)
+		.then(prop('youtubeId'))
+		.then(toObj('id'))
+		.then(getChannelUpdateImage)
+		.then(path('data.items.0.snippet.thumbnails.medium.url'))
+		.then(toObj('thumbnail_url'))
+		.then(merge({id: req.params.id}))
+		.then(data => {
+			req.channel = data;
+			next();
+		})
+		.catch(quotaExceeded(next))
+		.catch(next);
+};
+
 module.exports = {
 	songsForChannel,
 	userForChannel,
 	channelUpdate,
-	channelsUpdate
+	channelsUpdate,
+	channelUpdateImage
 };
