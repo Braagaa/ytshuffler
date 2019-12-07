@@ -31,6 +31,13 @@ export const path = str => obj => str
 export const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => set(value, key)(acc), {});
 
+export const map = fn => arr => arr.map(fn);
+export const reduce = (fn, init) => arr => arr.reduce(fn, init);
+
+export const nth = index => array => array[index];
+
+export const prop = prop => obj => obj[prop];
+
 export const noDup = arr => Array.from(new Set(arr));
 
 export const call = (...arg) => fn => fn(...arg);

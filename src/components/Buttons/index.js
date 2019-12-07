@@ -24,8 +24,9 @@ export const StyledButton = styled.button`
 export const SmallButton = styled.button`
 	${props => props.display ? `display: ${props.display};` : ''}
 	padding: 13px 20px;
-	color: ${props => props.color};
-	background: ${props => props.background};
+	color: ${props => props.color ? props.color : main.colors.color3};
+	background: ${props => props.background ? 
+		props.background : main.colors.color1};
 	box-shadow: ${props => 
 		props.bs ? '10px 10px 5px 0px rgba(50, 50, 50, 0.75)' : 'none'};
 	margin: ${props => props.margin};

@@ -3,6 +3,7 @@ import styled, {keyframes} from 'styled-components';
 import {ReactComponent as DiscSVG} from '../../imgs/disc.svg';
 
 import {MainWrapper} from './style';
+import main from '../../style/main';
 
 const spin3D = keyframes`
 	100% {transform: rotate3d(0, 0, 1, 3turn);}
@@ -25,7 +26,7 @@ const Wrapper = styled(MainWrapper)`
 export default function(props) {
 	return (
 		<Wrapper lm={props.lm} isLoading={props.isLoading}>
-			<DiscSVG fill={props.fill} size={props.size}/>
+			<DiscSVG fill={props.fill || main.colors.color1} size={props.size}/>
 			<p>{props.message || 'Loading...'}</p>
 		</Wrapper>
 	);

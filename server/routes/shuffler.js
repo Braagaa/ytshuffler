@@ -58,6 +58,11 @@ const getChannelMW = [
 	trySanitizeInput('params')('id')
 ];
 
+const getChannelsPlaylistsGenreMW = [
+	trySanitizeInput('query')('genres'),
+	auth
+];
+
 const putChannelMW = [
 	auth,
 	trySanitizeInput('params')('id'),
@@ -107,6 +112,30 @@ router.get('/channels/songs', getChannelsSongsMW, (req, res, next) => {
 		.catch(nextError(500, 'Could not get all of users songs at this time.', next));
 });
 
+//GET channels/genres
+router.get('/channels/genres', auth, (req, res, next) => {
+	return Channel.getGenres(req.user)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not get genres.', next));
+});
+
+//GET channels/playlists/genre
+router.get('/channels/playlists/genres', getChannelsPlaylistsGenreMW, (req, res, next) => {
+	return Channel.getGenrePlaylists(req.user, req.query.genres)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not obtain genre playlist.', next));
+});
+
+//GET channels/:id
+router.get('/channels/:id', getChannelMW, (req, res, next) => {
+	return Channel.findOneChannel(req.params.id, req.user)
+		.then(errorIfNull(404, 'Cannot find channel.'))
+		.then(success(200, res))
+		.catch(castError(next))
+		.catch(errorStatus(404, next))
+		.catch(nextError(500, 'Could not obtain channel.', next));
+});
+
 //POST channels
 router.post('/channels', postChannelsMW, (req, res, next) => {
 	const {channel} = req;
@@ -122,16 +151,6 @@ router.post('/channels', postChannelsMW, (req, res, next) => {
 			`Could not store channel ${req.channel.title || ''} at this time.`, 
 			next
 		));
-});
-
-//GET channels/:id
-router.get('/channels/:id', getChannelMW, (req, res, next) => {
-	return Channel.findOneChannel(req.params.id, req.user)
-		.then(errorIfNull(404, 'Cannot find channel.'))
-		.then(success(200, res))
-		.catch(castError(next))
-		.catch(errorStatus(404, next))
-		.catch(nextError(500, 'Could not obtain channel.', next));
 });
 
 //PUT channels/:id

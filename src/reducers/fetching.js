@@ -1,7 +1,8 @@
 import {FETCHING_BEGIN, FETCHING_SUCCESS, FETCHING_FAIL} from '../actions/initialLoad';
-import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED} from '../actions/fetching';
+import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED, INITIAL_FETCH} from '../actions/fetching';
 
 const def = {
+	initialLoad: false,
 	isLoading: false,
 	isError: false,
 	error: null
@@ -10,6 +11,13 @@ const def = {
 export default function fetchingReducer(state = def, action) {
 	const {key, data} = action.payload || {};
 	switch(action.type) {
+		case INITIAL_FETCH:
+			return {
+				...state,
+				initialLoad: true,
+				isError: false,
+				error: null
+			};
 		case FETCHING_BEGIN:
 			return {
 				...state,
@@ -21,6 +29,7 @@ export default function fetchingReducer(state = def, action) {
 			return {
 				...state,
 				isLoading: false,
+				initialLoad: false,
 				isError: false,
 				[key]: data
 			};
@@ -28,6 +37,7 @@ export default function fetchingReducer(state = def, action) {
 			return {
 				...state,
 				isLoading: false,
+				initialLoad: false,
 				isError: true,
 				error: action.payload.error.response.data.error
 			};
@@ -43,6 +53,7 @@ export default function fetchingReducer(state = def, action) {
 			return {
 				...state,
 				isError: false,
+				initialLoad: false,
 				error: null
 			};
 		case CLEAR_FETCH:

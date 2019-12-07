@@ -271,6 +271,51 @@ channelSchema.static('updateManyChannels', function(channels) {
 	return Channel.bulkWrite(toBulkWrite);
 });
 
+const genresQuery = user => [
+		{$match: {'users.id': toObjectId(user.id)}},
+		{$unwind: '$users'},
+		{$match: {'users.id': toObjectId(user.id)}},
+		{$addFields: {playlist: {$objectToArray: '$playlists'}}},
+		{$addFields: {playlist: {$reduce: {
+			input: '$playlist',
+			initialValue: null,
+			in: {$cond: {
+				if: {$eq: ['$$this.k', '$users.playmode']},
+				then: '$$this.v',
+				else: '$$value'
+			}}
+		}}}},
+		{$set: {'playlist.channelTitle': '$title'}},
+		{$unwind: '$topics'},
+];
+const filterPlaylistQuery = 
+	{$addFields: {playlist: {$filter: {
+		input: '$playlist',
+		as: 'song',
+		cond: {$in: ['$topics', '$$song.topics']}
+	}}}};
+
+channelSchema.static('getGenres', function(user) {
+	return Channel.aggregate([
+		...genresQuery(user),
+		filterPlaylistQuery,
+		{$unwind: '$playlist'},
+		{$group: {_id: '$topics', count: {$sum: 1}}},
+		{$project: {_id: 0, genre: '$_id', count: 1}}
+	]);
+});
+
+channelSchema.static('getGenrePlaylists', function(user, genres = '') {
+	return Channel.aggregate([
+		...genresQuery(user),
+		{$match: {$expr: {$in: ['$topics', genres.split(',')]}}},
+		filterPlaylistQuery,
+		{$unwind: '$playlist'},
+		{$group: {_id: '$topics', playlist: {$push: '$playlist'}}},
+		{$project: {_id: 0, playlist: 1, genre: '$_id'}}
+	]);
+});
+
 channelSchema.index({title: 1});
 
 const Channel = model('Channel', channelSchema);

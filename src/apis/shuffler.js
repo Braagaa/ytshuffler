@@ -39,6 +39,8 @@ export const getYotubeTopicIds = () => getAxios(youtubeURL + 'topicIds')();
 export const getChannels = getAxios(shufflerURL + 'channels');
 export const getChannel = id => getAxios(shufflerURL + 'channels/' + id)();
 export const getAllSongs = getAxios(shufflerURL + 'channels/songs');
+export const getAllGenres = getAxios(shufflerURL + 'channels/genres');
+export const getGenresPlaylist = getAxios(shufflerURL + 'channels/playlists/genres');
 export const createChannel = postAxios(shufflerURL + 'channels');
 export const deleteChannels = deleteAxios(shufflerURL + 'channels/');
 export const deleteChannel = id => deleteAxios(shufflerURL + 'channels/' + id)();

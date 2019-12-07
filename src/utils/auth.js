@@ -24,8 +24,8 @@ export const logoutUser = () => {
 
 export const unauthorized = history => err => {
 	if (err.response) {
-		const {code} = err.response;
-		if (code === 401 || code === 404){
+		const {code, status} = err.response;
+		if (code === 401 || code === 404 || status === 401 || status === 404){
 			store.dispatch(modalMode(true, false, {
 				message: 'You are unauthorized. Please relogin or register an email.'
 			}));

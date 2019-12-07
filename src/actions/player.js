@@ -1,4 +1,5 @@
-import {getAllSongs} from '../apis/shuffler';
+import {getAllSongs, getGenresPlaylist} from '../apis/shuffler';
+import {map, reduce, prop, path, reThrow} from '../utils/func';
 
 export const CREATE_PLAYER = 'CREATE_PLAYER';
 export const PLAY_SINGLE = 'PLAY_SINGLE';
@@ -46,12 +47,24 @@ export const pauseVideo = action(PAUSE);
 export const clearPlayer = action(CLEAR);
 export const startLoading = action(START_LOADING);
 
+const dispatchToPlayList = dispatch => data => dispatch(playList(data));
+
 export const playAllSongs = () => dispatch => {
 	dispatch(startLoading());
 	return getAllSongs()
-		.then(res => res.data.songs)
-		.then(songs => dispatch(playList(songs)))
+		.then(path('data.songs'))
+		.then(dispatchToPlayList(dispatch))
 		.catch(e => dispatch(foundError(e)));
+};
+
+export const playGenresPlaylist = genres => dispatch => {
+	dispatch(startLoading());
+	return getGenresPlaylist({genres})
+		.then(prop('data'))
+		.then(map(prop('playlist')))
+		.then(reduce((acc, playlist) => [...acc, ...playlist], []))
+		.then(dispatchToPlayList(dispatch))
+		.catch(reThrow(e => dispatch(foundError(e))));
 };
 
 const checkState = (state, e) => e.data === window.YT.PlayerState[state];
@@ -77,7 +90,10 @@ export const createYTPlayer = () => dispatch => {
 		}
 	};
 
-	const onError = e => dispatch(foundError(e));
+	const onError = e => {
+		console.log(e);
+		dispatch(foundError(e));
+	}
 
 	tag.onload = function() {
 		window.onYouTubeIframeAPIReady = function() {
