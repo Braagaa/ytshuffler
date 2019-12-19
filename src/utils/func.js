@@ -49,3 +49,12 @@ export const assoc = (prop, value) => obj => ({...obj,  [prop]: value});
 export const complement = fn => (...args) => !fn(...args);
 
 export const thunk = (fn, ...args) => () => fn(...args);
+
+export const setTime = time => arg => {
+	return new Promise(resolve => {
+		const id = setTimeout(() => {
+			clearTimeout(id);
+			return resolve(arg);
+		}, time);
+	});
+};

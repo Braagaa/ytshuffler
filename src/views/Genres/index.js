@@ -52,7 +52,7 @@ export default connectFunction(function(props) {
 	return (
 		<Loader isLoading={initialLoad} lm="3em">
 			<Header>Genres</Header>
-			<FlexWrap ai="center" mb="2em">
+			<FlexWrap ai="center" mb="3em">
 				<SmallButton 
 					bs 
 					display="block" 

@@ -28,6 +28,7 @@ const reverse = arr => clone(arr).reverse();
 
 const map = fn => arr => arr.map(fn);
 const filter = fn => arr => arr.filter(fn);
+const reduce = (fn, inital) => arr => arr.reduce(fn, inital);
 
 const method = (name, ...args) => obj => obj[name](...args);
 
@@ -112,6 +113,7 @@ module.exports = {
 	props,
 	path,
 	toObj,
+	reduce,
 	pick,
 	zip,
 	zipWith

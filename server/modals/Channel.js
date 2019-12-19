@@ -51,26 +51,29 @@ const frontEndFields = channel => ({
 	songs: channel.playlists[channel.users[0].playmode]
 });
 
+const pageLimitQuery = (skip, prop) => ({$ceil: {$divide: [prop, skip]}});
+const paginationQuery = (page, pageLimit, countProp) => [
+	{$count: countProp},
+	{$addFields: {
+		page: page,
+		pageLimit,
+		prevPage: {
+			$and: [{$gt: [page, 1]}, {$lte: [page, pageLimit]}]
+		},
+		nextPage: {
+			$and: [{$lt: [page, pageLimit]}, {$gte: [page, 1]}]
+		}
+	}}
+]
+
 channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text) {
-	const pageLimit = {$ceil: {$divide: ['$totalChannels', skip]}};
+	const pageLimit = pageLimitQuery(skip, '$totalChannels');
 	const textObj = text ? {title: new RegExp(text, 'i')} : {};
 	return Channel.aggregate([
 		{$match: {'users.id': toObjectId(user.id), ...textObj}},
 		{
 			$facet: {
-				metaData: [
-					{$count: 'totalChannels'},
-					{$addFields: {
-						page: page,
-						pageLimit,
-						prevPage: {
-							$and: [{$gt: [page, 1]}, {$lte: [page, pageLimit]}]
-						},
-						nextPage: {
-							$and: [{$lt: [page, pageLimit]}, {$gte: [page, 1]}]
-						}
-					}}
-				],
+				metaData: paginationQuery(page, pageLimit, 'totalChannels'),
 				channels: [
 					{$skip: skip * (page - 1)},
 					{$limit: skip},
@@ -271,7 +274,7 @@ channelSchema.static('updateManyChannels', function(channels) {
 	return Channel.bulkWrite(toBulkWrite);
 });
 
-const genresQuery = user => [
+const playlistQuery = user => [
 		{$match: {'users.id': toObjectId(user.id)}},
 		{$unwind: '$users'},
 		{$match: {'users.id': toObjectId(user.id)}},
@@ -286,7 +289,6 @@ const genresQuery = user => [
 			}}
 		}}}},
 		{$set: {'playlist.channelTitle': '$title'}},
-		{$unwind: '$topics'},
 ];
 const filterPlaylistQuery = 
 	{$addFields: {playlist: {$filter: {
@@ -297,7 +299,8 @@ const filterPlaylistQuery =
 
 channelSchema.static('getGenres', function(user) {
 	return Channel.aggregate([
-		...genresQuery(user),
+		...playlistQuery(user),
+		{$unwind: '$topics'},
 		filterPlaylistQuery,
 		{$unwind: '$playlist'},
 		{$group: {_id: '$topics', count: {$sum: 1}}},
@@ -307,13 +310,44 @@ channelSchema.static('getGenres', function(user) {
 
 channelSchema.static('getGenrePlaylists', function(user, genres = '') {
 	return Channel.aggregate([
-		...genresQuery(user),
+		...playlistQuery(user),
+		{$unwind: '$topics'},
 		{$match: {$expr: {$in: ['$topics', genres.split(',')]}}},
 		filterPlaylistQuery,
 		{$unwind: '$playlist'},
 		{$group: {_id: '$topics', playlist: {$push: '$playlist'}}},
 		{$project: {_id: 0, playlist: 1, genre: '$_id'}}
 	]);
+});
+
+channelSchema.static('getArtistsPlaylist', function(user, page = 1, skip = 50, text) {
+	const pageLimit = pageLimitQuery(skip, '$totalArtists');
+	const textObj = text ? 
+		{$match: {'playlist.artist': new RegExp(text, 'i')}} :
+		{$addFields: {nomatch: true}};
+
+	return Channel.aggregate([
+		...playlistQuery(user),
+		{$unwind: '$playlist'},
+		textObj,
+		{$group: {_id: '$playlist.artist', playlist: {$push: '$playlist'}}},
+		{$sort: {_id: 1}},
+		{$facet: {
+			metaData: paginationQuery(page, pageLimit, 'totalArtists'),
+			artists: [
+				{$skip: skip * (page - 1)},
+				{$limit: skip},
+				{$project: {
+				_id: 0,
+				artist: {$rtrim: {input: '$_id', chars: ' - Topic'}},
+				playlist: 1
+			}}],
+		}},
+	])
+		.then(data => ({
+			metaData: data[0].metaData[0],
+			artists: data[0].artists
+		}));
 });
 
 channelSchema.index({title: 1});

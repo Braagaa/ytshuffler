@@ -63,6 +63,13 @@ const getChannelsPlaylistsGenreMW = [
 	auth
 ];
 
+const getChannelsPlaylistsArtistsMW = [
+	auth,
+	tryParseNumber('query')('page'),
+	tryParseNumber('query')('skip'),
+	trySanitizeInput('query')('text')
+];
+
 const putChannelMW = [
 	auth,
 	trySanitizeInput('params')('id'),
@@ -124,6 +131,14 @@ router.get('/channels/playlists/genres', getChannelsPlaylistsGenreMW, (req, res,
 	return Channel.getGenrePlaylists(req.user, req.query.genres)
 		.then(success(200, res))
 		.catch(nextError(500, 'Could not obtain genre playlist.', next));
+});
+
+//GET channels/playlists/artists
+router.get('/channels/playlists/artists', getChannelsPlaylistsArtistsMW, (req, res, next) => {
+	const {page, skip, text} = req.query;
+	return Channel.getArtistsPlaylist(req.user, page, skip, text)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not obtain artists playlist.'));
 });
 
 //GET channels/:id

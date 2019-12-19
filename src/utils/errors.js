@@ -16,5 +16,12 @@ export const ifAnyError = (setFn, message) => error => {
 
 export const setStateThrow = (fn, ...args) => mainArg => {
 	fn(...args);	
-	throw mainArg
+	throw mainArg;
+};
+
+export const ifErrorStatus = (status, fn) => e => {
+	if (e.response.status === status) {
+		return fn(e);
+	};
+	throw e;
 };

@@ -1,8 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import CD from './CD';
-
+/*
 const toCSS = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => acc + `${key}: ${value};\n`, '');
 
@@ -14,8 +13,8 @@ const LoaderWrap = styled.div`
 	` : ''}
 	${({css}) => css ? toCSS(css) : ''}
 `;
-
-export default function(LoaderComponent) {
+*/
+export default function(LoaderComponent, hide = true) {
 	return function({isLoading, message, fill, size, css, lm, children}) {
 		return (
 			<React.Fragment>
@@ -26,9 +25,11 @@ export default function(LoaderComponent) {
 						<LoaderComponent isLoading={isLoading} lm={lm} size={size} fill={fill}/>
 					)
 				}
-				<LoaderWrap css={css} isLoading={isLoading}>
-					{React.Children.toArray(children)}
-				</LoaderWrap>
+				{
+					!isLoading ? (
+						React.Children.toArray(children)
+					) : null
+				}
 			</React.Fragment>
 		);
 	}

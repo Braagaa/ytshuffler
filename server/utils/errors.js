@@ -78,12 +78,21 @@ const pathError = (pathStr, status, msg) => data => {
 const checkQuotaError = e => e.response && e.response.data.error.code === 403;
 const createQuotaExceededError = () => createError(
 	403, 
-	'Youtube quoata has been reached. Try again after 3:00 AM EST'
+	'Youtube quoata has been reached. Try again after 3:00 AM EST.'
 );
 
 const quotaExceeded = next => e => {
 	if (checkQuotaError(e)) {
 		return next(createQuotaExceededError());
+	}
+	throw e;
+};
+
+const exceedsRequestSpotify = (res, next) => e => {
+	const response = e.response;
+	if (response.status === 429) {
+		res.set('Retry-After', (parseInt(response.headers['Retry-After']) + 1) * 1000);
+		next(createError(429, response.statusText));
 	}
 	throw e;
 };
@@ -96,6 +105,7 @@ module.exports = {
 	requiredParamter,
 	validateErrors,
 	duplicateError,
+	exceedsRequestSpotify,
 	errorIf,
 	errorIfNull,
 	pathError,

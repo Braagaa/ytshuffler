@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 
-import {valueChange} from '../../utils/commonEvent';
 import main from '../../style/main';
 import {ReactComponent as SearchIcon} from '../../imgs/search.svg';
+import {write} from '../../actions/input';
 
 const Label = styled.label`
 	display: inline-block;
@@ -24,7 +25,7 @@ const Input = styled.input`
 	font-weight: bold;
 	font-size: 1.5em;
 	outline: none;
-	margin-bottom: 1em;
+	margin-bottom: ${props => props.mb || '1em'};
 `;
 
 const SearchIconWrapper = styled.div`
@@ -35,10 +36,18 @@ const SearchIconWrapper = styled.div`
 	height: 36px;
 `;
 
-export default function(props) {
-	const [searchText, setSearchText] = useState(props.value || '');
+const mapStateToProps = storeData => ({});
+const mapDispatchToProps = {write};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
-	const onTextChange = valueChange(setSearchText);
+export default connectFunction(function(props) {
+	const [input, setInput] = useState('');
+	const onTextChange = e => setInput(e.target.value);
+
+	const onSearch = e => {
+		props.clickHandler(input)(e);
+		props.write('search', input);
+	};
 
 	return (
 		<>
@@ -48,13 +57,14 @@ export default function(props) {
 					placeholder="Type here..." 
 					id="search" 
 					type="text" 
-					value={searchText}
+					mb={props.mb}
+					value={input}
 					onChange={onTextChange}
 				/>
-				<SearchIconWrapper onClick={props.clickHandler(searchText)}>
+				<SearchIconWrapper onClick={onSearch}>
 					<SearchIcon fill={main.colors.color1}/>
 				</SearchIconWrapper>
 			</div>
 		</>
 	);
-};
+});

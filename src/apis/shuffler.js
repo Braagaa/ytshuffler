@@ -4,6 +4,7 @@ import {getCSRFStorage} from '../utils/auth';
 //For now use local for calling the database server
 const databaseURL = 'http://localhost:3000/';
 const youtubeURL = databaseURL + 'youtube/';
+const spotifyURL = databaseURL + 'spotify/';
 const shufflerURL = databaseURL + 'shuffler/';
 const authURL = databaseURL + 'auth/';
 const usersURL = databaseURL + 'users/';
@@ -41,6 +42,7 @@ export const getChannel = id => getAxios(shufflerURL + 'channels/' + id)();
 export const getAllSongs = getAxios(shufflerURL + 'channels/songs');
 export const getAllGenres = getAxios(shufflerURL + 'channels/genres');
 export const getGenresPlaylist = getAxios(shufflerURL + 'channels/playlists/genres');
+export const getAllArtistsPlaylists = getAxios(shufflerURL + 'channels/playlists/artists');
 export const createChannel = postAxios(shufflerURL + 'channels');
 export const deleteChannels = deleteAxios(shufflerURL + 'channels/');
 export const deleteChannel = id => deleteAxios(shufflerURL + 'channels/' + id)();
@@ -48,6 +50,7 @@ export const updateAllChannels = putAxios(shufflerURL + 'channels/update');
 export const updateChannelImage = id => putAxios(shufflerURL + `channels/${id}/update/image`)();
 export const changeChannelPlaylist = (channelId, playmode) => 
 	putAxios(shufflerURL + `channels/${channelId}/playlist/${playmode}`)();
+export const getArtistsImages = artists => getAxios(spotifyURL + `search/artists/images`)({artists});
 
 //auth
 export const registerUser = postAxios(authURL + 'register');

@@ -1,4 +1,5 @@
-import {INITIALIZE, PREV_PAGE, NEXT_PAGE, CURRENT_PAGE} from '../actions/pagination';
+import {INITIALIZE, PREV_PAGE, NEXT_PAGE, CURRENT_PAGE, RESET} from '../actions/pagination';
+import {EXIT} from '../actions/fetching';
 import {getOffset} from '../utils/math';
 
 export default function(storeData = {}, action) {
@@ -34,6 +35,14 @@ export default function(storeData = {}, action) {
 				offset: getOffset(itemsPerPage, page) + itemsPerPage,
 				initalized: false,
 			} : storeData;
+		case RESET || EXIT:
+			return {
+				page: 1,
+				itemsPerPage: 10,
+				maximumItems: 50,
+				offset: 0,
+				initalized: true,
+			};
 		default:
 			return {
 				page: 1,

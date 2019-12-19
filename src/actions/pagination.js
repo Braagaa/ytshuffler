@@ -2,6 +2,7 @@ export const PREV_PAGE = 'PREV_PAGE';
 export const NEXT_PAGE = 'NEXT_PAGE';
 export const CURRENT_PAGE = 'CURRENT_PAGE';
 export const INITIALIZE = 'INITIALIZE';
+export const RESET = 'RESET';
 
 export const initalizePage = (itemsPerPage, page, maximumItems, offset) => ({
 	type: INITIALIZE,
@@ -22,3 +23,5 @@ export const currentPage = page => ({
 	type: CURRENT_PAGE, 
 	payload: {page}
 });
+
+export const resetPage = () => ({type: RESET});

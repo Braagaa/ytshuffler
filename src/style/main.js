@@ -7,6 +7,7 @@ export default {
 		color5: 'black',
 		color6: '#a84c3a',
 		color7: 'darkgreen',
-		purple: '#6d54f0'
+		purple: '#6d54f0',
+		mintcream: 'mintcream'
 	}
 };

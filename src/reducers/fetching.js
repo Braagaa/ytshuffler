@@ -1,8 +1,8 @@
 import {FETCHING_BEGIN, FETCHING_SUCCESS, FETCHING_FAIL} from '../actions/initialLoad';
-import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED, INITIAL_FETCH} from '../actions/fetching';
+import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED, INITIAL_FETCH, MAP, EXIT} from '../actions/fetching';
 
 const def = {
-	initialLoad: false,
+	initialLoad: true,
 	isLoading: false,
 	isError: false,
 	error: null
@@ -49,6 +49,10 @@ export default function fetchingReducer(state = def, action) {
 					...data
 				}
 			};
+		case MAP:
+			return {
+				[key]: action.payload.fn(state[key])
+			};
 		case CLEAR_ERROR:
 			return {
 				...state,
@@ -56,7 +60,7 @@ export default function fetchingReducer(state = def, action) {
 				initialLoad: false,
 				error: null
 			};
-		case CLEAR_FETCH:
+		case CLEAR_FETCH || EXIT:
 			return def;
 		default:
 			return state;

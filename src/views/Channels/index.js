@@ -72,7 +72,7 @@ export default connectFunction(function(props) {
 		if (!initalized) {
 			fetching(getChannels, 'data', {page, skip: channelsPerPage});
 		} 
-	}, [fetching, page, initalized])
+	}, [fetching, page, initalized]);
 
 	const searchHandler = searchText => e => {
 		if (messageObj.message !== noChannelsMessage[0]) {

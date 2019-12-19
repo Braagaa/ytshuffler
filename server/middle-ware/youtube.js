@@ -65,7 +65,8 @@ const getAllSongs = async (channelId, channelTitle, order) => {
 		.map(method('join', ','));
 
 	videos = await asyncMap(videoIdsString => getVideos({id: videoIdsString}))(videosString);
-	videos = flat(videos.map(path('data.items')))
+	videos = flat(videos.map(path('data.items')));
+	videos = videos
 		.map(video => ({
 			youtubeId: video.id,
 			title: getTitle(video.snippet.title),
