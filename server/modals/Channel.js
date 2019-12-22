@@ -330,6 +330,8 @@ channelSchema.static('getArtistsPlaylist', function(user, page = 1, skip = 50, t
 		...playlistQuery(user),
 		{$unwind: '$playlist'},
 		textObj,
+		{$addFields: {'playlist.artist': {$split: ['$playlist.artist', ' - Topic']}}},
+		{$addFields: {'playlist.artist': {$arrayElemAt: ['$playlist.artist', 0]}}},
 		{$group: {_id: '$playlist.artist', playlist: {$push: '$playlist'}}},
 		{$sort: {_id: 1}},
 		{$facet: {
@@ -339,13 +341,13 @@ channelSchema.static('getArtistsPlaylist', function(user, page = 1, skip = 50, t
 				{$limit: skip},
 				{$project: {
 				_id: 0,
-				artist: {$rtrim: {input: '$_id', chars: ' - Topic'}},
+				artist: '$_id',
 				playlist: 1
 			}}],
 		}},
 	])
 		.then(data => ({
-			metaData: data[0].metaData[0],
+			metaData: data[0].metaData[0] || {},
 			artists: data[0].artists
 		}));
 });

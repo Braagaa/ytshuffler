@@ -23,7 +23,8 @@ export default connectFunction(function(props) {
 	const {modalMode} = props;
 	const {snippet: data, statistics, foundChannel} = props;
 	const {url} = data.thumbnails.medium;
-	const topicList = noDup(props.topicDetails.topicIds)
+	const {topicDetails = []} = props;
+	const topicList = noDup(topicDetails.topicIds)
 		.map(num => props.topicIds[num])
 		.filter(topicId => topicId && topicId !== 'Music');
 

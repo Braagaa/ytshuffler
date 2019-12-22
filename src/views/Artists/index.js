@@ -36,6 +36,10 @@ const ArtistsView = connectFunction(function(props) {
 	const {initalFetch, fetching, initalizePage, exit} = props;
 	const [initialLoad, setInitialLoad] = useState(true);
 
+	const noResultsFound = !search ?
+		'No artists found in your channels.' :
+		`'${search}' cannot be found in your channels.`;
+
 	useEffect(() => {
 		initalFetch(
 			getAllArtistsPlaylists, 
@@ -87,7 +91,7 @@ const ArtistsView = connectFunction(function(props) {
 			<Loader isLoading={isLoading} lm="3em">
 				<PaginationOrNull bool={artists.length > 0}/>
 				<MessageOrNull bool={!initialLoad && artists.length === 0}>
-					No artists found.
+					{noResultsFound}
 				</MessageOrNull>
 				<Artists artists={artists}/>
 				<PaginationOrNull bool={artists.length > 0}/>

@@ -1,9 +1,9 @@
 import {FETCHING_BEGIN, FETCHING_SUCCESS, FETCHING_FAIL} from '../actions/initialLoad';
-import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED, INITIAL_FETCH, MAP, EXIT} from '../actions/fetching';
+import {CLEAR_FETCH, CLEAR_ERROR, MERGE_FETCHED, INITIAL_FETCH, INITIAL_FETCH_SUCCESS, MAP, EXIT} from '../actions/fetching';
 
 const def = {
 	initialLoad: true,
-	isLoading: false,
+	isLoading: true,
 	isError: false,
 	error: null
 };
@@ -25,11 +25,17 @@ export default function fetchingReducer(state = def, action) {
 				isError: false,
 				error: null
 			};
+		case INITIAL_FETCH_SUCCESS:
+			return {
+				...state,
+				initialLoad: false,
+				isError: false,
+				[key]: data
+			};
 		case FETCHING_SUCCESS:
 			return {
 				...state,
 				isLoading: false,
-				initialLoad: false,
 				isError: false,
 				[key]: data
 			};

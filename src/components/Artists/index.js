@@ -20,7 +20,10 @@ const Artists = function(props) {
 				{
 					Object.entries(listObj).map(([key, artists]) => (
 						<Li key={key}>
-							<ArtistGroup header={key} artists={artists}/>
+							<ArtistGroup 
+								header={key} 
+								artists={artists}
+							/>
 						</Li>
 					))
 				}
@@ -32,7 +35,7 @@ const Artists = function(props) {
 export default Artists;
 
 Artists.propTypes = {
-	artists: PropTypes.array
+	artists: PropTypes.array,
 };
 Artists.defaultProps = {
 	artists: []

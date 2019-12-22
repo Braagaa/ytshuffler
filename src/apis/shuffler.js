@@ -50,7 +50,7 @@ export const updateAllChannels = putAxios(shufflerURL + 'channels/update');
 export const updateChannelImage = id => putAxios(shufflerURL + `channels/${id}/update/image`)();
 export const changeChannelPlaylist = (channelId, playmode) => 
 	putAxios(shufflerURL + `channels/${channelId}/playlist/${playmode}`)();
-export const getArtistsImages = artists => getAxios(spotifyURL + `search/artists/images`)({artists});
+export const getArtistsImages = (artists, size) => getAxios(spotifyURL + `search/artists/images`)({artists, size});
 
 //auth
 export const registerUser = postAxios(authURL + 'register');

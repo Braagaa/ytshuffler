@@ -60,6 +60,7 @@ export const Duration = styled(Info)`
 	margin: 0 14px;
 	visibility: hidden;
 	position: absolute;
+	top: 0;
 
 	@media (min-width: 576px) {
 		visibility: visible;

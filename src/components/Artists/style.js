@@ -29,9 +29,6 @@ export const Wrapper = styled.div`
 	flex: ${valueOrDefault('f', 'none')};
 	justify-content: ${valueOrDefault('jc', 'flex-start')};
 
-	@media (min-width: 768px) {
-		flex: 1;
-	}
 `;
 
 export const BodyWrapper = styled.div`
@@ -41,6 +38,7 @@ export const BodyWrapper = styled.div`
 	transition: all 0.2s ease-in;
 	border: 1px transparent solid;
 	border-radius: 10px;
+	max-width: 700px;
 
 	:hover {
 		color: ${redish};
@@ -49,6 +47,10 @@ export const BodyWrapper = styled.div`
 
 	:hover button {
 		transform: scale(1);
+	}
+
+	:hover svg {
+		fill: ${redish};
 	}
 `;
 
@@ -67,7 +69,7 @@ export const Img = styled.img`
 `;
 
 export const Name = styled.span`
-	font-size: 1em;
+	font-size: 1.3em;
 	font-weight: bold;
 	padding: 9px;
 	padding-left: 15px;

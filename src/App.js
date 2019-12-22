@@ -13,6 +13,7 @@ import Channels from './views/Channels';
 import Songs from './views/Songs';
 import Genres from './views/Genres';
 import Artists from './views/Artists';
+import Artist from './views/Artist';
 import Settings from './views/Settings';
 import NoMatch from './views/404';
 import Player from './components/Player/';
@@ -72,6 +73,12 @@ export default function App() {
 								redirectTo={'/'}
 								exact 
 								component={Artists}
+							/>
+							<AuthRoute 
+								path="/channels/artists/:artist" 
+								redirectTo={'/'}
+								exact 
+								component={Artist}
 							/>
 							<AuthRoute 
 								path="/channels/:id" 

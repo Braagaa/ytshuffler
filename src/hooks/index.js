@@ -14,6 +14,14 @@ export const useInitalLoad = (apiCall, key, ...args) => {
 	}, []);
 };
 
+export const useLoadResource = (apiCall, key, ...args) => {
+	useEffect(() => {
+		fetching(apiCall, key, ...args)(store.dispatch);
+		return () => store.dispatch(fetchClear(key));
+	//eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+};
+
 export const usePagination = (apiCall, key, pagination, history, ...args) => {
 	useEffect(() => {
 		if (!pagination.initalized) {

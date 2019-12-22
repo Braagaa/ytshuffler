@@ -7,6 +7,7 @@ import Genres from '../../components/GenreList';
 import {SmallButton} from '../../components/Buttons';
 import InfoTooltip from '../../components/Tooltip/InfoTooltip';
 import PreLoader from '../../components/Loaders';
+import NoResults from '../../components/NoResults';
 
 import {getAllGenres} from '../../apis/shuffler';
 import {initalFetch} from '../../actions/fetching';
@@ -18,6 +19,7 @@ import {setState} from '../../utils/commonEvent';
 
 const Loader = PreLoader();
 const infoTooltipMessage = "Select the genres you want to play, then press 'Play Genres' to randomly shuffle a playlist."
+const noResultsMessage = 'No genres have been found in your channels.';
 
 const mapStateToProps = storeData => ({
 	initialLoad: storeData.fetching.initialLoad,
@@ -49,22 +51,29 @@ export default connectFunction(function(props) {
 		return () => clearData();
 	}, [initalFetch, clearData]);
 
+	console.log(genres);
+
 	return (
 		<Loader isLoading={initialLoad} lm="3em">
 			<Header>Genres</Header>
-			<FlexWrap ai="center" mb="3em">
-				<SmallButton 
-					bs 
-					display="block" 
-					margin="0 1em 0 0" 
-					disabled={initialLoad || isLoading}
-					onClick={playGenres}
-				>
-					Play Genres
-				</SmallButton>
-				<InfoTooltip>{infoTooltipMessage}</InfoTooltip>
-			</FlexWrap>
-			<Genres genres={genres}/>
+			<NoResults 
+				bool={genres.length !== 0} 
+				message={noResultsMessage}
+			>
+				<FlexWrap ai="center" mb="3em">
+					<SmallButton 
+						bs 
+						display="block" 
+						margin="0 1em 0 0" 
+						disabled={initialLoad || isLoading}
+						onClick={playGenres}
+					>
+						Play Genres
+					</SmallButton>
+					<InfoTooltip>{infoTooltipMessage}</InfoTooltip>
+				</FlexWrap>
+				<Genres genres={genres}/>
+			</NoResults>
 		</Loader>
 	);
 });
