@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 
 import main from '../../style/main';
 import {ReactComponent as SearchIcon} from '../../imgs/search.svg';
-import {write} from '../../actions/input';
+import {write, clearAll} from '../../actions/input';
 
 const Label = styled.label`
 	display: inline-block;
@@ -37,7 +37,7 @@ const SearchIconWrapper = styled.div`
 `;
 
 const mapStateToProps = storeData => ({});
-const mapDispatchToProps = {write};
+const mapDispatchToProps = {write, clearAll};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
@@ -48,6 +48,10 @@ export default connectFunction(function(props) {
 		props.clickHandler(input)(e);
 		props.write('search', input);
 	};
+
+	useEffect(() => {
+		return () => props.clearAll();
+	}, [props.clearAll]);
 
 	return (
 		<>

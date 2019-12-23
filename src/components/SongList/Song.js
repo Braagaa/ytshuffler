@@ -2,8 +2,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {playSingle} from '../../actions/player';
+import {youtubeURL} from '../../data/url';
 
-import {Wrapper, Img, ButtonsWrapper, InfoWrapper, Info, Artist, Duration, SongButton} from './styles';
+import {Wrapper, Img, ButtonsWrapper, InfoWrapper, Info, Artist, Duration, SongButton, LinkSongButton} from './styles';
 import main from '../../style/main';
 
 const mapStateToProps = () => ({});
@@ -42,12 +43,14 @@ export default connectFunction(function(props) {
 					>
 						Play
 					</SongButton>
-					<SongButton 
+					<LinkSongButton 
 						bg={main.colors.color3} 
 						color={main.colors.color1}
+						href={`${youtubeURL.paths.watch}${youtubeId}`}
+						target="_blank"
 					>
-						Delete
-					</SongButton>
+						Info
+					</LinkSongButton>
 				</ButtonsWrapper>
 				<Duration>{duration}</Duration>
 			</Wrapper>

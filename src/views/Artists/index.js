@@ -67,6 +67,7 @@ const ArtistsView = connectFunction(function(props) {
 	);
 
 	useArtistsImages(artists);
+	console.log('bro');
 
 	const onSearch = searchText => e => {
 		return fetching(getAllArtistsPlaylists, 'data', {

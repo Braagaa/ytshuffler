@@ -7,10 +7,18 @@ const Wrapper = styled.div`
 	font-size: 1em;
 	margin: 0px;
 	font-weight: 600;
+	margin-top: 1.5em;
+
+	@media (min-width: 660px) {
+		margin: 0;
+	}
 
 	@media (min-width: 768px) {
-		font-size: 1.5em;
-		margin: 15px 25px;
+		margin: 10px;
+	}
+
+	@media (min-width: 992px) {
+		font-size: 1.3em;
 	}
 `;
 

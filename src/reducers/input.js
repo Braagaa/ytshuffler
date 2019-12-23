@@ -1,4 +1,4 @@
-import {WRITE, CLEAR} from '../actions/input';
+import {WRITE, CLEAR_INPUTS} from '../actions/input';
 
 export default function inputReducer(state = {}, action) {
 	switch(action.type) {
@@ -7,7 +7,7 @@ export default function inputReducer(state = {}, action) {
 				...state,
 				[action.payload.key]: action.payload.input
 			};
-		case CLEAR:
+		case CLEAR_INPUTS:
 			return {};
 		default:
 			return state;

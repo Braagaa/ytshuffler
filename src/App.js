@@ -63,19 +63,19 @@ export default function App() {
 								component={Channels}
 							/>
 							<AuthRoute 
-								path="/channels/genres" 
+								path="/genres" 
 								redirectTo={'/'}
 								exact 
 								component={Genres}
 							/>
 							<AuthRoute 
-								path="/channels/artists" 
+								path="/artists" 
 								redirectTo={'/'}
 								exact 
 								component={Artists}
 							/>
 							<AuthRoute 
-								path="/channels/artists/:artist" 
+								path="/artists/:artist" 
 								redirectTo={'/'}
 								exact 
 								component={Artist}

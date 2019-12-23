@@ -22,7 +22,7 @@ export const Wrapper = styled.div`
 		opacity: 0.85;
 	}
 
-	:hover button {
+	:hover button, :hover a {
 		opacity: 1;
 		transform: scale(1);
 	}
@@ -74,3 +74,25 @@ export const SongButton = styled(Pill)`
 	opacity: 0;
 	transition: all 0.3s ease-out;
 `;
+
+export const LinkSongButton = styled.a`
+	background-color: ${props => props.bg};
+	color: ${props => props.color};
+	border: none;
+	border-radius: 1em;
+	display: inline-block;
+	padding: .50em .8em;
+	font-size: 75%;
+	font-weight: 700;
+	text-align: center;
+	letter-spacing: 1px;
+	cursor: pointer;
+	margin-right: 5px;
+	transform: scale(0);
+	opacity: 0;
+	transition: all 0.3s ease-out;
+
+	:hover {
+		color: ${main.colors.color1};
+	}
+`

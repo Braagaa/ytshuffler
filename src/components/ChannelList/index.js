@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import Channel from './Channel';
 
 const Wrapper = styled.div`
+	margin: 2em 0;
+
 	@media (min-width: 768px) {
 		display: flex;
 		flex-wrap: wrap;

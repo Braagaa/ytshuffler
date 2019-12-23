@@ -3,19 +3,18 @@ import main from '../../style/main';
 
 export const Wrappper = styled.div`
 	display: flex;
-	justify-content: center;
 	align-items: center;
 	background: rgba(255,255,255,0.8);
 	width: 100%;
 	padding: 15px;
+	border-radius: 8px;
 	cursor: pointer;
-	border-radius: 30px;
 	margin: 0 10px 10px 0;
 	position: relative;
 
 	@media (min-width: 576px) {
 		width: 75%;
-		margin: 0 auto 10px;
+		margin: 0 auto 15px;
 	}
 
 	@media (min-width: 768px) {
@@ -25,6 +24,7 @@ export const Wrappper = styled.div`
 `;
 
 export const Inner = styled.div`
+	margin: 0 auto;
 `;
 
 export const Img = styled.img`
@@ -51,6 +51,7 @@ export const Header = styled.h4`
 	padding: 4px;
 	color: ${main.colors.color1};
 	font-size: 1em;
+	border-radius: 2px;
 	margin-bottom: 1em;
 `;
 

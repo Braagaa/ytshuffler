@@ -24,7 +24,7 @@ const Loader = Loaders();
 const PaginationOrNull = Conditional(Pagination);
 const MessageOrNull = Conditional(Message);
 const ButtonOrNull = Conditional(SmallButton);
-const channelsPerPage = 50;
+const channelsPerPage = 10;
 const noChannelsMessage = [
 	"You have no channels. Why don't you <link>add<link> some?",
 	['/search']

@@ -86,7 +86,7 @@ export default connectFunction(function(props) {
 					</Button>
 				</ConditionalLoader>
 				<Link
-					href={youtubeURL.channel + props.id}
+					href={youtubeURL.paths.channel + props.id}
 					color={colors.color3}
 					background={colors.color1}
 					target="_blank"

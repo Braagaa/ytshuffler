@@ -22,7 +22,7 @@ const ArtistGroup = withRouter(connectFunction(function(props) {
 
 	const onPlay = playlist => e => playList(playlist);
 	const onGo = artist => e => props.history
-		.push(`/channels/artists/${artist}`);
+		.push(`/artists/${artist}`);
 
 	return (
 		<div>
