@@ -1,4 +1,4 @@
-import {getAllSongs, getGenresPlaylist} from '../apis/shuffler';
+import {getChannels, getAllSongs, getGenresPlaylist} from '../apis/shuffler';
 import {map, reduce, prop, path, reThrow} from '../utils/func';
 
 export const CREATE_PLAYER = 'CREATE_PLAYER';
@@ -35,7 +35,7 @@ export const sendYTPlayer = YTPlayer => ({
 
 export const foundError = e => ({
 	type: ERROR,
-	payload: {error: e.response.data.error}
+	payload: {error: e}
 });
 
 const action = action => () => ({type: action});
@@ -50,19 +50,32 @@ export const startLoading = action(START_LOADING);
 const dispatchToPlayList = dispatch => data => dispatch(playList(data));
 
 export const playAllSongs = () => dispatch => {
+	dispatch(stopVideo());
 	dispatch(startLoading());
 	return getAllSongs()
 		.then(path('data.songs'))
 		.then(dispatchToPlayList(dispatch))
-		.catch(e => dispatch(foundError(e)));
+		.catch(reThrow(e => dispatch(foundError(e))));
 };
 
 export const playGenresPlaylist = genres => dispatch => {
+	dispatch(stopVideo());
 	dispatch(startLoading());
 	return getGenresPlaylist({genres})
 		.then(prop('data'))
 		.then(map(prop('playlist')))
 		.then(reduce((acc, playlist) => [...acc, ...playlist], []))
+		.then(dispatchToPlayList(dispatch))
+		.catch(reThrow(e => dispatch(foundError(e))));
+};
+
+export const playFavouriteChannels = options => dispatch => {
+	dispatch(stopVideo());
+	dispatch(startLoading());
+	return getChannels({favourites: true, ...options})
+		.then(path('data.channels'))
+		.then(map(prop('songs')))
+		.then(reduce((acc, songs) => acc.concat(songs), []))
 		.then(dispatchToPlayList(dispatch))
 		.catch(reThrow(e => dispatch(foundError(e))));
 };

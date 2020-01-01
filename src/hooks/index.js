@@ -2,7 +2,6 @@ import {useState, useEffect, useLayoutEffect} from 'react';
 import store from '../store/';
 import {initalFetch, fetching, fetchClear, mapFetched} from '../actions/fetching';
 import {updateChannelImage, getArtistsImages} from '../apis/shuffler';
-import {unauthorized} from '../utils/auth';
 import {prop, path, thunk} from '../utils/func';
 import {ifErrorStatus} from '../utils/errors';
 
@@ -20,16 +19,6 @@ export const useLoadResource = (apiCall, key, ...args) => {
 		return () => store.dispatch(fetchClear(key));
 	//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-};
-
-export const usePagination = (apiCall, key, pagination, history, ...args) => {
-	useEffect(() => {
-		if (!pagination.initalized) {
-			fetching(apiCall, key, ...args)(store.dispatch)
-				.catch(unauthorized(history));
-		}
-	//eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination.page]);
 };
 
 export const useMessages = start => {
@@ -126,4 +115,24 @@ export const useArtistsImages = artists => {
 
 		return () => clearTimeout(id);
 	}, [artists]);
+};
+
+export const useToggle = (prop, apiCall) => {
+	const [disabled, setDisabled] = useState(false);
+	const [bool, setBool] = useState(prop);
+
+	const callback = (...args) => {
+		if (!disabled) {
+			setDisabled(true);
+			apiCall(...args)
+				.then(() => setBool(!bool))
+				.then(() => setDisabled(false))
+		}
+	};
+
+	useEffect(() => {
+		setBool(prop);
+	}, [prop]);
+
+	return [bool, disabled, callback];
 };

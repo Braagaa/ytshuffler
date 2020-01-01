@@ -4,18 +4,19 @@ import {connect} from 'react-redux';
 
 import Header from '../../components/Headers/';
 import SearchBar from '../../components/SearchBar/';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination/withHistory';
 import Message from '../../components/Message';
 import Artists from '../../components/Artists';
 import PreLoader from '../../components/Loaders';
 import Conditional from '../../components/Conditional';
 
 import {getAllArtistsPlaylists} from '../../apis/shuffler';
-import {usePagination, useArtistsImages} from '../../hooks';
 import {initalizePage} from '../../actions/pagination';
-import {initalFetch, fetching, exit} from '../../actions/fetching';
+import {fetching, exit} from '../../actions/fetching';
 import {unauthorized} from '../../utils/auth';
 import {path, thunk} from '../../utils/func';
+import {useArtistsImages} from '../../hooks';
+import {checkValidPage} from '../../utils/math';
 
 const artistsPerPage = 50;
 const Loader = PreLoader();
@@ -24,65 +25,44 @@ const MessageOrNull = Conditional(Message);
 
 const mapStateToProps = storeData => ({
 	isLoading: storeData.fetching.isLoading || false,
-	pagination: storeData.pagination || {},
 	data: storeData.fetching.data || [],
 	search: storeData.input.search || ''
 });
-const mapDispatchToProps = {initalFetch, exit, fetching, initalizePage};
+const mapDispatchToProps = {exit, fetching, initalizePage};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 const ArtistsView = connectFunction(function(props) {
-	const {isLoading, pagination, search, data: {artists = []}} = props;
-	const {initalFetch, fetching, initalizePage, exit} = props;
+	const {isLoading, history, search, data: {artists = []}} = props;
+	const {fetching, initalizePage, exit} = props;
 	const [initialLoad, setInitialLoad] = useState(true);
+	const [pageLimit, setPageLimit] = useState(1);
 
 	const noResultsFound = !search ?
 		'No artists found in your channels.' :
 		`'${search}' cannot be found in your channels.`;
 
-	useEffect(() => {
-		initalFetch(
-			getAllArtistsPlaylists, 
-			'data', 
-			{page: 1, skip: artistsPerPage}
-		)
-			.then(path('metaData.totalArtists'))
-			.then(totalArtists => initalizePage(
-				artistsPerPage, 
-				1, 
-				totalArtists, 
-				0
-			))
-			.then(thunk(setInitialLoad, false));
-		
-		return () => exit();
-	}, [exit, initalFetch, initalizePage]);
+	const query = new URLSearchParams(props.history.location.search);
+	const p = checkValidPage(parseInt(query.get('p') || 1), pageLimit);
+	const q = query.get('q') || '';
 
-	usePagination(
-		getAllArtistsPlaylists, 
-		'data', 
-		pagination, 
-		props.history, 
-		{page: pagination.page, skip: artistsPerPage, text: search}
-	);
+	useEffect(() => {
+		fetching(
+			getAllArtistsPlaylists,
+			'data',
+			{page: p, skip: artistsPerPage, text: q}
+		)
+			.then(path('metaData.pageLimit'))
+			.then(setPageLimit)
+			.then(thunk(setInitialLoad, false))
+			.catch(unauthorized(history));
+
+		return () => exit();
+	}, [q, p, exit, history, fetching, initalizePage]);
 
 	useArtistsImages(artists);
-	console.log('bro');
 
 	const onSearch = searchText => e => {
-		return fetching(getAllArtistsPlaylists, 'data', {
-			page: 1, 
-			skip: artistsPerPage,
-			text: searchText
-		})
-			.then(path('metaData.totalArtists'))
-			.then(totalArtists => initalizePage(
-				artistsPerPage, 
-				1, 
-				totalArtists, 
-				0
-			))
-			.catch(unauthorized(props.history));
+		history.push(`artists?q=${searchText}&p=1`);
 	};
 
 	return(
@@ -90,12 +70,18 @@ const ArtistsView = connectFunction(function(props) {
 			<Header>Artists</Header>
 			<SearchBar mb="2.5em" clickHandler={onSearch}/>
 			<Loader isLoading={isLoading} lm="3em">
-				<PaginationOrNull bool={artists.length > 0}/>
+				<PaginationOrNull 
+					pageLimit={pageLimit}
+					bool={artists.length > 0}
+				/>
 				<MessageOrNull bool={!initialLoad && artists.length === 0}>
 					{noResultsFound}
 				</MessageOrNull>
 				<Artists artists={artists}/>
-				<PaginationOrNull bool={artists.length > 0}/>
+					<PaginationOrNull 
+					pageLimit={pageLimit}
+					bool={artists.length > 0}
+				/>
 			</Loader>
 		</Loader>
 	);
@@ -110,6 +96,5 @@ ArtistsView.propTypes = {
 	exit: PropTypes.func,
 	search: PropTypes.string,
 	isLoading: PropTypes.bool,
-	pagination: PropTypes.object,
 	data: PropTypes.object
 };

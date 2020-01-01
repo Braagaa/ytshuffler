@@ -24,6 +24,7 @@ const {
 	checkPlaylist,
 	checkObjectId
 } = require('../middle-ware/validateYoutube');
+const {frontEndFields} = require('../utils/queries');
 
 const router = express.Router();
 
@@ -38,7 +39,9 @@ const getChannelsMW = [
 	auth, 
 	tryParseNumber('query')('page'), 
 	tryParseNumber('query')('skip'),
-	trySanitizeInput('query')('text')
+	trySanitizeInput('query')('text'),
+	trySanitizeInput('query')('favourites'),
+	defaultProps('query', {favourites: false})
 ];
 
 const getChannelsSongsMW = [
@@ -51,6 +54,12 @@ const postChannelsMW = [
 	parseChannel, 
 	songsForChannel,
 	userForChannel,
+];
+
+const putChannelFav = [
+	auth,
+	checkObjectId('params'),
+	defaultProps('body', {favorite: true})
 ];
 
 const getChannelMW = [
@@ -104,8 +113,8 @@ const deleteChannelMW = [
 
 //GET channels
 router.get('/channels', getChannelsMW, (req, res, next) => {
-	const{page, skip, text} = req.query;
-	return Channel.allChannelsForUser(req.user, page, skip, text)
+	const{page, skip, text, favourites} = req.query;
+	return Channel.allChannelsForUser(req.user, page, skip, text, favourites)
 		.then(success(200, res))
 		.catch(
 			nextError(500, 'Your channels could not be obtained.', next)
@@ -126,6 +135,13 @@ router.get('/channels/genres', auth, (req, res, next) => {
 		.catch(nextError(500, 'Could not get genres.', next));
 });
 
+//GET channels/favourites/songs
+router.get('/channels/favourites/songs', auth, (req, res, next) => {
+	return Channel.getFavouriteChannelSongs(req.user)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not obtain favourite songs.', next));
+});
+
 //GET channels/playlists/genre
 router.get('/channels/playlists/genres', getChannelsPlaylistsGenreMW, (req, res, next) => {
 	return Channel.getGenrePlaylists(req.user, req.query.genres)
@@ -138,7 +154,7 @@ router.get('/channels/playlists/artists', getChannelsPlaylistsArtistsMW, (req, r
 	const {page, skip, text} = req.query;
 	return Channel.getArtistsPlaylist(req.user, page, skip, text)
 		.then(success(200, res))
-		.catch(nextError(500, 'Could not obtain artists playlist.'));
+		.catch(nextError(500, 'Could not obtain artists playlist.', next));
 });
 
 //GET channels/:id
@@ -196,7 +212,20 @@ router.put('/channels/:id/update/image', putChannelImageMW, (req, res, next) => 
 		{new: true, select: {playlists: 0, totalVideoCounts: 0, users: 0}}
 	)
 		.then(success(200, res))
-		.catch(nextError(500, 'Could not update channels image.'));
+		.catch(nextError(500, 'Could not update channels image.', next));
+});
+
+//PUT channels/:id/favourite
+router.put('/channels/:id/favourite', auth, (req, res, next) => {
+	const {params: {id}, body: {favourite}, user} = req;
+	return Channel.findOneAndUpdate(
+		{_id: id, 'users.id': user._id},
+		{$set: {'users.$.isFavourite': favourite}},
+		{new: true}
+	)
+		.then(frontEndFields)
+		.then(success(200, res))
+		.catch(nextError(500, 'Could not update favourite status.', next));
 });
 
 //DELETE channels/

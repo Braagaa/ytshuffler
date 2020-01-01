@@ -118,7 +118,8 @@ export default function playerReducer(state = defaultState, action) {
 		case START_LOADING:
 			return {
 				...state,
-				isLoading: true
+				isLoading: true,
+				isExpanded: true
 			};
 		case ERROR:
 			return {

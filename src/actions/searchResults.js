@@ -1,7 +1,7 @@
 import {getYoutubeSearchChannels, getYoutubeChannels} from '../apis/shuffler';
 import {spliceInto} from '../utils/func';
 import {modalMode} from './modal';
-import {reThrow} from '../utils/func';
+import {reThrow, tap} from '../utils/func';
 
 export const SEARCH_BEGIN = 'SEARCH_RESULTS_BEGIN';
 export const SEARCH_SUCCESS = 'SEARCH_RESULTS_SUCCESS';
@@ -37,11 +37,13 @@ export const getSearchResults = (query, itemsPerPage) => dispatch => {
 		return getYoutubeSearchChannels(query)
 			.then(pathItems)
 			.then(items => getChannels(items, 0, 1, itemsPerPage))
-			.then(actionCreatorToDispatch(setResults, dispatch))
+			.then(tap(actionCreatorToDispatch(setResults, dispatch)))
 			.catch(reThrow(actionCreatorToDispatch(setError, dispatch)))
 			.catch(reThrow(e => dispatch(modalMode(true, false, e.response.data.error))));
 	}
-	return dispatch(setResults([]));
+
+	return Promise.resolve([])
+		.then(tap(actionCreatorToDispatch(setResults, dispatch)))
 };
 
 export const getChannels = (items, offset, page, itemsPerPage) => 

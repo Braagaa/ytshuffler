@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 
 import Header from '../../components/Headers/ChannelHeader';
+import {ButtonsWrapper} from './style';
 import {SongForm as Form, FlexForm} from '../../components/Forms/style';
 import {SmallButton, ModalButton} from '../../components/Buttons';
 import RadioGroup from '../../components/RadioGroup';
@@ -13,14 +14,16 @@ import InfoModal from '../../components/InfoModal';
 import OverLay from '../../components/Modal/OverLay';
 import {Message, ChannelImg} from '../../components/Results/styles';
 import {ConditionalLoader as Conditional} from '../../components/Conditional';
+import Heart from '../../components/Heart';
 
-import {getChannel, changeChannelPlaylist, deleteChannel} from '../../apis/shuffler';
+import {getChannel, changeChannelPlaylist, deleteChannel, updateFavouriteStatus} from '../../apis/shuffler';
 import {fetching, fetchClear, clearError} from '../../actions/fetching';
 import {modalMode} from '../../actions/modal';
 import {playList} from '../../actions/player';
 import {setState} from '../../utils/commonEvent';
 import main from '../../style/main';
 import {unauthorized} from '../../utils/auth';
+import {useToggle} from '../../hooks';
 
 const Loader = Loaders();
 const ModalLoader = Loaders(WaitingDots);
@@ -44,6 +47,11 @@ export default connectFunction(function(props) {
 	const {fetchingState, channel, isLoading, modal} = props;
 	const {fetching, fetchClear, modalMode, playList, clearError} = props;
 	const {id} = props.match.params;
+
+	const [isFavourite, disabled, toggleHeart] = useToggle(
+		channel.isFavourite, 
+		updateFavouriteStatus, 
+	);
 
 	const onChange = e => {
 		window.scrollTo(0, 0);
@@ -78,6 +86,13 @@ export default connectFunction(function(props) {
 		playList(songs);
 	};
 
+	const onFavourite = e => {
+		e.preventDefault();
+		if (!disabled) {
+			toggleHeart(id, !isFavourite);
+		}
+	};
+
 	useEffect(() => {
 		fetching(getChannel, 'channel', id);
 		return () => fetchClear();
@@ -102,22 +117,29 @@ export default connectFunction(function(props) {
 						checked={channel.playmode}
 						onChange={onChange}
 					/>
-					<SmallButton
-						color={main.colors.color3}
-						background={main.colors.color1}
-						bs={true}
-						type="submit"
-					>
-						Delete Channel
-					</SmallButton>
-					<SmallButton
-						color={main.colors.color3}
-						background={main.colors.color1}
-						bs={true}
-						onClick={onPlay}
-					>
-						Play
-					</SmallButton>
+					<ButtonsWrapper>
+						<SmallButton
+							color={main.colors.color3}
+							background={main.colors.color1}
+							bs={true}
+							type="submit"
+						>
+							Delete Channel
+						</SmallButton>
+						<SmallButton
+							color={main.colors.color3}
+							background={main.colors.color1}
+							bs={true}
+							onClick={onPlay}
+						>
+							Play
+						</SmallButton>
+						<Heart 
+							onClick={onFavourite}
+							isFilled={isFavourite}
+							m="0 0 0 1.5em"
+						/>
+					</ButtonsWrapper>
 				</Form>
 				<SongList channelTitle={channel.title} songs={channel.songs || []}/>
 			</div>

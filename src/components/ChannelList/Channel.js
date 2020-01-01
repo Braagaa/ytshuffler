@@ -1,10 +1,14 @@
 import React from 'react';
 import {useUpdateImage} from '../../hooks/';
+import Conditional from '../Conditional';
 
-import {Wrappper, Inner, Header, Img, P, Ul} from './styles';
+import {ReactComponent as Heart} from '../../imgs/heart.svg';
+import {Wrappper, HeartWrapper, Inner, Header, Img, P, Ul} from './styles';
+
+const HeartOrNull = Conditional(Heart);
 
 export default function({thumbnail_url, title, topics, songs, ...props}) {
-	const {_id, history} = props;
+	const {_id, history, isFavourite} = props;
 	const onClick = e => history.push('/channels/' + _id);
 
 	const [imageUrl, updateImage] = useUpdateImage(_id, thumbnail_url);
@@ -26,6 +30,9 @@ export default function({thumbnail_url, title, topics, songs, ...props}) {
 					}
 				</Ul>
 			</Inner>
+			<HeartWrapper>
+				<HeartOrNull bool={isFavourite} fill="red"/>
+			</HeartWrapper>
 		</Wrappper>
 	);
 };

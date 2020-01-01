@@ -34,7 +34,7 @@ router.get('/channels',
 			.then(fetched => fetched.data.items)
 			.then(channels => [
 				channels,
-				ifUserInChannels(channels, req.user)
+				ifUserInChannels(Channel, channels, req.user)
 			])
 			.then(data => Promise.all(data))
 			.then(([channels, foundChannelIds]) => 

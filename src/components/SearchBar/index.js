@@ -41,6 +41,7 @@ const mapDispatchToProps = {write, clearAll};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
+	const {clearAll} = props;
 	const [input, setInput] = useState('');
 	const onTextChange = e => setInput(e.target.value);
 
@@ -50,8 +51,8 @@ export default connectFunction(function(props) {
 	};
 
 	useEffect(() => {
-		return () => props.clearAll();
-	}, [props.clearAll]);
+		return () => clearAll();
+	}, [clearAll]);
 
 	return (
 		<>

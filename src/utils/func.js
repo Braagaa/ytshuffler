@@ -50,11 +50,4 @@ export const complement = fn => (...args) => !fn(...args);
 
 export const thunk = (fn, ...args) => () => fn(...args);
 
-export const setTime = time => arg => {
-	return new Promise(resolve => {
-		const id = setTimeout(() => {
-			clearTimeout(id);
-			return resolve(arg);
-		}, time);
-	});
-};
+export const ifElse = (bool, pass, fail) => (...args) => bool ? pass(...args) : fail(...args);

@@ -61,6 +61,14 @@ export const P = styled.p`
 	margin-bottom: 5px;
 `;
 
+export const HeartWrapper = styled.div`
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	bottom: 10px;
+	right: 10px;
+`;
+
 export const Ul = styled.ul`
 	${textStyles}
 	padding: 0px;

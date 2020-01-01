@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 
 import {FlexWrap} from '../../components/Wrappers';
@@ -22,8 +22,6 @@ const infoTooltipMessage = "Select the genres you want to play, then press 'Play
 const noResultsMessage = 'No genres have been found in your channels.';
 
 const mapStateToProps = storeData => ({
-	initialLoad: storeData.fetching.initialLoad,
-	isLoading: storeData.fetching.isLoading,
 	genres: storeData.fetching.genres,
 	selectedGenres: storeData.select
 });
@@ -32,8 +30,9 @@ const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
 	const {initalFetch, clearData, playGenresPlaylist} = props;
-	const {initialLoad, isLoading} = props;
 	const {genres = [], selectedGenres = {}} = props;
+	const [initialLoad, setInitialLoad] = useState(true);
+	const [isLoading, setLoading] = useState(false);
 
 	const playGenres = e => {
 		const genresStr = Object.entries(selectedGenres)
@@ -41,17 +40,18 @@ export default connectFunction(function(props) {
 			.map(nth(0))
 			.join(',');
 
+		setLoading(true);
 		playGenresPlaylist(genresStr)
 			.then(setState(clearData))
+			.then(setState(setLoading, false))
 			.catch(unauthorized(props.history));
 	};
 
 	useEffect(() => {
-		initalFetch(getAllGenres, 'genres');
+		initalFetch(getAllGenres, 'genres')
+			.then(setState(setInitialLoad, false));
 		return () => clearData();
 	}, [initalFetch, clearData]);
-
-	console.log(genres);
 
 	return (
 		<Loader isLoading={initialLoad} lm="3em">

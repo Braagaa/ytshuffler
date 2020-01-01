@@ -44,15 +44,16 @@ export default connectFunction(function(props) {
 	};
 
 	useEffect(() => {
-		initalizePage(10, 1, 50, 0);
-		getSearchResults(q, 10);
+		getSearchResults(q, 10)
+			.then(items => initalizePage(10, 1, items.length, 0));
 	}, [q, initalizePage, getSearchResults]);
 
 	useEffect(() => {
 		if (!isLoading && !isError) {
 			checkToChannels(items, offset, page, itemsPerPage);
 		}
-	}, [offset, items, page, itemsPerPage, checkToChannels, isLoading, isError]);
+		//eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [page]);
 
 	return (
 		<div>

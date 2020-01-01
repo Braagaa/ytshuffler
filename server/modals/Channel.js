@@ -2,7 +2,8 @@ const {Schema, model, Types: {ObjectId: toObjectId}} = require('mongoose');
 const {songSchema} = require('./Song');
 const {userSchema} = require('./User');
 const {errorIfNull} = require('../utils/errors');
-const {tap} = require('../utils/func');
+const {frontEndFields} = require('../utils/queries');
+const {tap, prop} = require('../utils/func');
 
 const {ObjectId} = Schema.Types;
 
@@ -23,7 +24,11 @@ const channelSchema = new Schema({
 	users: [{
 		_id: false,
 		id: ObjectId,
-		playmode: String
+		playmode: String,
+		isFavourite: {
+			type: Boolean,
+			default: false
+		}
 	}],
 	totalVideoCounts: {
 		date: {
@@ -40,16 +45,7 @@ const channelSchema = new Schema({
 		date: [songSchema],
 		viewCount: [songSchema]
 	}
-});
-
-const frontEndFields = channel => ({
-	youtubeId: channel.youtubeId,
-	title: channel.title,
-	thumbnail_url: channel.thumbnail_url,
-	topics: channel.topics,
-	playmode: channel.users[0].playmode,
-	songs: channel.playlists[channel.users[0].playmode]
-});
+}, {collation: {locale: 'en', strength: 1}});
 
 const pageLimitQuery = (skip, prop) => ({$ceil: {$divide: [prop, skip]}});
 const paginationQuery = (page, pageLimit, countProp) => [
@@ -66,34 +62,27 @@ const paginationQuery = (page, pageLimit, countProp) => [
 	}}
 ]
 
-channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text) {
+channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text, favourites = false) {
 	const pageLimit = pageLimitQuery(skip, '$totalChannels');
 	const textObj = text ? {title: new RegExp(text, 'i')} : {};
+	const favouritesObj = favourites === 'true' ? {'users.isFavourite': true} : {};
+
 	return Channel.aggregate([
-		{$match: {'users.id': toObjectId(user.id), ...textObj}},
+		{$match: {'users.id': toObjectId(user.id), ...textObj, ...favouritesObj}},
 		{
 			$facet: {
 				metaData: paginationQuery(page, pageLimit, 'totalChannels'),
 				channels: [
+					{$sort: {title: 1}},
 					{$skip: skip * (page - 1)},
 					{$limit: skip},
+					{$unwind: '$users'},
 					{$addFields: {
-						playmode: {
-							$reduce: {
-								input: '$users',
-								initialValue: '',
-								in: {
-									$cond: {
-										if: {$eq: ['$$this.id', toObjectId(user.id)]},
-										then: '$$this.playmode',
-										else: '$$value'
-									}
-								}
-							}
-						},
+						playmode: '$users.playmode',
+						isFavourite: '$users.isFavourite',
 						songs: {
 							$objectToArray: '$playlists'
-						}
+						},
 					}},
 					{$addFields: {
 						songs: {
@@ -167,7 +156,7 @@ channelSchema.static('findOneChannel', function(id, user) {
 			thumbnail_url: 1,
 			topics: 1,
 			playlists: 1,
-			users: {$elemMatch: {id: user._id}}
+			users: {$elemMatch: {id: user._id}},
 		}
 	)
 		.then(frontEndFields);
@@ -350,6 +339,21 @@ channelSchema.static('getArtistsPlaylist', function(user, page = 1, skip = 50, t
 			metaData: data[0].metaData[0] || {},
 			artists: data[0].artists
 		}));
+});
+
+channelSchema.static('getFavouriteChannelSongs', function(user) {
+	return Channel.aggregate([
+		{$match: {'users.id': toObjectId(user.id), 'users.isFavourite': true}},
+		{$unwind: '$users'},
+		{$match: {'users.id': toObjectId(user.id)}},
+		{$addFields: {'playlists': {$objectToArray: '$playlists'}}},
+		{$unwind: '$playlists'},
+		{$match: {$expr: {$eq: ['$playlists.k', '$users.playmode']}}},
+		{$unwind: '$playlists.v'},
+		{$group: {_id: null, songs: {$push: '$playlists.v'}}},
+		{$project: {_id: 0}}
+	])
+		.then(prop('0'));
 });
 
 channelSchema.index({title: 1});
