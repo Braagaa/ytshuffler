@@ -46,6 +46,7 @@ export default connectFunction(function(props) {
 	const onTextChange = e => setInput(e.target.value);
 
 	const onSearch = e => {
+		e.preventDefault();
 		props.clickHandler(input)(e);
 		props.write('search', input);
 	};
@@ -57,7 +58,7 @@ export default connectFunction(function(props) {
 	return (
 		<>
 			<Label htmlFor="search">{props.text}</Label>
-			<div>
+			<form onSubmit={onSearch}>
 				<Input 
 					placeholder="Type here..." 
 					id="search" 
@@ -69,7 +70,7 @@ export default connectFunction(function(props) {
 				<SearchIconWrapper onClick={onSearch}>
 					<SearchIcon fill={main.colors.color1}/>
 				</SearchIconWrapper>
-			</div>
+			</form>
 		</>
 	);
 });

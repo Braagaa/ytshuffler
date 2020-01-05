@@ -39,6 +39,7 @@ export default connectFunction(function(props) {
 	const displayedItems = items.slice(offset, itemsPerPage * page);
 
 	const onSubmitHandle = value => e => {
+		e.preventDefault();
 		props.history.push('/search?q=' + value);
 		setq(value);
 	};
@@ -57,14 +58,12 @@ export default connectFunction(function(props) {
 
 	return (
 		<div>
-			<form onSubmit={onSubmitHandle}>
-				<SearchBar
-					history={props.history} 
-					text="Search"
-					clickHandler={onSubmitHandle}
-					value={q}
-				/>
-			</form>
+			<SearchBar
+				history={props.history} 
+				text="Search"
+				clickHandler={onSubmitHandle}
+				value={q}
+			/>
 			<h2 className="mb-2 pl-4">Results</h2>
 			<PaginationOrNull 
 				bool={!isLoading && items.length > 0}
