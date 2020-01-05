@@ -13,7 +13,8 @@ import Modal from '../../components/Modal/';
 import InfoModal from '../../components/InfoModal';
 import OverLay from '../../components/Modal/OverLay';
 import {Message, ChannelImg} from '../../components/Results/styles';
-import {ConditionalLoader as Conditional} from '../../components/Conditional';
+import DateText from '../../components/Message';
+import Condition, {ConditionalLoader as Conditional} from '../../components/Conditional';
 import Heart from '../../components/Heart';
 
 import {getChannel, changeChannelPlaylist, deleteChannel, updateFavouriteStatus} from '../../apis/shuffler';
@@ -23,10 +24,12 @@ import {playList} from '../../actions/player';
 import {setState} from '../../utils/commonEvent';
 import main from '../../style/main';
 import {unauthorized} from '../../utils/auth';
+import {channelDateFormat} from '../../utils/date';
 import {useToggle} from '../../hooks';
 
 const Loader = Loaders();
 const ModalLoader = Loaders(WaitingDots);
+const DateOrNull = Condition(DateText);
 const radioButtons = [
 	['date', 'Most Recent Songs'],
 	['viewCount', 'Most Viewed Songs'],
@@ -141,7 +144,18 @@ export default connectFunction(function(props) {
 						/>
 					</ButtonsWrapper>
 				</Form>
-				<SongList channelTitle={channel.title} songs={channel.songs || []}/>
+				<DateOrNull 
+					bool={channel.updatedOn} 
+					fs="1.2em" 
+					mb="1em"
+					ta="left"
+				>
+					{`Last Updated: ${channelDateFormat(channel.updatedOn)}`}
+				</DateOrNull>
+				<SongList 
+					channelTitle={channel.title} 
+					songs={channel.songs || []}
+				/>
 			</div>
 			<Modal on={modal.on}>
 				<Conditional bool={!fetchingState.error}>

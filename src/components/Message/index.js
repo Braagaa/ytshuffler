@@ -2,10 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from './Link';
 
+const defaultProps = (prop, def) => props => props[prop] || def;
+
 const Wrappper = styled.div`
-	font-size: 2em;
-	text-align: center;
-	margin-top: ${props => props.mt || '0'};
+	font-size: ${defaultProps('fs', '2em')};
+	text-align: ${defaultProps('ta', 'center')};
+	margin-top: ${defaultProps('mt', '0')};
+	margin-bottom: ${defaultProps('mb', '0')};
 	${props => props.css || ''}
 `;
 
@@ -17,6 +20,8 @@ export default function(props) {
 		);
 
 	return (
-		<Wrappper mt={props.mt} css={props.css}>{message}</Wrappper>
+		<Wrappper {...props}>
+			{message}
+		</Wrappper>
 	);
 };

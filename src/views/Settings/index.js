@@ -4,6 +4,7 @@ import {getUserSettings, updateUserSettings, deleteChannels} from '../../apis/sh
 import {fetching, mergeFetched, fetchClear} from '../../actions/fetching';
 import {modalMode} from '../../actions/modal';
 
+import {SettingWrapper, ButtonsWrapper} from './style';
 import Header from '../../components/Headers';
 import RadioGroup from '../../components/RadioGroup';
 import {SmallButton} from '../../components/Buttons';
@@ -21,8 +22,15 @@ const radioDefaultPlaymodeButtons = [
 	['date', 'Most Recent Songs'],
 	['viewCount', 'Most Viewed Songs'],
 ];
+const radioChannelOrder = [
+	['alphabetical', 'Alphabetical'],
+	['updated', 'Recently Updated'],
+	['newest', 'Newest'],
+	['oldest', 'Oldest']
+];
 
 const defaultPlaymodeHint = 'This defaults to which songs will be added when a channel is added to your library. The first 100 songs are obtained from the channel either by the following ways: most recently uploaded or most viewed.';
+const channelOrderHint = 'Adjust how you want your channels to be ordered in your Channels List by the following ways:';
 
 const {color1: white, color3: redish} = main.colors;
 const Loader = Loaders();
@@ -39,10 +47,12 @@ const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 export default connectFunction(function(props) {
 	const {fetching, mergeFetched, fetchClear, modalMode} = props;
 	const {initalLoading, settings, modal} = props;
-
-	const playmodeOnChange = e => {
-		mergeFetched('settings', {playmode: e.target.value});
+	
+	const mergeSettings = prop => e => {
+		mergeFetched('settings', {[prop]: e.target.value});
 	};
+	const playmodeOnChange = mergeSettings('playmode');
+	const channelOrderOnChange = mergeSettings('channelOrder');
 
 	const deleteAllChannels = e => {
 		e.preventDefault();
@@ -74,30 +84,41 @@ export default connectFunction(function(props) {
 			<div>
 				<Header>Settings</Header>
 				<form onSubmit={saveSettings}>
-					<RadioGroup
-						title="Default Play Mode"
-						name="default_playmode"
-						hint={defaultPlaymodeHint}
-						values={radioDefaultPlaymodeButtons}
-						checked={settings.playmode || 'date'}
-						onChange={playmodeOnChange}
-					/>
-					<SmallButton 
-						background={white} 
-						color={redish}
-						bs={true}
-					>
-						Save Settings
-					</SmallButton>
-					<SmallButton
-						background={white} 
-						color={redish}
-						bs={true}
-						margin='1em 0 0 2em'
-						onClick={deleteAllChannels}
-					>
-						Delete All Channels
-					</SmallButton>
+					<SettingWrapper>
+						<RadioGroup
+							title="Default Play Mode"
+							name="default_playmode"
+							hint={defaultPlaymodeHint}
+							values={radioDefaultPlaymodeButtons}
+							checked={settings.playmode || 'date'}
+							onChange={playmodeOnChange}
+						/>
+						<RadioGroup
+							title="Channel Order"
+							name="channel_order"
+							hint={channelOrderHint}
+							values={radioChannelOrder}
+							checked={settings.channelOrder || 'alphabetical'}
+							onChange={channelOrderOnChange}
+						/>
+					</SettingWrapper>
+					<ButtonsWrapper>
+						<SmallButton 
+							background={white} 
+							color={redish}
+							bs={true}
+						>
+							Save Settings
+						</SmallButton>
+						<SmallButton
+							background={white} 
+							color={redish}
+							bs={true}
+							onClick={deleteAllChannels}
+						>
+							Delete All Channels
+						</SmallButton>
+					</ButtonsWrapper>
 				</form>
 			</div>
 			<Modal on={modal.on}>

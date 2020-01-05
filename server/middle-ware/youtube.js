@@ -86,15 +86,17 @@ const getSongsForUpdate = async (channel, playlist) => {
 		.then(path('data.items.0.statistics.videoCount'));
 
 	let videos = [];
+	let isUpdatedVideos = false;
 	const playlistCount = totalVideoCounts[playlist];
 
 	if (playlistCount !== parseInt(channelVideoCount)) {
 		videos = await getAllSongs(youtubeId, title, playlist);
+		isUpdatedVideos = true;
 	} else {
 		videos = playlists[playlist];
 	};
 
-	return {videos, channelVideoCount};
+	return {videos, isUpdatedVideos, channelVideoCount: parseInt(channelVideoCount)};
 };
 
 const songsForChannel = async (req, res, next) => {
@@ -153,13 +155,21 @@ const channelUpdate = async (req, res, next) => {
 			.then(errorIfNull(404, 'Channel cannot be found.'));
 		const {totalVideoCounts, youtubeId, title, playlists} = channel;
 
-		const {videos, channelVideoCount} = await getSongsForUpdate(channel, playlist);
+		const {
+			videos, 
+			channelVideoCount, 
+			isUpdatedVideos
+		} = await getSongsForUpdate(channel, playlist);
 
-		req.channel = channel;
+		req.channel = channel.toObject();
 		req.channel.playmode = playlist;
 		req.channel.totalVideoCounts[playlist] = channelVideoCount;
 		req.channel.playlists[playlist] = videos;
-		
+
+		if (isUpdatedVideos) {
+			req.channel.updatedOn = Date.now();
+		}
+
 		next();
 	} catch(e) {
 		if (checkQuotaError(e)) return next(createQuotaExceededError());
@@ -198,7 +208,9 @@ const channelsUpdate = async (req, res, next) => {
 				_id: channel._id,
 				playmode: channel.playmode,
 				videoCount: channel.newViewCount,
-				videos
+				videos,
+				//updatedOn needs testing
+				updatedOn: Date.now()
 			}), neededChannelsToUpdate));
 		
 		req.channels = updatedChannels;

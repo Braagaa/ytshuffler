@@ -28,6 +28,17 @@ export const path = str => obj => str
 	.split('.')
 	.reduce((acc, str) => acc[str], obj);
 
+export const pathOr = (str, def) => obj => {
+	try {
+		return str
+			.split('.')
+			.reduce((acc, str) => acc[str], obj);
+			
+	} catch(e) {
+		return def;
+	}
+};
+
 export const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => set(value, key)(acc), {});
 

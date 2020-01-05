@@ -21,6 +21,10 @@ const channelSchema = new Schema({
 		type: String,
 		required: true
 	},
+	updatedOn: {
+		type: Date,
+		default: Date.now
+	},
 	users: [{
 		_id: false,
 		id: ObjectId,
@@ -28,6 +32,10 @@ const channelSchema = new Schema({
 		isFavourite: {
 			type: Boolean,
 			default: false
+		},
+		subscribedOn: {
+			type: Date,
+			default: Date.now
 		}
 	}],
 	totalVideoCounts: {
@@ -60,12 +68,20 @@ const paginationQuery = (page, pageLimit, countProp) => [
 			$and: [{$lt: [page, pageLimit]}, {$gte: [page, 1]}]
 		}
 	}}
-]
+];
 
+const sortObject = {
+	alphabetical: {title: 1},
+	updated: {updatedOn: -1},
+	newest: {'users.subscribedOn': -1},
+	oldest: {'users.subscribedOn': 1}
+};
 channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, text, favourites = false) {
 	const pageLimit = pageLimitQuery(skip, '$totalChannels');
 	const textObj = text ? {title: new RegExp(text, 'i')} : {};
 	const favouritesObj = favourites === 'true' ? {'users.isFavourite': true} : {};
+	const order = sortObject[user.settings.channelOrder] 
+		|| sortObject.alphabetical;
 
 	return Channel.aggregate([
 		{$match: {'users.id': toObjectId(user.id), ...textObj, ...favouritesObj}},
@@ -73,10 +89,11 @@ channelSchema.static('allChannelsForUser', function(user, page = 1, skip = 50, t
 			$facet: {
 				metaData: paginationQuery(page, pageLimit, 'totalChannels'),
 				channels: [
-					{$sort: {title: 1}},
+					{$unwind: '$users'},
+					{$match: {'users.id': toObjectId(user.id)}},
+					{$sort: order},
 					{$skip: skip * (page - 1)},
 					{$limit: skip},
-					{$unwind: '$users'},
 					{$addFields: {
 						playmode: '$users.playmode',
 						isFavourite: '$users.isFavourite',
@@ -157,6 +174,7 @@ channelSchema.static('findOneChannel', function(id, user) {
 			topics: 1,
 			playlists: 1,
 			users: {$elemMatch: {id: user._id}},
+			updatedOn: 1
 		}
 	)
 		.then(frontEndFields);
@@ -169,7 +187,8 @@ channelSchema.static('findOneChannelForUpdate', function(filter) {
 			title: 1,
 			totalVideoCounts: 1,
 			youtubeId: 1,
-			playlists: 1
+			playlists: 1,
+			updatedOn: 1
 		}
 	);
 });
@@ -177,11 +196,12 @@ channelSchema.static('findOneChannelForUpdate', function(filter) {
 channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {
 	const {playmode} = channelUser;
 	return Channel.findOneAndUpdate(
-		{_id: channel.id, 'users.id': channelUser.id},
+		{_id: channel._id, 'users.id': channelUser.id},
 		{
 			totalVideoCounts: channel.totalVideoCounts, 
 			[`playlists.${playmode}`]: channel.playlists[playmode],
-			$set: {'users.$.playmode': playmode}
+			$set: {'users.$.playmode': playmode},
+			updatedOn: channel.updatedOn
 		},
 		{
 			new: true,
@@ -191,7 +211,8 @@ channelSchema.static('updateChannelPlaylist', function(channel, channelUser) {
 				thumbnail_url: 1,
 				users: {$elemMatch: {id: channelUser.id}},
 				topics: 1,
-				playlists: 1
+				playlists: 1,
+				updatedOn: 1
 			}
 		}
 	)
@@ -251,12 +272,13 @@ channelSchema.static('findChannelsForUpdate', function(user) {
 
 channelSchema.static('updateManyChannels', function(channels) {
 	const toBulkWrite = channels
-		.map(({_id, playmode, videoCount, videos}) => ({
+		.map(({_id, playmode, videoCount, videos, updatedOn}) => ({
 			updateOne: {
 				filter: {_id},
 				update: {
 					[`totalVideoCounts.${playmode}`]: videoCount,
 					[`playlists.${playmode}`]: videos,
+					updatedOn
 				}
 			}
 		}));

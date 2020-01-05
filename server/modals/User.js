@@ -21,6 +21,10 @@ const userSchema = new Schema({
 		playmode: {
 			type: String,
 			default: 'date'
+		},
+		channelOrder: {
+			type: String,
+			default: 'alphabetical'
 		}
 	}
 });

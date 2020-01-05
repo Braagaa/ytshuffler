@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {getChannels, getFavouriteSongs} from '../../apis/shuffler';
 import {fetching, fetchClear} from '../../actions/fetching';
-import {playAllSongs, playFavouriteChannels} from '../../actions/player';
+import {playList, playAllSongs, playFavouriteChannels} from '../../actions/player';
 import {useMessages} from '../../hooks/';
 import {setState} from '../../utils/commonEvent';
 
@@ -18,7 +18,7 @@ import {ButtonsWrapper} from './style';
 
 import mainStyle from '../../style/main';
 import {unauthorized} from '../../utils/auth';
-import {ifElse, path} from '../../utils/func';
+import {ifElse, pathOr} from '../../utils/func';
 
 const {colors} = mainStyle;
 const Loader = Loaders();
@@ -36,24 +36,25 @@ const noChannelsMessage = [
 const mapStateToProps = storeData => ({
 	data: storeData.fetching.data || {},
 	favouriteSongs: storeData.fetching.favouriteSongs || {songs: []},
-	isLoading: storeData.fetching.isLoading,
 	error: storeData.fetching.error,
 	initalized: storeData.pagination.initalized
 });
 const mapDispatchToProps = {
 	fetching, 
 	fetchClear, 
+	playList,
 	playAllSongs, 
 	playFavouriteChannels
 };
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {data, favouriteSongs, isLoading, history} = props;
-	const {fetching, fetchClear, playAllSongs, playFavouriteChannels} = props;
+	const {data, favouriteSongs, history} = props;
+	const {fetching, fetchClear, playList, playAllSongs} = props;
 	const {metaData} = data;
 	const [pageLimit, setPageLimit] = useState(1);
 	const [favouritesLoading, setFavouritesLoading] = useState(true);
+	const [isLoading, setLoading] = useState(true);
 
 	const [messageObj, setMessage] = useMessages(false);
 
@@ -62,7 +63,7 @@ export default connectFunction(function(props) {
 		return data;
 	};
 
-	const requestPageLimit = data => data.metaData.page > data.metaData.pageLimit ?
+	const requestPageLimit = data => data.metaData && data.metaData.page > data.metaData.pageLimit ?
 		fetching(getChannels, 'data', {
 			page: data.metaData.pageLimit, 
 			skip: channelsPerPage,
@@ -85,6 +86,8 @@ export default connectFunction(function(props) {
 	}, [fetching, setFavouritesLoading, history, fetchClear]);
 
 	useEffect(() => {
+		setLoading(true);
+		setMessage('');
 		fetching(getChannels, 'data', {
 			page: p,
 			skip: channelsPerPage, 
@@ -97,8 +100,9 @@ export default connectFunction(function(props) {
 				checkIfNoChannels(`No channels found for '${search}'.`),
 				checkIfNoChannels(...noChannelsMessage)
 			))
-			.then(path('metaData.pageLimit'))
+			.then(pathOr('metaData.pageLimit', 1))
 			.then(setPageLimit)
+			.then(setState(setLoading, false))
 			.catch(unauthorized(props.history));
 		//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [favourites, search, p]);
@@ -116,12 +120,7 @@ export default connectFunction(function(props) {
 	};
 
 	const playFavourites = e => {
-		playFavouriteChannels({
-			page: p, 
-			skip: channelsPerPage, 
-			text: search
-		})
-			.catch(unauthorized(props.history));
+		playList(favouriteSongs.songs);
 	};
 
 	const showFavouriteChannels = e => {

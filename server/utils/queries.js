@@ -14,7 +14,8 @@ const frontEndFields = channel => ({
 	topics: channel.topics,
 	playmode: channel.users[0].playmode,
 	songs: channel.playlists[channel.users[0].playmode],
-	isFavourite: channel.users[0].isFavourite
+	isFavourite: channel.users[0].isFavourite,
+	updatedOn: channel.updatedOn
 });
 
 module.exports = {
