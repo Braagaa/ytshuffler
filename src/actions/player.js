@@ -12,6 +12,8 @@ export const CLEAR = 'CLEAR';
 export const EXPAND = 'EXPAND';
 export const START_LOADING = 'START_LOADING';
 export const ERROR = 'ERROR';
+export const SET_VOLUME = 'SET_VOLUME';
+export const TOGGLE_MUTE = 'TOGGLE_MUTE';
 
 export const playSingle = video => ({
 	type: PLAY_SINGLE,
@@ -38,6 +40,11 @@ export const foundError = e => ({
 	payload: {error: e}
 });
 
+export const setVolume = value => ({
+	type: SET_VOLUME,
+	payload: {value}
+});
+
 const action = action => () => ({type: action});
 
 export const playVideo = action(PLAY);
@@ -46,6 +53,7 @@ export const stopVideo = action(STOP);
 export const pauseVideo = action(PAUSE);
 export const clearPlayer = action(CLEAR);
 export const startLoading = action(START_LOADING);
+export const toggleMute = action(TOGGLE_MUTE);
 
 const dispatchToPlayList = dispatch => data => dispatch(playList(data));
 

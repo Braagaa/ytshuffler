@@ -8,7 +8,8 @@ import {ReactComponent as StopButton} from '../../imgs/stop-button.svg';
 import {ReactComponent as MusicIcon} from '../../imgs/music-player.svg';
 import {ReactComponent as MinimizeIcon} from '../../imgs/minimize.svg';
 import {ReactComponent as ShuffleButton} from '../../imgs/shuffle.svg';
-import {ConditionalHidden, Conditions} from '../Conditional/';
+import Volume from '../Volume';
+import Condition, {ConditionalHidden, Conditions} from '../Conditional/';
 import Loaders from '../Loaders/';
 
 import main from '../../style/main';
@@ -48,6 +49,7 @@ const playmodes = createPlaymode(
 const modeButtonColor = main.colors.color5;
 
 const Loader = Loaders();
+const VolumeOrNull = Condition(Volume);
 
 const mapStateToProps = storeData => ({
 	player: storeData.player
@@ -88,6 +90,9 @@ export default connectFunction(function(props) {
 				<SongTitle>{playingCurrent.title}</SongTitle>
 				<Artist>{playingCurrent.artist}</Artist>
 				<ChannelTitle>{playingCurrent.channelTitle}</ChannelTitle>
+				<VolumeOrNull 
+					bool={player.status !== 0 && player.status !== 3}
+				/>
 				<ButtonsWrapper>
 					<MinimizeWrapper onClick={expandOrMinimize}>
 						<MinimizeIcon fill={modeButtonColor}/>

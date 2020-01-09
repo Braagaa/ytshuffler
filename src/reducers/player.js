@@ -7,6 +7,8 @@ import {
 	PLAY_NEXT, 
 	PAUSE, 
 	STOP, 
+	SET_VOLUME,
+	TOGGLE_MUTE,
 	EXPAND, 
 	CLEAR,
 	START_LOADING,
@@ -29,6 +31,8 @@ const defaultState = {
 	isExpanded: false,
 	isLoading: false,
 	playingCurrent: {},
+	volume: 100,
+	isMuted: false,
 	YTPlayer: null
 };
 
@@ -44,6 +48,8 @@ export default function playerReducer(state = defaultState, action) {
 			};
 		case PLAY_SINGLE: 
 			YTPlayer.loadVideoById(video.youtubeId);
+			YTPlayer.setSize(174, 174);
+			YTPlayer.setVolume(state.volume);
 			return {
 				type: 'SINGLE',
 				status: statuses.unstarted,
@@ -51,11 +57,15 @@ export default function playerReducer(state = defaultState, action) {
 				playingCurrent: video,
 				isExpanded: true,
 				isLoading: false,
-				YTPlayer: state.YTPlayer
+				YTPlayer: state.YTPlayer,
+				volume: state.volume,
+				isMuted: state.isMuted
 			};
 		case PLAY_LIST:
 			randomVideo = randomNth(videos);
 			YTPlayer.loadVideoById(randomVideo.youtubeId);
+			YTPlayer.setSize(174, 174);
+			YTPlayer.setVolume(state.volume);
 			return {
 				type: 'LIST',
 				status: statuses.unstarted,
@@ -63,7 +73,9 @@ export default function playerReducer(state = defaultState, action) {
 				playingCurrent: randomVideo,
 				isExpanded: true,
 				isLoading: false,
-				YTPlayer: state.YTPlayer
+				YTPlayer: state.YTPlayer,
+				volume: state.volume,
+				isMuted: state.isMuted
 			};
 		case PLAY_NEXT:
 			if (state.status === statuses.stop) return state;
@@ -74,6 +86,8 @@ export default function playerReducer(state = defaultState, action) {
 					...defaultState,
 					isExpanded: state.isExpanded,
 					YTPlayer: state.YTPlayer,
+					volume: state.volume,
+					isMuted: state.isMuted
 				};
 			}
 
@@ -108,9 +122,31 @@ export default function playerReducer(state = defaultState, action) {
 			return {
 				...defaultState,
 				isExpanded: state.isExpanded,
-				YTPlayer: state.YTPlayer
+				YTPlayer: state.YTPlayer,
+				volume: state.volume,
+				isMuted: state.isMuted
 			};
+		case SET_VOLUME:
+			YTPlayer.unMute();
+			YTPlayer.setVolume(action.payload.value);
+			return {
+				...state,
+				isMuted: false,
+				volume: action.payload.value
+			};
+		case TOGGLE_MUTE:
+			if (YTPlayer.isMuted()) {
+				YTPlayer.unMute();
+				return {...state, isMuted: false};
+			}
+			YTPlayer.mute();
+			return {...state, isMuted: true};
 		case EXPAND:
+			if (!action.payload.isExpanded) {
+				YTPlayer.setSize(0, 0);
+			} else {
+				YTPlayer.setSize(174, 174);
+			}
 			return {
 				...state,
 				isExpanded: action.payload.isExpanded

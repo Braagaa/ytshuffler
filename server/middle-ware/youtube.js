@@ -73,7 +73,7 @@ const getAllSongs = async (channelId, channelTitle, order) => {
 			artist: getArtist(channelTitle, video.snippet.title),
 			thumbnail_url: video.snippet.thumbnails.default.url,
 			duration: video.contentDetails.duration,
-			topics: getTopics(video.topicDetails.relevantTopicIds)
+			topics: getTopics(video.topicDetails ? video.topicDetails.relevantTopicIds : [])
 		}));
 
 	return videos;
@@ -217,6 +217,7 @@ const channelsUpdate = async (req, res, next) => {
 
 		next();
 	} catch(e) {
+		console.log(e);
 		if (checkQuotaError(e)) return next(createQuotaExceededError());
 		next(createError(500, 'Could not update channels.'));
 	};
