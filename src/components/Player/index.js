@@ -9,6 +9,7 @@ import {ReactComponent as MusicIcon} from '../../imgs/music-player.svg';
 import {ReactComponent as MinimizeIcon} from '../../imgs/minimize.svg';
 import {ReactComponent as ShuffleButton} from '../../imgs/shuffle.svg';
 import Volume from '../Volume';
+import Duration from '../Duration';
 import Condition, {ConditionalHidden, Conditions} from '../Conditional/';
 import Loaders from '../Loaders/';
 
@@ -50,6 +51,9 @@ const modeButtonColor = main.colors.color5;
 
 const Loader = Loaders();
 const VolumeOrNull = Condition(Volume);
+const DurationOrNull = Condition(Duration);
+const invalidPlayerStatus = (status, player) => !status
+	.includes(player.status);
 
 const mapStateToProps = storeData => ({
 	player: storeData.player
@@ -87,11 +91,14 @@ export default connectFunction(function(props) {
 						<div id="player"></div>
 					</ConditionalHidden>
 				</ImgHolder>
+				<DurationOrNull
+					bool={invalidPlayerStatus([0, 3], player)}
+				/>
 				<SongTitle>{playingCurrent.title}</SongTitle>
 				<Artist>{playingCurrent.artist}</Artist>
 				<ChannelTitle>{playingCurrent.channelTitle}</ChannelTitle>
 				<VolumeOrNull 
-					bool={player.status !== 0 && player.status !== 3}
+					bool={invalidPlayerStatus([0, 3], player)}
 				/>
 				<ButtonsWrapper>
 					<MinimizeWrapper onClick={expandOrMinimize}>

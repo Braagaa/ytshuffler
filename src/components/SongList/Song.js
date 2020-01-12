@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
+import ytDuration from 'youtube-duration-format';
 import {playSingle} from '../../actions/player';
 import {youtubeURL} from '../../data/url';
 
@@ -22,6 +23,7 @@ export default connectFunction(function(props) {
 			title,
 			artist,
 			thumbnail_url, 
+			duration
 		});
 	};
 
@@ -52,7 +54,7 @@ export default connectFunction(function(props) {
 						Info
 					</LinkSongButton>
 				</ButtonsWrapper>
-				<Duration>{duration}</Duration>
+				<Duration>{ytDuration(duration)}</Duration>
 			</Wrapper>
 		</li>
 	);

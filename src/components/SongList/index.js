@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import ytDuration from 'youtube-duration-format';
-import {adjustProp} from '../../utils/func';
 
 import Song from './Song';
 
@@ -38,7 +36,6 @@ export default function(props) {
 		<List>
 			{
 				props.songs
-					.map(adjustProp('duration', ytDuration))
 					.map(s => <Song key={s._id} channelTitle={props.channelTitle} {...s}/>)
 			}
 		</List>
