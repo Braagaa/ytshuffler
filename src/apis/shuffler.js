@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {getCSRFStorage} from '../utils/auth';
 
 //For now use local for calling the database server
 const databaseURL = 'http://localhost:3000/';
@@ -8,6 +7,9 @@ const spotifyURL = databaseURL + 'spotify/';
 const shufflerURL = databaseURL + 'shuffler/';
 const authURL = databaseURL + 'auth/';
 const usersURL = databaseURL + 'users/';
+
+//This is needed to prevent circular dependency
+const getCSRFStorage = () => localStorage.getItem('CSRF');
 
 const getAxios = (url, initalQuery = {}) => (query = {}) => 
 	axios.get(url, {

@@ -21,6 +21,13 @@ export const useLoadResource = (apiCall, key, ...args) => {
 	}, []);
 };
 
+export const useTitle = ({title, artist}) => {
+	if (title) {
+		return document.title =  `${title} - ${artist}`;
+	}
+	document.title = 'YTShuffler';
+};
+
 export const useMessages = start => {
 	const [message, setMessage] = useState({
 		message: '',

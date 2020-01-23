@@ -16,7 +16,7 @@ const mapStateToProps = storeData => ({
 const mapDispatchToProps = {};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
-const Duration = connectFunction(function({player}) {
+export const Duration = function({player}) {
 	const {playingCurrent, YTPlayer} = player;
 	const [currentMs, setCurrentMs] = useState(0);
 	const drag = useRef({ms: 0, isDrag: false});
@@ -36,7 +36,7 @@ const Duration = connectFunction(function({player}) {
 			} else {
 				setCurrentMs((YTPlayer.getCurrentTime() || 0) * 1000);
 			};
-		}, 300);
+		}, 250);
 
 		return () => clearInterval(interval);
 	}, [YTPlayer]);
@@ -97,9 +97,9 @@ const Duration = connectFunction(function({player}) {
 			<ChannelTitle>{currentDuration} / {maxDuration}</ChannelTitle>
 		</div>
 	);
-});
+};
 
-export default Duration;
+export default connectFunction(Duration);
 
 Duration.propTypes = {
 	player: PropTypes.object

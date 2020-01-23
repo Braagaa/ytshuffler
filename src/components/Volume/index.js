@@ -15,7 +15,7 @@ const mapStateToProps = storeData => ({
 const mapDispatchToProps = {setVolume};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
-const Volume = connectFunction(function({player, setVolume}) {
+export const Volume = function({player, setVolume}) {
 	const {volume, isMuted} = player;
 	const onChange = ({x}) => setVolume(x);
 
@@ -52,6 +52,6 @@ const Volume = connectFunction(function({player, setVolume}) {
 			/>
 		</Wrapper>
     );
-});
+};
 
-export default Volume;
+export default connectFunction(Volume);

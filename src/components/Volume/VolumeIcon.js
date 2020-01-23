@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {ReactComponent as Mute} from '../../imgs/mute.svg';
 import {toggleMute} from '../../actions/player'
@@ -13,7 +14,7 @@ const mapStateToProps = storeData => ({
 const mapDispatchToProps = {toggleMute};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
-const VolumeIcon = connectFunction(function({player, toggleMute}) {
+export const VolumeIcon = function({player, toggleMute}) {
 	const {volume, isMuted} = player;
 	const highLowVolumeColor = volume > 50 ? purple : 'transparent';
 
@@ -45,6 +46,15 @@ const VolumeIcon = connectFunction(function({player, toggleMute}) {
 			/>
 		</MuteWrapper>
 	);
-});
+};
 
-export default VolumeIcon;
+export default connectFunction(VolumeIcon);
+
+VolumeIcon.propTypes = {
+	toggleMute: PropTypes.func,
+	player: PropTypes.object
+};
+
+VolumeIcon.defaultProps = {
+	player: {volume: 100, isMuted: false}
+};

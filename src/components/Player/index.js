@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {ReactComponent as Forward} from '../../imgs/forward-button.svg';
@@ -12,6 +13,7 @@ import Volume from '../Volume';
 import Duration from '../Duration';
 import Condition, {ConditionalHidden, Conditions} from '../Conditional/';
 import Loaders from '../Loaders/';
+import {useTitle} from '../../hooks';
 
 import main from '../../style/main';
 import {
@@ -68,7 +70,7 @@ const mapDispatchToProps = {
 };
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
-export default connectFunction(function(props) {
+export function Player(props) {
 	const {SHUFFLE, PLAY, PAUSE} = playmodes;
 	const {player, playVideo, playNext, pauseVideo, stopVideo, openPlayer, playAllSongs} = props;
 	const {playingCurrent} = player;
@@ -79,6 +81,8 @@ export default connectFunction(function(props) {
 		};
 		return openPlayer(!player.isExpanded);
 	};
+
+	useTitle(playingCurrent);
 
 	return(
 		<div>
@@ -93,12 +97,14 @@ export default connectFunction(function(props) {
 				</ImgHolder>
 				<DurationOrNull
 					bool={invalidPlayerStatus([0, 3], player)}
+					id="duration"
 				/>
 				<SongTitle>{playingCurrent.title}</SongTitle>
 				<Artist>{playingCurrent.artist}</Artist>
 				<ChannelTitle>{playingCurrent.channelTitle}</ChannelTitle>
 				<VolumeOrNull 
 					bool={invalidPlayerStatus([0, 3], player)}
+					id="volume"
 				/>
 				<ButtonsWrapper>
 					<MinimizeWrapper onClick={expandOrMinimize}>
@@ -132,4 +138,25 @@ export default connectFunction(function(props) {
 			</ExpandWrapper>
 		</div>
 	);
-}); 
+}; 
+
+export default connectFunction(Player);
+
+Player.propTypes = {
+	player: PropTypes.object,
+	playVideo: PropTypes.func,
+	playNext: PropTypes.func,
+	pauseVideo: PropTypes.func,
+	stopVideo: PropTypes.func,
+	openPlayer: PropTypes.func,
+	playAllSongs: PropTypes.func
+};
+
+Player.defaultProps = {
+	player: {
+		playingCurrent: {}, 
+		status: 0, 
+		isExpanded: true, 
+		isLoading: false
+	},
+};

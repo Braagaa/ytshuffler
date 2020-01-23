@@ -16,7 +16,7 @@ import {
 } from '../actions/player';
 
 
-const statuses = {
+export const statuses = {
 	unstarted: -1,
 	stop: 0,
 	play: 1,
@@ -24,7 +24,7 @@ const statuses = {
 	error: 3
 };
 
-const defaultState = {
+export const defaultState = {
 	type: 'STOP',
 	status: statuses.stop,
 	playlist: null,
