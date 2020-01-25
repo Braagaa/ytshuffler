@@ -26,10 +26,25 @@ export const unauthorized = history => err => {
 	if (err.response) {
 		const {code, status} = err.response;
 		if (code === 401 || code === 404 || status === 401 || status === 404){
+			logoutUser();
 			store.dispatch(modalMode(true, false, {
 				message: 'You are unauthorized. Please relogin or register an email.'
 			}));
 			history.push('/');
 		}
 	}
+};
+
+export const noChannel = history => ({response}) => {
+	const {status} = response;
+	if (status === 404) {
+		history.replace('/channels');
+	};
+	if (status === 422) {
+		const path = history.location.pathname.split('/');
+		store.dispatch(modalMode(true, false, {
+			message: `Channel '${path[path.length - 1]}' cannot be found.`
+		}));
+		history.replace('/channels');
+	};
 };

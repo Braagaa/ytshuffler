@@ -3,12 +3,15 @@ const {nextError, errorIfNull} = require('../utils/errors');
 const {Channel} = require('../modals');
 const {User} = require('../modals/User');
 const {auth} = require('../middle-ware/auth'); 
-const {prop} = require('../utils/func');
+const {prop, asyncTap} = require('../utils/func');
+const {generateJWT, completeJWT} = require('../utils/jwt');
 const {
 	checkValidSettings, 
 	trySanitizeInput, 
 	sanitizeInputs
 } = require('../middle-ware/validateYoutube');
+
+const createToken = generateJWT({expiresIn: '1d'});
 
 const video_infoMW = [
 	auth,
@@ -55,6 +58,7 @@ router.put('/settings', settingsMW, (req, res, next) => {
 		{settings: req.body},
 		{new: true, select: {settings: 1}}
 	)
+		.then(asyncTap(completeJWT(req, res, createToken)))
 		.then(prop('settings'))
 		.then(success(200, res))
 		.catch(nextError(500, 'Could not change settings', next));

@@ -4,6 +4,7 @@ import Enzyme, {shallow} from 'enzyme';
 import {Provider} from 'react-redux';
 
 import Player, {statuses} from '../../reducers/Player';
+import nullYTPlayer from '../../utils/nullYTPlayer';
 import {
 	CREATE_PLAYER,
 	PLAY_SINGLE,
@@ -44,7 +45,7 @@ class State {
 			playingCurrent: {},
 			volume: 100,
 			isMuted: false,
-			YTPlayer: null,
+			YTPlayer: nullYTPlayer,
 			...props
 		};
 		return this;
@@ -244,6 +245,6 @@ it('ERROR', () => {
 
 it('CLEAR', () => {
 	const action = createAction(CLEAR);
-	const result = new State().getState();
-	expect(Player(initialState, action)).toEqual(result);
+	const result = new State().addYTPlayer().toJSON();
+	expect(stringify(Player(initialState, action))).toEqual(result);
 });

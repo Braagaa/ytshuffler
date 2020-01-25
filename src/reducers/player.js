@@ -1,4 +1,5 @@
 import {randomNth} from '../utils/random';
+import nullYTPlayer from '../utils/nullYTPlayer';
 import {
 	CREATE_PLAYER, 
 	PLAY_SINGLE, 
@@ -14,7 +15,6 @@ import {
 	START_LOADING,
 	ERROR
 } from '../actions/player';
-
 
 export const statuses = {
 	unstarted: -1,
@@ -33,7 +33,7 @@ export const defaultState = {
 	playingCurrent: {},
 	volume: 100,
 	isMuted: false,
-	YTPlayer: null
+	YTPlayer: nullYTPlayer
 };
 
 export default function playerReducer(state = defaultState, action) {

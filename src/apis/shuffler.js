@@ -62,5 +62,5 @@ export const loginUser = postAxios(authURL + 'login');
 
 //users
 export const getUserVideoInfo = id => getAxios(usersURL + 'video_info/' + id)();
-export const getUserSettings = getAxios(usersURL + 'settings/');
-export const updateUserSettings = putAxios(usersURL + 'settings/');
+export const getUserSettings = getAxios(usersURL + 'settings');
+export const updateUserSettings = putAxios(usersURL + 'settings');

@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const {generateCSRF, userCSRFHeader} = require('../utils/csrf');
+const {tap} = require('../utils/func');
+
 const secret = process.env.JWT_SECRET;
 const nodeEnv = process.env.NODE_ENV || 'dev';
 
@@ -25,8 +28,25 @@ const toCookies = res => ([headerPayload, signature]) => {
 	return [headerPayload, signature];
 };
 
+const userTokenData = req => user => ({
+	useruuid: user.id,
+	csrf: req.get('CSRF') || generateCSRF(),
+	settings: user.settings,
+	audience: 'user'
+});
+
+const completeJWT = (req, res, createToken) => user => Promise
+	.resolve(user)
+	.then(userTokenData(req))
+	.then(tap(userCSRFHeader(res)))
+	.then(createToken)
+	.then(splitJWTEncoded)
+	.then(toCookies(res));
+
 module.exports = {
 	generateJWT: generateJWT(secret),
 	splitJWTEncoded,
-	toCookies
+	toCookies,
+	userTokenData,
+	completeJWT
 };

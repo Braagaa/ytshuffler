@@ -177,7 +177,7 @@ channelSchema.static('findOneChannel', function(id, user) {
 			updatedOn: 1
 		}
 	)
-		.then(frontEndFields);
+		.then(channel => channel ? frontEndFields(channel) : channel);
 });
 
 channelSchema.static('findOneChannelForUpdate', function(filter) {

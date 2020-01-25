@@ -21,6 +21,7 @@ const auth = (req, res, next) => {
 
 	const jwtEncoded = cookies['JWT-HP'] + '.' + cookies['JWT-S'];
 	let token;
+
 	try {
 		token = jwt.verify(jwtEncoded, secret);
 	} catch(error) {
@@ -29,17 +30,20 @@ const auth = (req, res, next) => {
 	};
 
 	if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-		if (!req.get('CSRF') || req.get('CSRF') !== token.csrf)
+		if (!req.get('CSRF') || req.get('CSRF') !== token.csrf) {
 			return next(unauthorizedError);
+		}
 	}
 
-	return User.findById(token.useruuid, {email: 0, password: 0})
-		.then(errorIfNull(404, 'User cannot be found.'))
-		.then(setUser(req))
-		.then(mapTo([cookies['JWT-HP'], cookies['JWT-S']]))
-		.then(toCookies(res))
-		.then(callNext(next))
-		.catch(next);
+	req.user = {
+		id: token.useruuid, 
+		_id: token.useruuid,
+		settings: token.settings
+	};
+
+	toCookies(res)([cookies['JWT-HP'], cookies['JWT-S']]);
+
+	return next();
 };
 
 module.exports = {auth};

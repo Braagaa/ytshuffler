@@ -15,6 +15,9 @@ import Conditional from '../../components/Conditional';
 import Message from '../../components/Message';
 import {SmallButton} from '../../components/Buttons';
 import {ButtonsWrapper} from './style';
+import Modal from '../../components/Modal/';
+import InfoModal from '../../components/InfoModal';
+import OverLay from '../../components/Modal/OverLay';
 
 import mainStyle from '../../style/main';
 import {unauthorized} from '../../utils/auth';
@@ -37,7 +40,8 @@ const mapStateToProps = storeData => ({
 	data: storeData.fetching.data || {},
 	favouriteSongs: storeData.fetching.favouriteSongs || {songs: []},
 	error: storeData.fetching.error,
-	initalized: storeData.pagination.initalized
+	initalized: storeData.pagination.initalized,
+	modal: storeData.modal
 });
 const mapDispatchToProps = {
 	fetching, 
@@ -49,7 +53,7 @@ const mapDispatchToProps = {
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {data, favouriteSongs, history} = props;
+	const {data, modal, favouriteSongs, history} = props;
 	const {fetching, fetchClear, playList, playAllSongs} = props;
 	const {metaData} = data;
 	const [pageLimit, setPageLimit] = useState(1);
@@ -184,6 +188,10 @@ export default connectFunction(function(props) {
 					history={props.history}
 				/>
 			</Loader>
+			<Modal on={modal.on}>
+				<InfoModal/>
+			</Modal>
+			<OverLay on={modal.on}/>
 		</div>
 	);
 });

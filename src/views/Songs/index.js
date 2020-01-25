@@ -23,7 +23,7 @@ import {modalMode} from '../../actions/modal';
 import {playList} from '../../actions/player';
 import {setState} from '../../utils/commonEvent';
 import main from '../../style/main';
-import {unauthorized} from '../../utils/auth';
+import {unauthorized, noChannel} from '../../utils/auth';
 import {channelDateFormat} from '../../utils/date';
 import {useToggle} from '../../hooks';
 
@@ -47,7 +47,7 @@ const mapDispatchToProps = {fetching, fetchClear, modalMode, playList, clearErro
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function(props) {
-	const {fetchingState, channel, isLoading, modal} = props;
+	const {fetchingState, channel, isLoading, modal, history} = props;
 	const {fetching, fetchClear, modalMode, playList, clearError} = props;
 	const {id} = props.match.params;
 
@@ -97,9 +97,10 @@ export default connectFunction(function(props) {
 	};
 
 	useEffect(() => {
-		fetching(getChannel, 'channel', id);
+		fetching(getChannel, 'channel', id)
+			.catch(noChannel(history));
 		return () => fetchClear();
-	}, [fetching, fetchClear, id]);
+	}, [fetching, fetchClear, id, history]);
 
 	return(
 		<Loader 

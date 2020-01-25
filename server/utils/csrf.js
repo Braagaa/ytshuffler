@@ -4,9 +4,9 @@ const env = process.env.NODE_ENV;
 
 const generateCSRF = (Tokens, secret) => () => Tokens().create(secret);
 
-const toCSRFHeader = res => token => res.set('CSRF', token);
+const userCSRFHeader = res => ({csrf}) => res.set('CSRF', csrf);
 
 module.exports = {
 	generateCSRF: generateCSRF(Tokens, secret),
-	toCSRFHeader
+	userCSRFHeader
 };

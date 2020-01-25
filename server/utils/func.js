@@ -3,6 +3,11 @@ const tap = fn => arg => {
 	return arg;
 };
 
+const asyncTap = fn => async arg => {
+	await fn(arg);
+	return arg;
+};
+
 const clone = arr => [...arr];
 
 const pairs = arr => {
@@ -96,6 +101,7 @@ module.exports = {
 	adjust,
 	adjustProp,
 	applyTo,
+	asyncTap,
 	pairs,
 	reverse,
 	replaceAt,
