@@ -379,6 +379,8 @@ channelSchema.static('getFavouriteChannelSongs', function(user) {
 });
 
 channelSchema.index({title: 1});
+channelSchema.index({'playlists.date.artist': 1});
+channelSchema.index({'playlists.viewCount.artist': 1});
 
 const Channel = model('Channel', channelSchema);
 
