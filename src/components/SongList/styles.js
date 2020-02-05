@@ -40,7 +40,9 @@ export const ButtonsWrapper = styled.div`
 `;
 
 export const Img = styled.img`
+	min-width: 120px;
 	width: 120px;
+	min-height: 90px;
 	height: 90px;
 `;
 

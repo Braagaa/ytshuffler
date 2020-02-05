@@ -1,7 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 
 import main from '../../style/main';
+
+const noFocusBorder = css`
+	:focus {
+		outline: none;
+	}
+`;
 
 export const StyledButton = styled.button`
 	background-color: ${props => props.color || 'white'};
@@ -14,6 +20,8 @@ export const StyledButton = styled.button`
 	font-size: 1.1em;
 	font-weight: 700;
 	letter-spacing: 1px;
+
+	${noFocusBorder}
 
 	@media (max-width: 400px) {
 		font-size: 75%;
@@ -35,6 +43,8 @@ export const SmallButton = styled.button`
 	font-weight: bold;
 	border: none;
 	cursor: pointer;
+
+	${noFocusBorder}
 `;
 
 export const TransformButton = styled(SmallButton)`
@@ -61,6 +71,8 @@ export const Pill = styled.button`
 	text-align: center;
 	letter-spacing: 1px;
 	cursor: pointer;
+
+	${noFocusBorder}
 `;
 
 export const ModalButton = styled(SmallButton)`

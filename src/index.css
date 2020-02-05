@@ -4,6 +4,10 @@
 		 url(./fonts/Raleway-Regular.ttf) format('truetype');
 }
 
+*:focus {
+	outline: none;
+}
+
 body {
 	font-family: 'Raleway', 'sans-serif';
 	color: white;
