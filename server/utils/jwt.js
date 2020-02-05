@@ -4,6 +4,7 @@ const {tap} = require('../utils/func');
 
 const secret = process.env.JWT_SECRET;
 const nodeEnv = process.env.NODE_ENV || 'development';
+const productionTest = process.env.HTTPS;
 
 const options = {expiresIn: '1d'};
 
@@ -18,11 +19,11 @@ const splitJWTEncoded = tokenEncoded => {
 
 const toCookies = res => ([headerPayload, signature]) => {
 	res.cookie('JWT-HP', headerPayload, {
-		secure: nodeEnv === 'production',
+		secure: nodeEnv === 'production' && !productionTest,
 		maxAge: 1000 * 60 * 60 * 1
 	});
 	res.cookie('JWT-S', signature, {
-		secure: nodeEnv === 'production',
+		secure: nodeEnv === 'production' && !productionTest,
 		httpOnly: true
 	});
 	return [headerPayload, signature];

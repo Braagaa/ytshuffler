@@ -30,7 +30,9 @@
     "youtube-duration-format": "^0.2.0"
   },
   "scripts": {
-    "start": "npm-run-all --parallel react-server api-server",
+    "start": "node ./server/app.js",
+    "start:development": "npm-run-all --parallel react-server api-server",
+    "start:production": "nodemon -r dotenv/config ./server/app.js dotenv_config_path=./.env.production",
     "react-server": "react-scripts start",
     "api-server": "node -r dotenv/config ./server/app.js dotenv_config_path=./.env.development",
     "api-server-dev": "nodemon -r dotenv/config ./server/app.js",

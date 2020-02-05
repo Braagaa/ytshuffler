@@ -32,6 +32,14 @@ app.use('/shuffler', shuffler);
 app.use('/auth', auth);
 app.use('/users', users);
 
+if (app.get('env') === 'production') {
+	app.use(express.static(path.join(__dirname, '..', 'build')));
+
+	app.get('/*', (req, res) => {
+		res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+	});
+};
+
 app.use((req, res, next) => next(createError(404)));
 
 app.use((err, req, res, next) => {
@@ -45,14 +53,6 @@ app.use((err, req, res, next) => {
 		message: err.message
 	}});
 });
-
-if (app.get('env') === 'production') {
-	app.use(express.static(path.join(__dirname, 'build')));
-
-	app.get('/*', (req, res) => {
-		res.sendFile(path.join(__dirname, 'build', 'index.html'));
-	});
-};
 
 app.listen(app.get('port'), () => 
 	console.log(`Server listening at port: ${app.get('port')}`)

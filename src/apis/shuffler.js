@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //For now use local for calling the database server
-const databaseURL = 'http://localhost:3000/';
+const databaseURL = '/';
 const youtubeURL = databaseURL + 'youtube/';
 const spotifyURL = databaseURL + 'spotify/';
 const shufflerURL = databaseURL + 'shuffler/';
