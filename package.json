@@ -32,7 +32,7 @@
   "scripts": {
     "start": "npm-run-all --parallel react-server api-server",
     "react-server": "react-scripts start",
-    "api-server": "node -r dotenv/config ./server/app.js",
+    "api-server": "node -r dotenv/config ./server/app.js dotenv_config_path=./.env.development",
     "api-server-dev": "nodemon -r dotenv/config ./server/app.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -41,6 +41,10 @@
   "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "engines": {
+	"node": "10.x",
+	"npm": "6.x"
   },
   "browserslist": {
     "production": [

@@ -3,7 +3,7 @@ const {generateCSRF, userCSRFHeader} = require('../utils/csrf');
 const {tap} = require('../utils/func');
 
 const secret = process.env.JWT_SECRET;
-const nodeEnv = process.env.NODE_ENV || 'dev';
+const nodeEnv = process.env.NODE_ENV || 'development';
 
 const options = {expiresIn: '1d'};
 
