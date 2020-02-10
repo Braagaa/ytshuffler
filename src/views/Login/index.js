@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 
 import Button from '../../components/Buttons';
@@ -21,7 +21,7 @@ const mapDispatchToProps = {modalMode};
 const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export default connectFunction(function (props) {
-	const {errorModal} = props;
+	const {errorModal, modalMode} = props;
 	const [modalsOn, setModalsOn] = useState({
 		login: false, 
 		register: false
@@ -33,6 +33,17 @@ export default connectFunction(function (props) {
 	});
 	const loginModalHandle = modalHandle('login');
 	const registerModalHandle = modalHandle('register');
+
+	const isNewUser = new URLSearchParams(props.location.search)
+		.get('newUser');
+
+	useEffect(() => {
+		if (isNewUser === '1') {
+			modalMode(true, false, {
+				message: 'You have completed your registration. Proceed to login!'
+			});
+		}
+	}, [isNewUser]);	
 
 	return (
 		<Wrapper>

@@ -57,6 +57,7 @@ const asyncErrorIf = fn => (status, msg) => async data => {
 };
 
 const errorIfNull = errorIf(data => data === null || data === undefined);
+const errorIfInactiveUser = errorIf(user => !user.active);
 
 const errorStatus = (status, next) => error => {
 	if (error.status === status)
@@ -108,6 +109,7 @@ module.exports = {
 	exceedsRequestSpotify,
 	errorIf,
 	errorIfNull,
+	errorIfInactiveUser,
 	pathError,
 	asyncErrorIf,
 	castError,

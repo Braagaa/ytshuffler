@@ -39,6 +39,10 @@ export const pathOr = (str, def) => obj => {
 	}
 };
 
+export const wait = time => arg => new Promise((resolve) => {
+	setTimeout(() => resolve(arg), time)
+});
+
 export const flipObject = obj => Object.entries(obj)
 	.reduce((acc, [key, value]) => set(value, key)(acc), {});
 

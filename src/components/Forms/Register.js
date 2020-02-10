@@ -11,7 +11,8 @@ import {
 } from '../../utils/validation';
 import {registerUser} from '../../apis/shuffler';
 import {ifClientError, setStateThrow} from '../../utils/errors';
-import {setCSRFStorage} from '../../utils/auth';
+import {thunk} from '../../utils/func';
+import {modalMode} from '../../actions/modal';
 
 import Close from '../Close';
 import Input from '../Input';
@@ -25,12 +26,15 @@ const emailValidate = validateEmail.validate;
 const Loader = Loaders();
 const {colors: {color3: redish}} = main;
 
+const regMessage = 'An email will be sent shortly. Click on the link in your email to complete registration!'
+
 const mapStateToProps = storeData => ({
 	email: storeData.input.email,
 	password: storeData.input.password,
 	repeatPassword: storeData.input['repeat password']
 });
-const connectFunction = connect(mapStateToProps);
+const mapDispatchToProps = {modalMode};
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 const validations = [
 	[checkUpperCase, '1 capital letter'],
@@ -41,7 +45,7 @@ const validations = [
 ];
 
 export default connectFunction(function(props) {
-	const {email = '', password = '', repeatPassword = ''} = props;
+	const {email = '', password = '', repeatPassword = '', modalMode} = props;
 	const [clientErrorMsg, setClientErrorMsg] = useState('');
 	const [disableSubmit, setDisableSubmit] = useState(false);
 	const [loading, setLoading] = useState({isLoading: false, message: ''});
@@ -62,8 +66,10 @@ export default connectFunction(function(props) {
 			setDisableSubmit(true);
 
 			registerUser({email, password})
-				.then(setCSRFStorage)
-				.then(() => props.history.push('/channels'))
+				.then(thunk(setLoading, {isLoading: false, message: ''}))
+				.then(thunk(modalMode, true, false, {message: regMessage}))
+				.then(thunk(setDisableSubmit, false))
+				.then(thunk(exitHandle))
 				.catch(setStateThrow(setDisableSubmit, false))
 				.catch(setStateThrow(setLoading, {isLoading: false}))
 				.catch(ifClientError(setClientErrorMsg));

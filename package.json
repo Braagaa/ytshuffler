@@ -17,6 +17,7 @@
     "mongo-sanitize": "^1.0.1",
     "mongoose": "^5.7.1",
     "morgan": "^1.9.1",
+    "nodemailer": "^6.4.2",
     "pretty-ms": "^5.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -36,7 +37,7 @@
     "react-server": "react-scripts start",
     "api-server": "node -r dotenv/config ./server/app.js dotenv_config_path=./.env.development",
     "api-server-dev": "nodemon -r dotenv/config ./server/app.js",
-	"heroku-postbuild": "npm run build",
+    "heroku-postbuild": "npm run build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

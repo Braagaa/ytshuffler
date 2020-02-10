@@ -3,6 +3,7 @@ const {generateCSRF, userCSRFHeader} = require('../utils/csrf');
 const {tap} = require('../utils/func');
 
 const secret = process.env.JWT_SECRET;
+const emailSecret = process.env.EMAIL_SECRET;
 const nodeEnv = process.env.NODE_ENV || 'development';
 const productionTest = process.env.HTTPS;
 
@@ -35,6 +36,10 @@ const userTokenData = req => user => ({
 	settings: user.settings,
 	audience: 'user'
 });
+const emailTokenData = user => ({
+	useruuid: user.id,
+	audience: 'user'
+});
 
 const completeJWT = (req, res, createToken) => user => Promise
 	.resolve(user)
@@ -44,10 +49,17 @@ const completeJWT = (req, res, createToken) => user => Promise
 	.then(splitJWTEncoded)
 	.then(toCookies(res));
 
+const emailJWT = (email, createTokenFn) => user => Promise
+	.resolve(user)
+	.then(emailTokenData)
+	.then(createTokenFn);
+
 module.exports = {
 	generateJWT: generateJWT(secret),
+	generateEmailJWT: generateJWT(emailSecret),
 	splitJWTEncoded,
 	toCookies,
 	userTokenData,
-	completeJWT
+	completeJWT,
+	emailJWT
 };

@@ -2,7 +2,6 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 const {User} = require('../modals/User');
 const {errorIfNull} = require('../utils/errors');
-const {mapTo} = require('../utils/func');
 const {toCookies} = require('../utils/jwt');
 
 const secret = process.env.JWT_SECRET;

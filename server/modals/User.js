@@ -13,6 +13,10 @@ const userSchema = new Schema({
 			message: 'Email is not valid.'
 		}
 	},
+	active: {
+		type: Boolean,
+		default: false
+	},
 	password: {
 		type: String,
 		required: true
