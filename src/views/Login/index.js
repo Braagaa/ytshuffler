@@ -43,7 +43,7 @@ export default connectFunction(function (props) {
 				message: 'You have completed your registration. Proceed to login!'
 			});
 		}
-	}, [isNewUser]);	
+	}, [isNewUser, modalMode]);	
 
 	return (
 		<Wrapper>
